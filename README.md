@@ -1,10 +1,10 @@
-CREATE TABLE Buyer (
+CREATE TABLE SysAdmin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(50) NOT NULL
 );
 
-INSERT INTO Buyer (username, password) VALUES
+INSERT INTO SysAdmin (username, password) VALUES
 ('user1', 'password1'),
 ('user2', 'password2'),
 ('user3', 'password3'),
