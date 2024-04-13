@@ -1,5 +1,5 @@
 <?php
-require 'BuyerDB.php';
+require 'SysAdminDB.php';
 ?>
 
 <?php
