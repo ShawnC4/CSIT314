@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-// Assuming you have a class to handle user authentication called UserController
 require_once 'UserController.php';
 
 // Handle POST request
