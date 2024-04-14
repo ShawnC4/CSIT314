@@ -1,32 +1,28 @@
 <?php
-require 'SysAdminDB.php';
-?>
+require_once 'SysAdminDB.php';
 
-<?php
-class User {
-    public function authenticate($username, $password) {
+class UserEntity {
+    public function __construct() {
         global $conn;
-        $sql = "SELECT * FROM buyer WHERE username = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $username);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+        $this->conn = $conn;
+    }
 
-        if (mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-            if ($password == $row['password']) {
-                mysqli_close($conn);
-                return true;
-            } else {
-                mysqli_close($conn);
-                return false;
-            }
-        } else {
-            mysqli_close($conn);
-            return false;
-        }
+    public function getUserByUsername($username) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        
+        // Get result
+        $result = $stmt->get_result();
 
-        mysqli_stmt_close($stmt);
+        // Fetch user data
+        $user = $result->fetch_assoc();
+        
+        // Close statement
+        $stmt->close();
+        
+        return $user; // Return user data
     }
 }
 ?>
