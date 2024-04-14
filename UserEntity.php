@@ -1,5 +1,5 @@
 <?php
-require_once 'SysAdminDB.php';
+require_once 'UserAcctdb.php';
 
 class UserEntity {
     public function __construct() {
