@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+//Testint comment -shang ji
 // Check if user is already logged in
 if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
     // If logged in, redirect to landing page
