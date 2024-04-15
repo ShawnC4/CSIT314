@@ -7,7 +7,7 @@ class UserEntity {
         $this->conn = $conn;
     }
 
-    public function getUserByUsername($username) {
+    public function findAccByUsername($username) {
         // Prepare SQL statement
         $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ?");
         $stmt->bind_param("s", $username);
