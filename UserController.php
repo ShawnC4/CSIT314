@@ -14,7 +14,7 @@ class UserController {
 
     public function auth($username, $password) {
         // Retrieve user data from the database based on the provided username
-        $user = $this->entity->getUserByUsername($username);
+        $user = $this->entity->findAccByUsername($username);
 
         // Validate user credentials
         if ($user && $password == $user['password']) {
