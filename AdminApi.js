@@ -23,12 +23,10 @@ class AdminApi {
             },
             body: JSON.stringify({ profileName, createPermission, readPermission, updatePermission, deletePermission })
         })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error creating:', error));
+        .then(response => response.text())
+        .then(data =>console.log(data))
     }
 
 }
 
-// Instantiate LoginManager
 const admin = new AdminApi();

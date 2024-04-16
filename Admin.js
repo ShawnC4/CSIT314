@@ -10,7 +10,7 @@ function handleCreateProfileClick() {
         upForm.style.display = 'block';
         
         upForm.innerHTML = `
-            <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
+            <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name" required><br>
             <label>Permissions:</label><br>
             <label><input type="checkbox" id="createPermission" name="createPermission"> Create</label><br>
             <label><input type="checkbox" id="readPermission" name="readPermission"> Read</label><br>

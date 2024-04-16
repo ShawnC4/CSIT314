@@ -1,11 +1,12 @@
 <?php
-require_once 'UserAcctdb.php';
+require_once 'Konohadb.php';
 require 'UserAccClass.php';
 
 class UserAccEntity {
+    private $db, $conn;
     public function __construct() {
-        global $conn;
-        $this->conn = $conn;
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
     }
 
     public function findAccByUsername($username, $profile) {
