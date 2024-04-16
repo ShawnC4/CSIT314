@@ -1,4 +1,4 @@
-class Login {
+class LoginApi {
     constructor() {
         // Bind event listener to the login form
         document.getElementById('loginForm').addEventListener('submit', this.handleLogin.bind(this));
@@ -11,12 +11,12 @@ class Login {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const profile = document.getElementById('profile').value;
-        // Call login API endpoint
+
         this.apiCall(username, password, profile);
     }
 
     apiCall(username, password, profile) {
-        fetch('UserController.php?action=login', {
+        fetch('LoginController.php?action=login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ class Login {
     }
 
     fetchUserProfiles() {
-        fetch('UserController.php?action=getProfiles')
+        fetch('LoginController.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);
@@ -69,4 +69,4 @@ class Login {
 }
 
 // Instantiate LoginManager
-const login = new Login();
+const login = new LoginApi();
