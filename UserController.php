@@ -29,6 +29,13 @@ class UserController {
             return array("success" => false);
         }
     }
+
+    public function getUserProfiles() {
+        // Retrieve user profiles from the database
+        $profiles = $this->entity->getUserProfiles();
+
+        return $profiles;
+    }
 }
 
 // Instantiate Controller object
@@ -47,5 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
+    $profiles = $controller->getUserProfiles();
+
+    header('Content-Type: application/json');
+    echo json_encode($profiles);
 }
 ?>

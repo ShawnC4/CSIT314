@@ -53,5 +53,5 @@
         <p id="loginMessage"></p>
     </div>
 </body>
-<script src="ApiEndpoint.js"></script>
+<script src="LoginApi.js"></script>
 </html>
