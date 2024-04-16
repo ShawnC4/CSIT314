@@ -7,10 +7,33 @@ class UserEntity {
         $this->conn = $conn;
     }
 
-    public function findAccByUsername($username) {
+    public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
-        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        switch ($profile) {
+            case 'buyer':
+                $profile_id = 1;
+                break;
+            case 'seller':
+                $profile_id = 2;
+                break;
+            case 'agent':
+                $profile_id = 3;
+                break;
+            case 'admin':
+                $profile_id = 4;
+                break;
+            default:
+                $profile_id = 404;
+        }
+
+        if ($profile_id == 4) {
+            $stmt = $this->conn->prepare("SELECT * FROM sysadmin WHERE username = ?");
+            $stmt->bind_param("s", $username);
+        } else {
+            $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ? AND profile_id = ?");
+            $stmt->bind_param("si", $username, $profile_id);
+        }
+        
         $stmt->execute();
         
         // Get result
