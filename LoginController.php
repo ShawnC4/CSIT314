@@ -4,7 +4,7 @@ session_start();
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
 
-class UserController {
+class LoginController {
     private $entity;
 
     public function __construct() {
@@ -39,7 +39,7 @@ class UserController {
 }
 
 // Instantiate Controller object
-$controller = new UserController();
+$controller = new LoginController();
 
 // Handle POST request to authenticate user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'login') {
