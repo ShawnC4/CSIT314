@@ -12,18 +12,20 @@ class UserController {
         $this->entity = new UserEntity();
     }
 
-    public function auth($username, $password) {
+    public function auth($username, $password, $profile) {
         // Retrieve user data from the database based on the provided username
-        $user = $this->entity->findAccByUsername($username);
+        $user = $this->entity->findAccByUsername($username, $profile);
 
         // Validate user credentials
         if ($user && $password == $user['password']) {
             $_SESSION['logged'] = true;
             $_SESSION['username'] = $username;
+            $_SESSION['profile'] = $profile;
             // Valid credentials
             return array("success" => true);
         } else {
             // Invalid credentials
+            $_SESSION['logged'] = false;
             return array("success" => false);
         }
     }
@@ -37,9 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $requestData = json_decode(file_get_contents('php://input'), true);
     $username = $requestData['username'];
     $password = $requestData['password'];
+    $profile = $requestData['profile'];
 
     // Perform login authentication
-    $response = $controller->auth($username, $password);
+    $response = $controller->auth($username, $password, $profile);
 
     // Send JSON response
     header('Content-Type: application/json');

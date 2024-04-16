@@ -1,21 +1,3 @@
-CREATE TABLE SysAdmin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL
-);
-
-INSERT INTO SysAdmin (username, password) VALUES
-('user1', 'password1'),
-('user2', 'password2'),
-('user3', 'password3'),
-('user4', 'password4'),
-('user5', 'password5'),
-('user6', 'password6'),
-('user7', 'password7'),
-('user8', 'password8'),
-('user9', 'password9'),
-('user10', 'password10');
-
 # Just to test code
 
 CREATE TABLE user_profiles (
@@ -64,6 +46,24 @@ FROM (
 -- Populate user accounts for Agent profile with password 'agent_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
 SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_password', t.n), 3
+FROM (
+    SELECT ROW_NUMBER() OVER() AS n
+    FROM INFORMATION_SCHEMA.TABLES
+    LIMIT 10
+) t;
+
+
+CREATE TABLE sysadmin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    profile_id INT,
+    FOREIGN KEY (profile_id) REFERENCES user_profiles(id) -- Add foreign key constraint
+);
+
+INSERT INTO sysadmin (username, email, password, profile_id) 
+SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_password', t.n), 4
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
