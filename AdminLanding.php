@@ -17,8 +17,13 @@
 ?>
     <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
     <br>
-    <button onclick="">Create User Profile</button>
+    <button id="createProfile">Create User Profile</button>
+    <form id="UpForm">
+    
+    </form>
+    <br>
     <a href="logout.php">Logout</a>
-    <>
 </body>
+<script src="Admin.js"></script>
+<script src="AdminApi.js"></script>
 </html>
