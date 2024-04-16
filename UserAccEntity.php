@@ -1,5 +1,6 @@
 <?php
 require_once 'UserAcctdb.php';
+require 'UserAccClass.php';
 
 class UserAccEntity {
     public function __construct() {
@@ -23,11 +24,17 @@ class UserAccEntity {
         $result = $stmt->get_result();
 
         // Fetch user data
-        $user = $result->fetch_assoc();
+        $fetchuser = $result->fetch_assoc();
         
         // Close statement
         $stmt->close();
         
+        if ($fetchuser) {
+            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['profile_id']);
+        } else {
+            $user = null;
+        }
+
         return $user; // Return user data
     }
 

@@ -17,7 +17,7 @@ class UserController {
         $user = $this->entity->findAccByUsername($username, $profile);
 
         // Validate user credentials
-        if ($user && $password == $user['password']) {
+        if ($user && $password == $user->getPassword()) {
             $_SESSION['logged'] = true;
             $_SESSION['username'] = $username;
             $_SESSION['profile'] = $profile;
