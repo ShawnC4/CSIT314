@@ -9,29 +9,12 @@ class UserEntity {
 
     public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
-        switch ($profile) {
-            case 'buyer':
-                $profile_id = 1;
-                break;
-            case 'seller':
-                $profile_id = 2;
-                break;
-            case 'agent':
-                $profile_id = 3;
-                break;
-            case 'admin':
-                $profile_id = 4;
-                break;
-            default:
-                $profile_id = 404;
-        }
-
-        if ($profile_id == 4) {
+        if ($profile == 'admin') {
             $stmt = $this->conn->prepare("SELECT * FROM sysadmin WHERE username = ?");
             $stmt->bind_param("s", $username);
         } else {
             $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ? AND profile_id = ?");
-            $stmt->bind_param("si", $username, $profile_id);
+            $stmt->bind_param("si", $username, $profile);
         }
         
         $stmt->execute();
@@ -46,6 +29,30 @@ class UserEntity {
         $stmt->close();
         
         return $user; // Return user data
+    }
+
+    public function getUserProfiles() {
+        $profiles = array(); // Initialize an empty array to store profiles
+
+        // Prepare SQL statement to select profiles
+        $sql = "SELECT id FROM user_profiles";
+
+        // Execute the query
+        $result = $this->conn->query($sql);
+
+        // Check if the query was successful
+        if ($result) {
+            // Fetch profiles and add them to the array
+            while ($row = $result->fetch_assoc()) {
+                $profiles[] = $row;
+            }
+        } else {
+            // Handle error if query fails
+            echo "Error fetching profiles: " . $this->conn->error;
+        }
+
+        // Return the array of profiles
+        return $profiles;
     }
 }
 ?>
