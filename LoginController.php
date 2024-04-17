@@ -3,13 +3,15 @@ session_start();
 
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
+require_once 'UserProfileEntity.php';
 
 class LoginController {
-    private $entity;
+    private $entity, $entityP;
 
     public function __construct() {
         // Initialize Entity object
         $this->entity = new UserAccEntity();
+        $this->entityP = new UserProfileEntity();
     }
 
     public function auth($username, $password, $profile) {
@@ -32,7 +34,7 @@ class LoginController {
 
     public function getUserProfiles() {
         // Retrieve user profiles from the database
-        $profiles = $this->entity->getUserProfiles();
+        $profiles = $this->entityP->getUserProfiles();
 
         return $profiles;
     }

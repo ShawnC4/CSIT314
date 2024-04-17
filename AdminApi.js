@@ -1,10 +1,10 @@
 class AdminApi {
     constructor() {
-        // Bind event listener to the login form
-        document.getElementById('UpForm').addEventListener('submit', this.handleLogin.bind(this));
+        document.getElementById('UpForm').addEventListener('submit', this.handleCreate.bind(this));
+        this.fetchUserProfiles();
     }
 
-    handleLogin(event) {
+    handleCreate(event) {
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
         const createPermission = document.getElementById('createPermission').checked;
@@ -16,7 +16,7 @@ class AdminApi {
     }
 
     CreateProfileApiCall(profileName, createPermission, readPermission, updatePermission, deletePermission) {
-        fetch('AdminCreateProfileController.php?action=createProfile', {
+        fetch('AdminCreateUPController.php?action=createProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,7 +24,26 @@ class AdminApi {
             body: JSON.stringify({ profileName, createPermission, readPermission, updatePermission, deletePermission })
         })
         .then(response => response.text())
-        .then(data =>console.log(data))
+        .then(data => {
+            console.log(data);
+            this.fetchUserProfiles();
+        })
+    }
+
+    fetchUserProfiles() {
+        fetch('AdminViewUPController.php?action=getProfiles')
+        .then(response => response.json())
+        .then(profiles => {
+            console.log(profiles);
+            const profileList = document.getElementById('profileList');
+            profileList.innerHTML = ''; // Clear previous content
+            profiles.forEach(profile => {
+                const profileItem = document.createElement('div');
+                profileItem.textContent = profile.id;
+                profileList.appendChild(profileItem);
+            });
+        })
+        .catch(error => console.error('Error fetching user profiles:', error));
     }
 
 }
