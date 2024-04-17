@@ -1,7 +1,7 @@
 <?php
 require 'UserProfileEntity.php';
 
-class AdminCreateProfileController {
+class AdminCreateUPController {
     private $entity;
 
     public function __construct () {
@@ -14,7 +14,7 @@ class AdminCreateProfileController {
     }
 }
 
-$controller = new AdminCreateProfileController();
+$controller = new AdminCreateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
