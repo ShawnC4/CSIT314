@@ -22,6 +22,11 @@
     
     </form>
     <br>
+    <button id="updateProfile">Update User Profile</button>
+    <form id="UpForm2">
+    
+    </form>
+    <br>
     <div id="profileList">
         
     </div>
