@@ -62,15 +62,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <button id="createProfile">Create User Profile</button>
     <div id="myModal" class="modal">
         <!-- Modal content -->
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form id="UpForm">
-                <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name" required><br>
-                <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-                <br><label for="description">Description:</label><br>
-                <input type="text" id="description" name="description" placeholder="Description"><br>
-                <br><button id="SubmitUpForm" type="submit">Submit</button><br>
-            </form>
+        <div class="modal-content" id="modal-content">
+            
         </div>
     </div>
     <form id="UpForm">
@@ -83,6 +76,5 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <br>
     <a href="logout.php">Logout</a>
 </body>
-<script src="Admin.js"></script>
 <script src="AdminApi.js"></script>
 </html>
