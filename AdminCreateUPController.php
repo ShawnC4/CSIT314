@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $requestData = json_decode(file_get_contents('php://input'), true);
     $profileName = $requestData['profileName'];
     $activeStatus = $requestData['activeStatus'];
-    $description = ['description'];
+    $description = $requestData['description'];
     
     $response = $controller->createProfile($profileName, $activeStatus, $description);
 

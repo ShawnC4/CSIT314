@@ -10,14 +10,9 @@ class UserProfileEntity {
     }
 
     public function createUserProfile ($profileName, $activeStatus, $description) {
-        $sql = "INSERT INTO user_profiles VALUES (?, ?, ?)";
-
-        $name = $profileName;
-        $active = $activeStatus;
-        $desc = $description; 
-
+        $sql = "INSERT INTO user_profiles (name, activeStatus, description) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sis", $name, $active, $desc);
+        $stmt->bind_param("sis", $profileName, $activeStatus, $description);
 
         if ($stmt->execute()) {
             return ['success' => true];

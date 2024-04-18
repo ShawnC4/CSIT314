@@ -2,7 +2,7 @@
 CREATE TABLE user_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    activeStatus boolean NOT NULL,
+    activeStatus BOOLEAN NOT NULL,
     Description VARCHAR(100)
 );
 
