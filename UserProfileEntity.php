@@ -9,19 +9,15 @@ class UserProfileEntity {
         $this->conn = $this->db->getConn();
     }
 
-    public function createUserProfile ($profileName, $createPermission, $readPermission, $updatePermission, $deletePermission) {
-        $sql = "INSERT INTO user_profiles VALUES (?, ?, ?, ?, ?, ?)";
+    public function createUserProfile ($profileName, $activeStatus, $description) {
+        $sql = "INSERT INTO user_profiles VALUES (?, ?, ?)";
 
-        $id = strtolower($profileName);
         $name = $profileName;
-        $create_listing = $createPermission; 
-        $read_listing = $readPermission; 
-        $update_listing = $updatePermission; 
-        $delete_listing = $deletePermission; 
-        echo false;
+        $active = $activeStatus;
+        $desc = $description; 
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssiiii", $id, $name, $create_listing, $read_listing, $update_listing, $delete_listing);
+        $stmt->bind_param("sis", $name, $active, $desc);
 
         if ($stmt->execute()) {
             return ['success' => true];
@@ -34,7 +30,7 @@ class UserProfileEntity {
         $profiles = array(); // Initialize an empty array to store profiles
 
         // Prepare SQL statement to select profiles
-        $sql = "SELECT id FROM user_profiles";
+        $sql = "SELECT * FROM user_profiles";
 
         // Execute the query
         $result = $this->conn->query($sql);

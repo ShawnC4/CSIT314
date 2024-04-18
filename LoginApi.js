@@ -27,16 +27,16 @@ class LoginApi {
         .then(data => {
             if (data['success'] == true) {
                 switch (profile) {
-                    case 'buyer':
+                    case '1':
                         window.location.href = 'BuyerLanding.php';
                         break;
-                    case 'seller':
+                    case '2':
                         window.location.href = 'SellerLanding.php';
                         break;
-                    case 'agent':
+                    case '3':
                         window.location.href = 'AgentLanding.php';
                         break;
-                    case 'admin':
+                    case '4':
                         window.location.href = 'AdminLanding.php';
                         break;
                     default:
@@ -59,8 +59,8 @@ class LoginApi {
             profileSelect.innerHTML = '';
             profiles.forEach(profile => {
                 const option = document.createElement('option');
-                option.value = profile.id.toLowerCase();
-                option.textContent = profile.id;
+                option.value = profile.id;
+                option.textContent = profile.name;
                 profileSelect.appendChild(option);
             });
         })

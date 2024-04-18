@@ -11,11 +11,8 @@ function handleCreateProfileClick() {
         
         upForm.innerHTML = `
             <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name" required><br>
-            <label>Permissions:</label><br>
-            <label><input type="checkbox" id="createPermission" name="createPermission"> Create</label><br>
-            <label><input type="checkbox" id="readPermission" name="readPermission"> Read</label><br>
-            <label><input type="checkbox" id="updatePermission" name="updatePermission"> Update</label><br>
-            <label><input type="checkbox" id="deletePermission" name="deletePermission"> Delete</label><br>
+            <label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+            <input type="text" id="description" name="description" placeholder="Description"><br>
             <button type="submit">Submit</button><br>
         `;
     }

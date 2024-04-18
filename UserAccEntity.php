@@ -11,13 +11,9 @@ class UserAccEntity {
 
     public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
-        if ($profile == 'admin') {
-            $stmt = $this->conn->prepare("SELECT * FROM sysadmin WHERE username = ?");
-            $stmt->bind_param("s", $username);
-        } else {
-            $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ? AND profile_id = ?");
-            $stmt->bind_param("si", $username, $profile);
-        }
+        
+        $stmt = $this->conn->prepare("SELECT ua.* FROM user_accounts ua INNER JOIN user_profiles up ON ua.profile_id = up.id WHERE ua.username = ? AND ua.profile_id = ?");
+        $stmt->bind_param("si", $username, $profile);
         
         $stmt->execute();
         
