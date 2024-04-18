@@ -1,25 +1,6 @@
-CREATE TABLE SysAdmin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL
-);
-
-INSERT INTO SysAdmin (username, password) VALUES
-('user1', 'password1'),
-('user2', 'password2'),
-('user3', 'password3'),
-('user4', 'password4'),
-('user5', 'password5'),
-('user6', 'password6'),
-('user7', 'password7'),
-('user8', 'password8'),
-('user9', 'password9'),
-('user10', 'password10');
-
 # Just to test code
-
 CREATE TABLE user_profiles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     create_listing BOOLEAN NOT NULL DEFAULT false,
     read_listing BOOLEAN NOT NULL DEFAULT false,
@@ -27,11 +8,12 @@ CREATE TABLE user_profiles (
     delete_listing BOOLEAN NOT NULL DEFAULT false
 );
 
-INSERT INTO user_profiles (name, create_listing, read_listing, update_listing, delete_listing)
+INSERT INTO user_profiles (id, name, create_listing, read_listing, update_listing, delete_listing)
 VALUES
-('Buyer', false, true, false, false),
-('Seller', false, true, false, false),
-('Agent', true, true, true, true);
+('buyer', 'Buyer', false, true, false, false),
+('seller', 'Seller', false, true, false, false),
+('agent', 'Agent', true, true, true, true),
+('admin' ,'Admin', true, true, true, true);
 
 
 CREATE TABLE user_accounts (
@@ -39,13 +21,13 @@ CREATE TABLE user_accounts (
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL, -- Adding password field
-    profile_id INT,
+    profile_id VARCHAR(50),
     FOREIGN KEY (profile_id) REFERENCES user_profiles(id)
 );
 
 -- Populate user accounts for Buyer profile with password 'buyer_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_password', t.n), 1
+SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_password', t.n), 'buyer'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -54,7 +36,7 @@ FROM (
 
 -- Populate user accounts for Seller profile with password 'seller_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_password', t.n), 2
+SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_password', t.n), 'seller'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -63,7 +45,24 @@ FROM (
 
 -- Populate user accounts for Agent profile with password 'agent_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_password', t.n), 3
+SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_password', t.n), 'agent'
+FROM (
+    SELECT ROW_NUMBER() OVER() AS n
+    FROM INFORMATION_SCHEMA.TABLES
+    LIMIT 10
+) t;
+
+CREATE TABLE sysadmin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    profile_id VARCHAR(50),
+    FOREIGN KEY (profile_id) REFERENCES user_profiles(id) -- Add foreign key constraint
+);
+
+INSERT INTO sysadmin (username, email, password, profile_id) 
+SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_password', t.n), 'admin'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
