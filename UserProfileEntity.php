@@ -53,6 +53,22 @@ class UserProfileEntity {
         // Return the array of profiles
         return $profiles;
     }
+
+    public function updateUserProfile ($profileId, $profileName, $activeStatus, $description) {
+        // Prepare SQL statement to update user profile
+        $sql = "UPDATE user_profiles SET name=?, activeStatus=?, description=? WHERE id=?";
+        $stmt = $this->conn->prepare($sql);
+        
+        // Bind parameters to the statement
+        $stmt->bind_param("sisi", $profileName, $activeStatus, $description, $profileId);
+    
+        // Execute the update query
+        if ($stmt->execute()) {
+            return ['success' => true];
+        } else {
+            return ['success' => false];
+        }
+    }
     
 }
 

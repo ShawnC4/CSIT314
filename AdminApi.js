@@ -28,6 +28,28 @@ class AdminApi {
             console.log(data);
             this.fetchUserProfiles();
         })
+        .catch(error => console.error('Error creatimng profile:', error));
+    }
+
+    updateProfileApiCall = (event, profileId) => {
+        event.preventDefault();
+        const profileName = document.getElementById('updateProfileName').value;
+        const activeStatus = document.getElementById('updateActiveStatus').checked;
+        const description = document.getElementById('updateDescription').value;
+
+        fetch('AdminUpdateUPController.php?action=updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ profileId, profileName, activeStatus, description })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            this.fetchUserProfiles();  
+        })
+        .catch(error => console.error('Error updating profile:', error));
     }
 
     fetchUserProfiles() {
