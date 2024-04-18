@@ -66,9 +66,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
             
         </div>
     </div>
-    <form id="UpForm">
-    
-    </form>
     <br>
     <div id="profileList">
         
