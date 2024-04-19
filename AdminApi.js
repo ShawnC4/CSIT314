@@ -54,21 +54,16 @@ class AdminApi {
                 const profileName = document.createElement('span');
                 profileName.textContent = profile.name;
                 profileContainer.appendChild(profileName);
-                
-                 // Create edit button
-                 const editButton = document.createElement('button');
-                 editButton.textContent = 'Edit';
-                 editButton.addEventListener('click', () => {
-                     // Handle edit functionality here
-                     console.log('Edit button clicked for profile:', profile.name);
-                     // Inputs for updating profile data
-                     const updatedProfileName = 'Updated Profile Name';
-                     const updatedActiveStatus = true;
-                     const updatedDescription = 'Updated description';
-                     this.updateProfileApiCall(profile.id, updatedProfileName, updatedActiveStatus, updatedDescription);
-                 });
-                 profileContainer.appendChild(editButton);
-                
+
+                // Create edit button
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', () => {
+                    // Call displayUpdate function to display the form for updating profile
+                    displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
+                });
+                profileContainer.appendChild(editButton);
+
                 // Create suspend button
                 const suspendButton = document.createElement('button');
                 if (profile.activeStatus != true) {
@@ -178,4 +173,3 @@ function modalFeatures () {
 }
 
 document.getElementById('createProfile').addEventListener('click', displayCreate);
-document.getElementById('updateProfile').addEventListener('click', displayUpdate);
