@@ -40,10 +40,10 @@
         <h2>Login</h2>
         <form id="loginForm">
             <select id="profile" name="profile">
-                <option value="admin">Admin</option>
-                <option value="buyer">Buyer</option>
-                <option value="seller">Seller</option>
-                <option value="agent">Agent</option>
+                <option value=1>Buyer</option>
+                <option value=2>Seller</option>
+                <option value=3>Agent</option>
+                <option value=4>Admin</option>
             </select>
             <br>
             <input type="text" id="username" placeholder="Username" required>
