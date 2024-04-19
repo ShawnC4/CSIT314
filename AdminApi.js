@@ -104,19 +104,19 @@ function displayUpdate() {
         
     Form.innerHTML = `
     <span class="close">&times;</span>
-    <form id="UpdateProfileForm">
+    <form id="UpForm">
         <input type="hidden" id="updateProfileId" value="${profileId}">
         <br><input type="text" id="updateProfileName" name="updateProfileName" placeholder="Profile Name" value="${profileName}" required><br>
         <br><label><input type="checkbox" id="updateActiveStatus" name="updateActiveStatus" ${activeStatus ? 'checked' : ''}>Active Status</label><br>
         <br><label for="updateDescription">Description:</label><br>
         <input type="text" id="updateDescription" name="updateDescription" placeholder="Description" value="${description}"><br>
-        <br><button id="SubmitUpdateProfileForm" type="submit">Update</button><br>
+        <br><button id="SubmitUpForm" type="submit">Update</button><br>
     </form>
     `;
     
-    document.getElementById('UpForm2').addEventListener('submit', admin.updateProfileApiCall);
+    document.getElementById('UpForm').addEventListener('submit', admin.updateProfileApiCall);
 
-    document.getElementById('SubmitUpForm2').addEventListener('click', () => {
+    document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
     });
 
@@ -147,3 +147,4 @@ function modalFeatures () {
 }
 
 document.getElementById('createProfile').addEventListener('click', displayCreate);
+document.getElementById('updateProfile').addEventListener('click', displayUpdate);
