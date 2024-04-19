@@ -31,13 +31,42 @@ class AdminApi {
             const profileList = document.getElementById('profileList');
             profileList.innerHTML = ''; // Clear previous content
             profiles.forEach(profile => {
-                const profileItem = document.createElement('div');
-                profileItem.textContent = profile.name;
-                profileList.appendChild(profileItem);
+                // Create container for profile information
+                const profileContainer = document.createElement('div');
+                
+                // Display profile name
+                const profileName = document.createElement('span');
+                profileName.textContent = profile.name;
+                profileContainer.appendChild(profileName);
+                
+                // Create edit button
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', () => {
+                    // Handle edit functionality here
+                    console.log('Edit button clicked for profile:', profile.name);
+                });
+                profileContainer.appendChild(editButton);
+                
+                // Create suspend button
+                const suspendButton = document.createElement('button');
+                if (profile.activeStatus != true) {
+                    suspendButton.classList.add("disable-btn");
+                }
+                suspendButton.textContent = 'Suspend';
+                suspendButton.addEventListener('click', () => {
+                    // Handle suspend functionality here
+                    console.log('Suspend button clicked for profile:', profile.name);
+                });
+                profileContainer.appendChild(suspendButton);
+                
+                // Append profile container to profile list
+                profileList.appendChild(profileContainer);
             });
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
+    
 
 }
 

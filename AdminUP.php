@@ -42,6 +42,13 @@ body {font-family: Arial, Helvetica, sans-serif;}
   text-decoration: none;
   cursor: pointer;
 }
+
+.disable-btn {
+  pointer-events: none;
+    opacity: 0.5; 
+    cursor: not-allowed;
+}
+
 </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
