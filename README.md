@@ -1,9 +1,11 @@
+# add own mysql password in konohadb.php
+
 # Just to test code
 CREATE TABLE user_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     activeStatus BOOLEAN NOT NULL,
-    Description VARCHAR(100)
+    description VARCHAR(100)
 );
 
 INSERT INTO user_profiles (name, activeStatus, Description)
