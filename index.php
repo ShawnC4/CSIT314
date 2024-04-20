@@ -76,7 +76,7 @@
 
 <div class="login-container">
         <div class="login-title">REAL ESTATE SYSTEM</div>
-        <h2>Testing</h2>
+        <h2>Log In</h2>
         <form id="loginForm">
             <select id="profile" name="profile">
                 <option value="buyer">Buyer</option>
