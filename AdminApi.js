@@ -85,6 +85,10 @@ class AdminApi {
     
 }
 
+window.onload = function() {
+    loadContent('AdminUP.php');
+};
+
 const admin = new AdminApi();
 
 function displayCreate() {
@@ -172,4 +176,21 @@ function modalFeatures () {
     
 }
 
-document.getElementById('createProfile').addEventListener('click', displayCreate);
+function initialize() {
+    
+    admin.fetchUserProfiles();
+    document.getElementById('createProfile').addEventListener('click', displayCreate);
+}
+
+
+function loadContent(page) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("UPUA").innerHTML = this.responseText;
+        initialize();
+    }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}
