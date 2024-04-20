@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <style>
@@ -42,13 +42,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
   text-decoration: none;
   cursor: pointer;
 }
-
-.disable-btn {
-  pointer-events: none;
-    opacity: 0.5; 
-    cursor: not-allowed;
-}
-
 </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,8 +58,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
     </div>
     <br>
     <div id="profileList">
-        
-    </div>
+      
+    </div> 
     <br>
 </body>
 
