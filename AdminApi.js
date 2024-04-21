@@ -85,7 +85,6 @@ class AdminApi {
                 viewButton.textContent = 'View'
                 viewButton.addEventListener('click', () => {
                     viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
-                    //window.reload.location();
                 });
                 profileContainer.appendChild(viewButton)
 
@@ -155,7 +154,8 @@ function displayCreate() {
 function viewProfile(id, Name, activeStatus, Description){
     const Form = document.getElementById('modal-content');
 
-    //window.reload.location();
+    //
+    const isActive = activeStatus == 1;
 
     Form.style.display = 'block';
 
@@ -165,7 +165,7 @@ function viewProfile(id, Name, activeStatus, Description){
     <h2>Profile Details</h2>
     <p><strong>ID:</strong> ${id}</p>
     <p><strong>Name:</strong> ${Name}</p>
-    <p><strong>Status:</strong> ${activeStatus ? 'Active' : 'Inactive'}</p>
+    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
     <p><strong>Description:</strong> ${Description}</p>
     </div>
     `;
