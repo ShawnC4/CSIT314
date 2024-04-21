@@ -5,7 +5,7 @@
         public function __construct () {
             $this->db_server = "localhost";
             $this->db_user = "root";
-            $this->db_pass = "Solarity45sql"; //add your own password here
+            $this->db_pass = ""; //add your own password here
             $this->db_name = "konohadb";
             $this->conn = mysqli_connect($this->db_server, $this->db_user, $this->db_pass, $this->db_name);
         }
