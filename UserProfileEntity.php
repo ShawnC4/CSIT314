@@ -62,8 +62,20 @@ class UserProfileEntity {
             return ['success' => false];
         }
     }
+
+    public function suspendUserProfile($profileId) {
+        $sql = "UPDATE user_profiles SET activeStatus = 0 WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $profileId);
+        
+        if ($stmt->execute()) {
+            return ['success' => true, 'message' => 'Profile has been suspended successfully.'];
+        } else {
+            return ['success' => false, 'message' => 'Failed to suspend the profile.'];
+        }
+    }
     
-    
+
 }
 
 ?>

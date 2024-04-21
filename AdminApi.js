@@ -2,7 +2,6 @@ class AdminApi {
     constructor() {
         this.fetchUserProfiles();
     }
-
     CreateProfileApiCall = (event) => {
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
@@ -21,8 +20,7 @@ class AdminApi {
             console.log(data);
             this.fetchUserProfiles();  
         })
-    }
-
+    }    
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
         fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
@@ -38,7 +36,29 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
+    suspendProfileApiCall = (profileId) => {
+        fetch('AdminSuspendUPController.php?action=suspendProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ profileId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.success) {
+                //window.location.reload();
+                alert('Profile suspended successfully');
+                window.location.reload();
+            } else {
+                alert('Failed to suspend profile');
+            }
+            // Refresh the profiles list here if necessary
+        })
+        .catch(error => console.error('Error suspending user profile:', error));
+    }
+    
     fetchUserProfiles() {
         fetch('AdminViewUPController.php?action=getProfiles')
         .then(response => response.json())
@@ -52,10 +72,23 @@ class AdminApi {
                 
                 // Display profile name
                 const profileName = document.createElement('span');
-                profileName.textContent = profile.name;
+                profileName.textContent = profile.name + ' ';
                 profileContainer.appendChild(profileName);
 
-                // Create edit button
+                //Display profile status 
+                const profileStatus =  document.createElement('span');
+                profileStatus.textContent = profile.activeStatus == 1 ? 'Active' : 'Inactive';
+                profileContainer.appendChild(profileStatus);
+
+                //Create view button
+                const viewButton = document.createElement('button')
+                viewButton.textContent = 'View'
+                viewButton.addEventListener('click', () => {
+                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
+                    //window.reload.location();
+                });
+                profileContainer.appendChild(viewButton)
+
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
@@ -68,14 +101,17 @@ class AdminApi {
                 const suspendButton = document.createElement('button');
                 if (profile.activeStatus != true) {
                     suspendButton.classList.add("disable-btn");
+                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
                 }
                 suspendButton.textContent = 'Suspend';
                 suspendButton.addEventListener('click', () => {
                     // Handle suspend functionality here
-                    console.log('Suspend button clicked for profile:', profile.name);
+                    if (confirm('Are you sure you want to suspend this profile?')) {
+                        this.suspendProfileApiCall(profile.id);
+                    }
                 });
                 profileContainer.appendChild(suspendButton);
-                
+            
                 // Append profile container to profile list
                 profileList.appendChild(profileContainer);
             });
@@ -83,7 +119,7 @@ class AdminApi {
         .catch(error => console.error('Error fetching user profiles:', error));
     }
     
-}
+};
 
 window.onload = function() {
     loadContent('AdminUP.php');
@@ -112,6 +148,27 @@ function displayCreate() {
     document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
     });
+
+    modalFeatures();
+}
+
+function viewProfile(id, Name, activeStatus, Description){
+    const Form = document.getElementById('modal-content');
+
+    //window.reload.location();
+
+    Form.style.display = 'block';
+
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <div class = "profile-view">
+    <h2>Profile Details</h2>
+    <p><strong>ID:</strong> ${id}</p>
+    <p><strong>Name:</strong> ${Name}</p>
+    <p><strong>Status:</strong> ${activeStatus ? 'Active' : 'Inactive'}</p>
+    <p><strong>Description:</strong> ${Description}</p>
+    </div>
+    `;
 
     modalFeatures();
 }
