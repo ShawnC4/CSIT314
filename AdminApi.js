@@ -61,6 +61,7 @@ class AdminApi {
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
                     displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
+                    console.log('Update button clicked for profile:', profile.name);
                 });
                 profileContainer.appendChild(editButton);
 
@@ -78,12 +79,42 @@ class AdminApi {
                 
                 // Append profile container to profile list
                 profileList.appendChild(profileContainer);
+
             });
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
+
+    searchProfile = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+        // Select all profile containers
+        const profileContainers = document.querySelectorAll('#profileList > div');
+
+        // Iterate over each profile container
+        profileContainers.forEach(container => {
+            // Get text content of profile name within container and convert it to lowercase
+            const profileName = container.querySelector('span').textContent.toLowerCase();
+
+            // Check if profile name includes search input
+            if (profileName.includes(searchInput)) {
+
+                // display container if profile name includes search input
+                container.style.display = 'block';
+            }
+            else {
+                // hide container if profile name does not include search input
+                container.style.display = 'none';
+            }
+        });
+    }
     
 }
+
+window.onload = function() {
+    loadContent('AdminUP.php');
+};
 
 const admin = new AdminApi();
 
@@ -147,6 +178,8 @@ function displayUpdate(profileId, profileName, activeStatus, description) {
     });
 
     modalFeatures();
+
+    console.log('Successfully updated ', profileName);
 }
 
 function modalFeatures () {
@@ -172,4 +205,22 @@ function modalFeatures () {
     
 }
 
-document.getElementById('createProfile').addEventListener('click', displayCreate);
+function initialize() {
+    
+    admin.fetchUserProfiles();
+    document.getElementById('createProfile').addEventListener('click', displayCreate);
+    document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
+}
+
+
+function loadContent(page) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("UPUA").innerHTML = this.responseText;
+        initialize();
+    }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}

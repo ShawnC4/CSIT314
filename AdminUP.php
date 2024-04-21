@@ -55,18 +55,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <title>Admin UP Page</title>
 </head>
 <body>
-<?php
-    session_start();
-
-    // Check if user is not logged in
-    if (!isset($_SESSION['logged']) || $_SESSION['logged'] === false) {
-        header("Location: index.php");
-        exit;
-    }
-?>
-    <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
     <br>
     <button id="createProfile">Create User Profile</button>
+    <br>
+    <input type="text" id="searchInput" placeholder="Search profiles">
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">
@@ -78,7 +70,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
         
     </div>
     <br>
-    <a href="logout.php">Logout</a>
 </body>
-<script src="AdminApi.js"></script>
+
 </html>

@@ -9,24 +9,38 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             height: 100vh;
             margin: 0;
             padding: 0;
         }
 
-        button {
-            width: 45%; /* Set button width */
+        .button-container button {
+            width: 50%; /* Set button width */
             padding: 10px;
             margin: 5px;
             font-size: 16px;
         }
 
         .button-container {
+            border: 2px solid black;
             display: flex;
             justify-content: center;
-            width: 100%;
-            height: 70%;
+        }
+
+        #flex {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 90%;
+            width: 90%;
+            padding: 5px;
+        }
+        
+        #UPUA {
+            border: 1px solid black;
+            width: 90%;
+            height: 80%;
         }
     </style>
 </head>
@@ -40,12 +54,24 @@
         exit;
     }
 ?>
-    <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
-    <div class="button-container">
-        <button><a href="AdminUP.php">User Profile</a></button>
-        <button><a href="AdminUA.php">User Account</a></button>
+    
+    <div id="flex">
+        <div>
+            <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
+        </div>
+        <div class="button-container">
+            <button onclick="loadContent('AdminUP.php')">User Profile</button>
+            <button onclick="loadContent('AdminUA.php')">User Account</button>
+        </div>
+        <br>
+        <div id="UPUA">
+            
+        </div>
+        <br>
+        <div>
+            <a href="logout.php">Logout</a>
+        </div>
     </div>
-    <br>
-    <a href="logout.php">Logout</a>
 </body>
+<script src="AdminApi.js"></script>
 </html>
