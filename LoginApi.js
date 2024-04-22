@@ -12,10 +12,10 @@ class LoginApi {
         const password = document.getElementById('password').value;
         const profile = document.getElementById('profile').value;
 
-        this.apiCall(username, password, profile);
+        this.handleLogin(username, password, profile);
     }
 
-    apiCall(username, password, profile) {
+    handleLogin(username, password, profile) {
         fetch('LoginController.php?action=login', {
             method: 'POST',
             headers: {

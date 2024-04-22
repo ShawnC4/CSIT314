@@ -10,6 +10,7 @@ class UserProfileEntity {
     }
 
     public function createUserProfile ($profileName, $activeStatus, $description) {
+
         $sql = "INSERT INTO user_profiles (name, activeStatus, description) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sis", $profileName, $activeStatus, $description);
