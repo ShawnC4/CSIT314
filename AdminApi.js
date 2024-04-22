@@ -2,7 +2,6 @@ class AdminApi {
     constructor() {
         this.fetchUserProfiles();
     }
-
     CreateProfileApiCall = (event) => {
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
@@ -21,8 +20,7 @@ class AdminApi {
             console.log(data);
             this.fetchUserProfiles();  
         })
-    }
-
+    }    
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
         fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
@@ -38,7 +36,29 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
+    suspendProfileApiCall = (profileId) => {
+        fetch('AdminSuspendUPController.php?action=suspendProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ profileId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.success) {
+                //window.location.reload();
+                alert('Profile suspended successfully');
+                window.location.reload();
+            } else {
+                alert('Failed to suspend profile');
+            }
+            // Refresh the profiles list here if necessary
+        })
+        .catch(error => console.error('Error suspending user profile:', error));
+    }
+    
     fetchUserProfiles() {
         fetch('AdminViewUPController.php?action=getProfiles')
         .then(response => response.json())
@@ -52,8 +72,21 @@ class AdminApi {
                 
                 // Display profile name
                 const profileName = document.createElement('span');
-                profileName.textContent = profile.name;
+                profileName.textContent = profile.name + ' ';
                 profileContainer.appendChild(profileName);
+
+                //Display profile status 
+                const profileStatus =  document.createElement('span');
+                profileStatus.textContent = profile.activeStatus == 1 ? 'Active' : 'Inactive';
+                profileContainer.appendChild(profileStatus);
+
+                //Create view button
+                const viewButton = document.createElement('button')
+                viewButton.textContent = 'View'
+                viewButton.addEventListener('click', () => {
+                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
+                });
+                profileContainer.appendChild(viewButton)
 
                 // Create edit button
                 const editButton = document.createElement('button');
@@ -61,7 +94,6 @@ class AdminApi {
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
                     displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
-                    console.log('Update button clicked for profile:', profile.name);
                 });
                 profileContainer.appendChild(editButton);
 
@@ -69,17 +101,19 @@ class AdminApi {
                 const suspendButton = document.createElement('button');
                 if (profile.activeStatus != true) {
                     suspendButton.classList.add("disable-btn");
+                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
                 }
                 suspendButton.textContent = 'Suspend';
                 suspendButton.addEventListener('click', () => {
                     // Handle suspend functionality here
-                    console.log('Suspend button clicked for profile:', profile.name);
+                    if (confirm('Are you sure you want to suspend this profile?')) {
+                        this.suspendProfileApiCall(profile.id);
+                    }
                 });
                 profileContainer.appendChild(suspendButton);
-                
+            
                 // Append profile container to profile list
                 profileList.appendChild(profileContainer);
-
             });
         })
         .catch(error => console.error('Error fetching user profiles:', error));
@@ -109,8 +143,7 @@ class AdminApi {
             }
         });
     }
-    
-}
+};
 
 window.onload = function() {
     loadContent('AdminUP.php');
@@ -139,6 +172,28 @@ function displayCreate() {
     document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
     });
+
+    modalFeatures();
+}
+
+function viewProfile(id, name, activeStatus, description){
+    const Form = document.getElementById('modal-content');
+
+    //
+    const isActive = activeStatus == 1;
+
+    Form.style.display = 'block';
+
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <div class = "profile-view">
+    <h2>Profile Details</h2>
+    <p><strong>ID:</strong> ${id}</p>
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
+    <p><strong>Description:</strong> ${description}</p>
+    </div>
+    `;
 
     modalFeatures();
 }
@@ -178,8 +233,6 @@ function displayUpdate(profileId, profileName, activeStatus, description) {
     });
 
     modalFeatures();
-
-    console.log('Successfully updated ', profileName);
 }
 
 function modalFeatures () {

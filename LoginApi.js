@@ -44,7 +44,7 @@ class LoginApi {
                         break;
                 }
             } else {
-                document.getElementById('loginMessage').textContent = 'Invalid username or password';
+                document.getElementById('loginMessage').textContent = data['error'] || 'An error occurred during log in';
             }
         })
         .catch(error => console.error('Error logging in:', error));
