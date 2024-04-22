@@ -17,21 +17,28 @@ class LoginController {
     public function auth($username, $password, $profile) {
         // Retrieve user data from the database based on the provided username
         $user = $this->entity->findAccByUsername($username, $profile);
-
+    
         // Validate user credentials
         if ($user && $password == $user->getPassword()) {
-            $_SESSION['logged'] = true;
-            $_SESSION['username'] = $username;
-            $_SESSION['profile'] = $profile;
-            // Valid credentials
-            return ["success" => true];
+            // Check if user's profile is active
+            if ($user->isActive()) {
+                // User's profile is active, proceed with login
+                $_SESSION['logged'] = true;
+                $_SESSION['username'] = $username;
+                $_SESSION['profile'] = $profile;
+                return ["success" => true];
+            } else {
+                // User's profile is inactive, deny login
+                $_SESSION['logged'] = false;
+                return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
+            }
         } else {
             // Invalid credentials
             $_SESSION['logged'] = false;
-            return ["success" => false];
+            return ["success" => false, "error" => "Invalid username or password"];
         }
     }
-
+    
     public function getUserProfiles() {
         // Retrieve user profiles from the database
         $profiles = $this->entityP->getUserProfiles();
