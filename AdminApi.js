@@ -2,11 +2,18 @@ class AdminApi {
     constructor() {
         this.fetchUserProfiles();
     }
-    CreateProfileApiCall = (event) => {
+    
+    createProfileApiCall = (event) => {
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
+
+        // Check if profile name already exists
+        if (this.profileExists(profileName)) {
+            alert('Profile already exists!');
+            return; // Exit function if profile already exists
+        }
         
         fetch('AdminCreateUPController.php?action=createProfile', {
             method: 'POST',
@@ -20,7 +27,19 @@ class AdminApi {
             console.log(data);
             this.fetchUserProfiles();  
         })
-    }    
+    }
+
+    profileExists = (profileName) => {
+        const profiles = document.querySelectorAll('#profileList > div');
+        for (let i = 0; i < profiles.length; i++) {
+            const name = profiles[i].querySelector('span').textContent.trim();
+            if (name === profileName) {
+                return true; // Profile exists
+            }
+        }
+        return false; // Profile does not exist
+    }
+
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
         fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
@@ -167,7 +186,7 @@ function displayCreate() {
     </form>
     `;
     
-    document.getElementById('UpForm').addEventListener('submit', admin.CreateProfileApiCall);
+    document.getElementById('UpForm').addEventListener('submit', admin.createProfileApiCall);
 
     document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
@@ -250,11 +269,11 @@ function modalFeatures () {
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    //window.onclick = function(event) {
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
     
 }
 
