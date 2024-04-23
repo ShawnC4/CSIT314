@@ -2,11 +2,22 @@ class AdminApi {
     constructor() {
         this.fetchUserProfiles();
     }
+<<<<<<< HEAD
     CreateProfileApiCall = (event) => {
+=======
+
+    createProfileApiCall = (event) => {
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
+
+        // Check if profile name already exists
+        if (this.profileExists(profileName)) {
+            alert('Profile already exists!');
+            return; // Exit function if profile already exists
+        }
         
         fetch('AdminCreateUPController.php?action=createProfile', {
             method: 'POST',
@@ -18,9 +29,25 @@ class AdminApi {
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            this.fetchUserProfiles();  
+            this.fetchUserProfiles();
         })
+<<<<<<< HEAD
     }    
+=======
+    }
+
+    profileExists = (profileName) => {
+        const profiles = document.querySelectorAll('#profileList > div');
+        for (let i = 0; i < profiles.length; i++) {
+            const name = profiles[i].querySelector('span').textContent.trim();
+            if (name === profileName) {
+                return true; // Profile exists
+            }
+        }
+        return false; // Profile does not exist
+    }
+
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
         fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
@@ -36,6 +63,10 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     suspendProfileApiCall = (profileId) => {
         fetch('AdminSuspendUPController.php?action=suspendProfile', {
             method: 'POST',
@@ -84,10 +115,18 @@ class AdminApi {
                 const viewButton = document.createElement('button')
                 viewButton.textContent = 'View'
                 viewButton.addEventListener('click', () => {
+<<<<<<< HEAD
                     viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
                 });
                 profileContainer.appendChild(viewButton)
 
+=======
+                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.description);
+                });
+                profileContainer.appendChild(viewButton)
+
+                // Create edit button
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
@@ -117,7 +156,35 @@ class AdminApi {
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
+<<<<<<< HEAD
     
+=======
+
+    searchProfile = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+        // Select all profile containers
+        const profileContainers = document.querySelectorAll('#profileList > div');
+
+        // Iterate over each profile container
+        profileContainers.forEach(container => {
+            // Get text content of profile name within container and convert it to lowercase
+            const profileName = container.querySelector('span').textContent.toLowerCase();
+
+            // Check if profile name includes search input
+            if (profileName.includes(searchInput)) {
+
+                // display container if profile name includes search input
+                container.style.display = 'block';
+            }
+            else {
+                // hide container if profile name does not include search input
+                container.style.display = 'none';
+            }
+        });
+    }
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
 };
 
 window.onload = function() {
@@ -134,7 +201,7 @@ function displayCreate() {
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
-    <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name" required><br>
+    <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
     <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
     <br><label for="description">Description:</label><br>
     <input type="text" id="description" name="description" placeholder="Description"><br>
@@ -142,19 +209,42 @@ function displayCreate() {
     </form>
     `;
     
-    document.getElementById('UpForm').addEventListener('submit', admin.CreateProfileApiCall);
+    document.getElementById('UpForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
 
-    document.getElementById('SubmitUpForm').addEventListener('click', () => {
+        // Perform validation
+        const profileName = document.getElementById('profileName').value;
+        const description = document.getElementById('description').value;
+
+        if (!profileName.trim()) {
+            alert('Profile Name cannot be empty');
+            return;
+        }
+
+        if (!description.trim()) {
+            alert('Description cannot be empty');
+            return;
+        }
+
+        // Call the create profile API function if validation passes
+        admin.createProfileApiCall(event);
+        alert(`Profile ${profileName} was created successfully!`)
         document.getElementById("myModal").style.display = "none";
     });
 
     modalFeatures();
 }
 
+<<<<<<< HEAD
 function viewProfile(id, Name, activeStatus, Description){
     const Form = document.getElementById('modal-content');
 
     //
+=======
+function viewProfile(id, name, activeStatus, description){
+    const Form = document.getElementById('modal-content');
+
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     const isActive = activeStatus == 1;
 
     Form.style.display = 'block';
@@ -164,9 +254,15 @@ function viewProfile(id, Name, activeStatus, Description){
     <div class = "profile-view">
     <h2>Profile Details</h2>
     <p><strong>ID:</strong> ${id}</p>
+<<<<<<< HEAD
     <p><strong>Name:</strong> ${Name}</p>
     <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
     <p><strong>Description:</strong> ${Description}</p>
+=======
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
+    <p><strong>Description:</strong> ${description}</p>
+>>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     </div>
     `;
 
@@ -177,31 +273,63 @@ function displayUpdate(profileId, profileName, activeStatus, description) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
-        
+    
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
     <input type="hidden" id="profileId" name="profileId" value="${profileId}">
-    <br><input type="text" id="profileName" name="profileName" value="${profileName}" placeholder="Profile Name" required><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus" ${activeStatus ? 'checked' : ''}>Active Status</label><br>
+    <br><input type="text" id="profileName" name="profileName" value="${profileName}" placeholder="Profile Name"><br>
+    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
     <br><label for="description">Description:</label><br>
     <input type="text" id="description" name="description" value="${description}" placeholder="Description"><br>
     <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
     
+    // Store original values after populating the form
+    const originalProfileName = document.getElementById('profileName').value; // Moved inside
+    const activeStatusCheckbox = document.getElementById('activeStatus');
+    activeStatusCheckbox.checked = activeStatus;  // Set checked based on actual value
+    const originalDescription = document.getElementById('description').value.trim(); // Use trim for description
+    
     document.getElementById('UpForm').addEventListener('submit', function(event) {
         event.preventDefault();
         const updatedProfileId = document.getElementById('profileId').value;
         const updatedProfileName = document.getElementById('profileName').value;
+        // Retrieve the checked status of the checkbox inside the event listener
         const updatedActiveStatus = document.getElementById('activeStatus').checked;
         const updatedDescription = document.getElementById('description').value;
+    
+        // Check if any information was edited
+        if (updatedProfileName.trim() === originalProfileName.trim() &&
+            updatedActiveStatus === activeStatus &&
+            updatedDescription.trim() === originalDescription.trim()) {
+            
+            alert("Nothing was changed");
+            return;
+        }
 
-        // Call the update profile API function
-        admin.updateProfileApiCall(updatedProfileId, updatedProfileName, updatedActiveStatus, updatedDescription);
-
-        document.getElementById("myModal").style.display = "none";
-    });
+        // Add empty field checks
+        if (updatedProfileName.trim() === '') {
+            alert("Profile Name cannot be empty");
+            return;
+        } 
+        
+        else if (updatedDescription.trim() === '') {
+            alert("Description cannot be empty");
+            return;
+        }
+        
+        else {
+                // If validation passes, proceed with confirmation popup
+                const confirmation = confirm(`Are you sure you want to update ${originalProfileName}'s details?`);
+                if (confirmation) {
+                // Call the update profile API function
+                admin.updateProfileApiCall(updatedProfileId, updatedProfileName, updatedActiveStatus, updatedDescription);
+                document.getElementById("myModal").style.display = "none";
+                }
+            }
+        });
 
     document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
@@ -225,18 +353,18 @@ function modalFeatures () {
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+    //window.onclick = function(event) {
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
     
 }
 
 function initialize() {
-    
     admin.fetchUserProfiles();
     document.getElementById('createProfile').addEventListener('click', displayCreate);
+    document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
 }
 
 
