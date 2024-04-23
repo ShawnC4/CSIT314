@@ -21,27 +21,13 @@ class LoginController {
             // Check if user's profile is active
             if ($user->isActive()) {
                 // User's profile is active, proceed with login
-<<<<<<< HEAD
-                $_SESSION['logged'] = true;
-                $_SESSION['username'] = $username;
-                $_SESSION['profile'] = $profile;
                 return ["success" => true];
             } else {
                 // User's profile is inactive, deny login
-                $_SESSION['logged'] = false;
-=======
-                return ["success" => true];
-            } else {
-                // User's profile is inactive, deny login
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
                 return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
             }
         } else {
             // Invalid credentials
-<<<<<<< HEAD
-            $_SESSION['logged'] = false;
-=======
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
             return ["success" => false, "error" => "Invalid username or password"];
         }
     }

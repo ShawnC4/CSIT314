@@ -2,18 +2,14 @@ class AdminApi {
     constructor() {
         this.fetchUserProfiles();
     }
-<<<<<<< HEAD
-    CreateProfileApiCall = (event) => {
-=======
 
     createProfileApiCall = (event) => {
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
         event.preventDefault();
         const profileName = document.getElementById('profileName').value;
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
-        // Check if profile name already exists
+        // Check if profile name already existss
         if (this.profileExists(profileName)) {
             alert('Profile already exists!');
             return; // Exit function if profile already exists
