@@ -27,9 +27,6 @@ class AdminApi {
             console.log(data);
             this.fetchUserProfiles();
         })
-<<<<<<< HEAD
-    }    
-=======
     }
 
     profileExists = (profileName) => {
@@ -43,7 +40,6 @@ class AdminApi {
         return false; // Profile does not exist
     }
 
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
         fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
@@ -59,10 +55,6 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     suspendProfileApiCall = (profileId) => {
         fetch('AdminSuspendUPController.php?action=suspendProfile', {
             method: 'POST',
@@ -111,18 +103,11 @@ class AdminApi {
                 const viewButton = document.createElement('button')
                 viewButton.textContent = 'View'
                 viewButton.addEventListener('click', () => {
-<<<<<<< HEAD
-                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
-                });
-                profileContainer.appendChild(viewButton)
-
-=======
                     viewProfile(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(viewButton)
 
                 // Create edit button
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
@@ -152,9 +137,6 @@ class AdminApi {
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
-<<<<<<< HEAD
-    
-=======
 
     searchProfile = () => {
         // Get value entered in search input field and convert it to lowercase
@@ -180,7 +162,6 @@ class AdminApi {
             }
         });
     }
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
 };
 
 window.onload = function() {
@@ -231,16 +212,9 @@ function displayCreate() {
     modalFeatures();
 }
 
-<<<<<<< HEAD
-function viewProfile(id, Name, activeStatus, Description){
-    const Form = document.getElementById('modal-content');
-
-    //
-=======
 function viewProfile(id, name, activeStatus, description){
     const Form = document.getElementById('modal-content');
 
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     const isActive = activeStatus == 1;
 
     Form.style.display = 'block';
@@ -250,15 +224,9 @@ function viewProfile(id, name, activeStatus, description){
     <div class = "profile-view">
     <h2>Profile Details</h2>
     <p><strong>ID:</strong> ${id}</p>
-<<<<<<< HEAD
-    <p><strong>Name:</strong> ${Name}</p>
-    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
-    <p><strong>Description:</strong> ${Description}</p>
-=======
     <p><strong>Name:</strong> ${name}</p>
     <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
     <p><strong>Description:</strong> ${description}</p>
->>>>>>> b8c840c8d6b9da925b2aef81297e1856ee426804
     </div>
     `;
 
