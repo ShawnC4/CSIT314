@@ -9,7 +9,7 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
-        // Check if profile name already exists
+        // Check if profile name already existss
         if (this.profileExists(profileName)) {
             alert('Profile already exists!');
             return; // Exit function if profile already exists
@@ -29,7 +29,6 @@ class AdminApi {
             alert(`Profile ${profileName} was created successfully!`);
         })
     }
-
     profileExists = (profileName) => {
         const profiles = document.querySelectorAll('#profileList > div');
         for (let i = 0; i < profiles.length; i++) {
@@ -56,7 +55,6 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
     suspendProfileApiCall = (profileId) => {
         fetch('AdminSuspendUPController.php?action=suspendProfile', {
             method: 'POST',
