@@ -28,7 +28,6 @@ class AdminApi {
             this.fetchUserProfiles();
         })
     }
-    //TESTING//
     profileExists = (profileName) => {
         const profiles = document.querySelectorAll('#profileList > div');
         for (let i = 0; i < profiles.length; i++) {
