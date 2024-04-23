@@ -104,7 +104,7 @@ class AdminApi {
                 const viewButton = document.createElement('button')
                 viewButton.textContent = 'View'
                 viewButton.addEventListener('click', () => {
-                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.Description);
+                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(viewButton)
 
@@ -238,19 +238,19 @@ function displayUpdate(profileId, profileName, activeStatus, description) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
-        
+    
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
     <input type="hidden" id="profileId" name="profileId" value="${profileId}">
     <br><input type="text" id="profileName" name="profileName" value="${profileName}" placeholder="Profile Name"><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus" ${activeStatus ? 'checked' : ''}>Active Status</label><br>
+    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
     <br><label for="description">Description:</label><br>
     <input type="text" id="description" name="description" value="${description}" placeholder="Description"><br>
     <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
-
+    
     // Store original values after populating the form
     const originalProfileName = document.getElementById('profileName').value; // Moved inside
     const activeStatusCheckbox = document.getElementById('activeStatus');
