@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 // Controller class to process login requests
 require_once 'UserProfileEntity.php';
 
@@ -29,5 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
     header('Content-Type: application/json');
     echo json_encode($profiles);
+    exit();
 }
 ?>
