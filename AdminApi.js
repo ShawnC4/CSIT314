@@ -15,7 +15,7 @@ class AdminApi {
             return; // Exit function if profile already exists
         }
         
-        fetch('AdminCreateUPController.php?action=createProfile', {
+        fetch('AdminLanding.php?action=createProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,6 +26,7 @@ class AdminApi {
         .then(data => {
             console.log(data);
             this.fetchUserProfiles();
+            alert(`Profile ${profileName} was created successfully!`);
         })
     }
 
@@ -206,7 +207,7 @@ function displayCreate() {
 
         // Call the create profile API function if validation passes
         admin.createProfileApiCall(event);
-        alert(`Profile ${profileName} was created successfully!`)
+        
         document.getElementById("myModal").style.display = "none";
     });
 
