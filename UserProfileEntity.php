@@ -1,5 +1,6 @@
 <?php
 require_once 'Konohadb.php';
+require 'UserProfileClass.php';
 
 class UserProfileEntity {
     private $db, $conn;
@@ -34,6 +35,15 @@ class UserProfileEntity {
         if ($result) {
             // Fetch profiles and add them to the array
             while ($row = $result->fetch_assoc()) {
+                /*error_log('Error fetching profiles: SQL Query: ' . $row['name']);
+                $profile = new UserProfile(
+                    $row['id'],
+                    $row['name'],
+                    $row['activeStatus'],
+                    $row['description']
+                );
+                // Add the UserProfile object to the array
+                $profiles[] = $profile;*/
                 $profiles[] = $row;
             }
         } else {
