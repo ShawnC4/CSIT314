@@ -1,7 +1,7 @@
 <?php
 class UserProfile {
 
-    private $id, $name, $activeStatus, $description;
+    public $id, $name, $activeStatus, $description;
 
     public function __construct($id, $name, $activeStatus, $description) {
         $this->id = $id;

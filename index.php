@@ -1,5 +1,6 @@
 <?php
     require 'LoginController.php';
+
     $controller = new LoginController();
 
     // Handle POST request to authenticate user
