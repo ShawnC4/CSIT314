@@ -41,7 +41,7 @@ class AdminApi {
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
-        fetch('AdminUpdateUPController.php?action=updateProfile', {
+        fetch('AdminLanding.php?action=updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ class AdminApi {
         .catch(error => console.error('Error updating user profile:', error));
     }
     suspendProfileApiCall = (profileId) => {
-        fetch('AdminSuspendUPController.php?action=suspendProfile', {
+        fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
