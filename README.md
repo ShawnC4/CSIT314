@@ -1,5 +1,12 @@
 # add own mysql password in konohadb.php
-
+# create a config.php file so we don't have to keep changing the password when pulling.
+# <?php
+# define('DB_SERVER', 'localhost');
+# define('DB_USER', 'your_own_username');
+# define('DB_PASSWORD', 'your_own_password');
+# define('DB_NAME', 'konohadb');
+# ?>
+# there is alr a gitignore file so the config file will be ignored and wont commit and push to github
 # Just to test code
 CREATE TABLE user_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
