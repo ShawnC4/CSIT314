@@ -22,7 +22,7 @@ class UserAcc {
     }
 
     public function isActive(){
-        return $this->activeStatus == 1;
+        return $this->activeStatus;
     }
 }
 ?>

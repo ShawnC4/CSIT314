@@ -253,7 +253,7 @@ function displayUpdate(profileId, profileName, activeStatus, description) {
     // Store original values after populating the form
     const originalProfileName = document.getElementById('profileName').value; // Moved inside
     const activeStatusCheckbox = document.getElementById('activeStatus');
-    activeStatusCheckbox.checked = activeStatus;  // Set checked based on actual value
+    activeStatusCheckbox.checked = activeStatus == true;  // Set checked based on actual value
     const originalDescription = document.getElementById('description').value.trim(); // Use trim for description
     
     document.getElementById('UpForm').addEventListener('submit', function(event) {
