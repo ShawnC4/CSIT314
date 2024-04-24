@@ -1,6 +1,9 @@
 <?php
 require 'AdminCreateUPController.php';
-$controller = new AdminCreateUPController();
+require 'AdminViewUPController.php';
+
+//CREATE//
+$controllerCreate = new AdminCreateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -8,11 +11,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $activeStatus = $requestData['activeStatus'];
     $description = $requestData['description'];
     
-    $response = $controller->createProfile($profileName, $activeStatus, $description);
+    $response = $controllerCreate->createProfile($profileName, $activeStatus, $description);
 
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
+    exit();
+}
+
+
+//VIEW ALL PROFILE//
+$controllerView = new AdminViewUPController();
+
+// Handle POST request to authenticate user
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
+    $profiles = $controllerView->getUserProfiles();
+
+    header('Content-Type: application/json');
+    echo json_encode($profiles);
     exit();
 }
 ?>

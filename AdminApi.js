@@ -79,7 +79,7 @@ class AdminApi {
     }
     
     fetchUserProfiles() {
-        fetch('AdminViewUPController.php?action=getProfiles')
+        fetch('AdminLanding.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);

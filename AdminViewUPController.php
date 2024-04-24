@@ -19,7 +19,7 @@ class AdminViewUPController {
 }
 
 // Instantiate Controller object
-$controller = new AdminViewUPController();
+/*$controller = new AdminViewUPController();
 
 // Handle POST request to authenticate user
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
@@ -28,5 +28,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     header('Content-Type: application/json');
     echo json_encode($profiles);
     exit();
-}
+}*/
 ?>
