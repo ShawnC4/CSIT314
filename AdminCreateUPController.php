@@ -14,7 +14,7 @@ class AdminCreateUPController {
     }
 }
 
-/*$controller = new AdminCreateUPController();
+$controller = new AdminCreateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -27,5 +27,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
-}*/
+}
 ?>

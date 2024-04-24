@@ -16,7 +16,7 @@ class LoginApi {
     }
 
     apiCall(username, password, profile) {
-        fetch('index.php?action=login', {
+        fetch('LoginController.php?action=login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -25,7 +25,6 @@ class LoginApi {
         })
         .then(response => response.json())
         .then(data => {
-
             if (data['success'] == true) {
                 switch (profile) {
                     case '1':
@@ -52,7 +51,7 @@ class LoginApi {
     }
 
     fetchUserProfiles() {
-        fetch('index.php?action=getProfiles')
+        fetch('LoginController.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);

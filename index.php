@@ -1,29 +1,3 @@
-<?php
-    require 'LoginController.php';
-    $controller = new LoginController();
-
-    // Handle POST request to authenticate user
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'login') {
-        $requestData = json_decode(file_get_contents('php://input'), true);
-        $username = $requestData['username'];
-        $password = $requestData['password'];
-        $profile = $requestData['profile'];
-    
-        // Perform login authentication
-        $response = $controller->auth($username, $password, $profile);
-        // Send JSON response
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
-    } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-        $profiles = $controller->getUserProfiles();
-        header('Content-Type: application/json');
-
-        echo json_encode($profiles);
-        exit();
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,6 +44,35 @@
     </style>
 </head>
 <body>
+<?php
+    session_start();
+    function redirectDashboard () {
+        // Check if user is already logged in
+        if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) {
+            // If logged in, redirect to landing page
+            switch ($_SESSION['profile']) {
+                case 'buyer':
+                    header("Location: BuyerLanding.php");
+                    break;
+                case 'seller':
+                    header("Location: SellerLanding.php");
+                    break;
+                case 'agent':
+                    header("Location: AgentLanding.php");
+                    break;
+                case 'admin':
+                    header("Location: AdminLanding.php");
+                    break;
+                default:
+                    header("Location: logout.php");
+                    break;
+            }
+            exit;
+        }
+    }
+
+    redirectDashboard();
+?> 
 
 <div class="login-container">
         <div class="login-title">REAL ESTATE SYSTEM</div>

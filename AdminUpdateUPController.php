@@ -14,7 +14,7 @@ class AdminUpdateUPController {
     }
 }
 
-/*$updateController = new AdminUpdateUPController();
+$controller = new AdminUpdateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -23,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $activeStatus = $requestData['activeStatus'];
     $description = $requestData['description'];
     
-    $response = $updateController->updateProfile($profileId, $profileName, $activeStatus, $description);
+    $response = $controller->updateProfile($profileId, $profileName, $activeStatus, $description);
 
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
-}*/
+}
 ?>
