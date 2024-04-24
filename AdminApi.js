@@ -9,13 +9,13 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
-        // Check if profile name already exists
+        // Check if profile name already existss
         if (this.profileExists(profileName)) {
             alert('Profile already exists!');
             return; // Exit function if profile already exists
         }
         
-        fetch('AdminCreateUPController.php?action=createProfile', {
+        fetch('AdminLanding.php?action=createProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,9 +26,9 @@ class AdminApi {
         .then(data => {
             console.log(data);
             this.fetchUserProfiles();
+            alert(`Profile ${profileName} was created successfully!`);
         })
     }
-
     profileExists = (profileName) => {
         const profiles = document.querySelectorAll('#profileList > div');
         for (let i = 0; i < profiles.length; i++) {
@@ -41,7 +41,7 @@ class AdminApi {
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
-        fetch('AdminUpdateUPController.php?action=updateProfile', {
+        fetch('AdminLanding.php?action=updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,9 +55,8 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
     suspendProfileApiCall = (profileId) => {
-        fetch('AdminSuspendUPController.php?action=suspendProfile', {
+        fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,7 +79,7 @@ class AdminApi {
     }
     
     fetchUserProfiles() {
-        fetch('AdminViewUPController.php?action=getProfiles')
+        fetch('AdminLanding.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);
@@ -206,7 +205,7 @@ function displayCreate() {
 
         // Call the create profile API function if validation passes
         admin.createProfileApiCall(event);
-        alert(`Profile ${profileName} was created successfully!`)
+        
         document.getElementById("myModal").style.display = "none";
     });
 
