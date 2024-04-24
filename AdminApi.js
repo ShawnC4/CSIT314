@@ -41,7 +41,7 @@ class AdminApi {
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
-        fetch('AdminUpdateUPController.php?action=updateProfile', {
+        fetch('AdminLanding.php?action=updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

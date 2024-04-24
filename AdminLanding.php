@@ -1,6 +1,7 @@
 <?php
 require 'AdminCreateUPController.php';
 require 'AdminViewUPController.php';
+require 'AdminUpdateUPController.php';
 require 'AdminSuspendUPController.php';
 
 //CREATE//
@@ -33,14 +34,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit();
 }
 
-//Suspend Profile 
-$controller = new AdminSuspendUPController();
+//UPDATE//
+$controllerUpdate = new AdminUpdateUPController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $profileId = $requestData['profileId'];
+    $profileName = $requestData['profileName'];
+    $activeStatus = $requestData['activeStatus'];
+    $description = $requestData['description'];
+    
+    $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
+
+//SUSPEND// 
+$controllerSuspend = new AdminSuspendUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
     if (isset($requestData['profileId'])) {
         $profileId = $requestData['profileId'];
-        $response = $controller->suspendProfile($profileId);
+        $response = $controllerSuspend->suspendProfile($profileId);
 
         header('Content-Type: application/json');
         echo json_encode($response);
