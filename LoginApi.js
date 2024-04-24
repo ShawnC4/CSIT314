@@ -62,6 +62,8 @@ class LoginApi {
                 const option = document.createElement('option');
                 option.value = profile.id;
                 option.textContent = profile.name;
+                //option.value = profile.getId(); 
+                //option.textContent = profile.getName(); 
                 profileSelect.appendChild(option);
             });
         })
