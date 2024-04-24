@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
 require_once 'UserProfileEntity.php';
@@ -23,18 +21,13 @@ class LoginController {
             // Check if user's profile is active
             if ($user->isActive()) {
                 // User's profile is active, proceed with login
-                $_SESSION['logged'] = true;
-                $_SESSION['username'] = $username;
-                $_SESSION['profile'] = $profile;
                 return ["success" => true];
             } else {
                 // User's profile is inactive, deny login
-                $_SESSION['logged'] = false;
                 return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
             }
         } else {
             // Invalid credentials
-            $_SESSION['logged'] = false;
             return ["success" => false, "error" => "Invalid username or password"];
         }
     }
@@ -48,7 +41,7 @@ class LoginController {
 }
 
 // Instantiate Controller object
-$controller = new LoginController();
+/*$controller = new LoginController();
 
 // Handle POST request to authenticate user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'login') {
@@ -68,5 +61,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 
     header('Content-Type: application/json');
     echo json_encode($profiles);
-}
+}*/
 ?>
