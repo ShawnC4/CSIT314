@@ -1,6 +1,7 @@
 <?php
 require 'AdminCreateUPController.php';
 require 'AdminViewUPController.php';
+require 'AdminSuspendUPController.php';
 
 //CREATE//
 $controllerCreate = new AdminCreateUPController();
@@ -31,6 +32,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     echo json_encode($profiles);
     exit();
 }
+
+//Suspend Profile 
+$controller = new AdminSuspendUPController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendProfile') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    if (isset($requestData['profileId'])) {
+        $profileId = $requestData['profileId'];
+        $response = $controller->suspendProfile($profileId);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Profile ID is missing']);
+        exit();
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
