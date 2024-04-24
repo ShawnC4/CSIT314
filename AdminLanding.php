@@ -1,8 +1,8 @@
 <?php
-require 'AdminCreateUPController.php';
-require 'AdminViewUPController.php';
-require 'AdminUpdateUPController.php';
-require 'AdminSuspendUPController.php';
+require_once 'AdminCreateUPController.php';
+require_once 'AdminViewUPController.php';
+require_once 'AdminUpdateUPController.php';
+require_once 'AdminSuspendUPController.php';
 
 //CREATE//
 $controllerCreate = new AdminCreateUPController();
