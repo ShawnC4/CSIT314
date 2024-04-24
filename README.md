@@ -28,13 +28,14 @@ CREATE TABLE user_accounts (
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    activeStatus boolean NOT NULL,
     profile_id INT,
     FOREIGN KEY (profile_id) REFERENCES user_profiles(id)
 );
 
 -- Populate user accounts for Buyer profile with password 'buyer_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_pass', t.n), '1'
+SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_pass', t.n), true, '1'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -43,7 +44,7 @@ FROM (
 
 -- Populate user accounts for Seller profile with password 'seller_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_pass', t.n), '2'
+SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_pass', t.n), true, '2'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -52,7 +53,7 @@ FROM (
 
 -- Populate user accounts for Agent profile with password 'agent_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_pass', t.n), '3'
+SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_pass', t.n), true, '3'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -61,7 +62,7 @@ FROM (
 
 -- Populate user accounts for Admin profile with password 'admin_password'
 INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_pass', t.n), '4'
+SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_pass', t.n), true, '4'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES

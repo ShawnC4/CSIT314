@@ -10,6 +10,32 @@ class UserProfileEntity {
         $this->conn = $this->db->getConn();
     }
 
+    public function findProfileById($profile) {
+        // Prepare SQL statement
+        
+        $stmt = $this->conn->prepare("SELECT * FROM user_profiles WHERE id = ?");
+        $stmt->bind_param("i", $profile);
+        
+        $stmt->execute();
+        
+        // Get result
+        $result = $stmt->get_result();
+
+        // Fetch user data
+        $fetchuser = $result->fetch_assoc();
+        
+        // Close statement
+        $stmt->close();
+        
+        if ($fetchuser) {
+            $user = new UserProfile($fetchuser['id'], $fetchuser['name'], $fetchuser['activeStatus'], $fetchuser['description']);
+        } else {
+            $user = null;
+        }
+
+        return $user; // Return user data
+    }
+
     public function createUserProfile ($profileName, $activeStatus, $description) {
         $sql = "INSERT INTO user_profiles (name, activeStatus, description) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);

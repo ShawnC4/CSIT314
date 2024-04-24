@@ -12,7 +12,7 @@ class UserAccEntity {
     public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
         
-        $stmt = $this->conn->prepare("SELECT ua.*, up.activeStatus FROM user_accounts ua INNER JOIN user_profiles up ON ua.profile_id = up.id WHERE ua.username = ? AND ua.profile_id = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ? AND profile_id = ?");
         $stmt->bind_param("si", $username, $profile);
         
         $stmt->execute();
@@ -27,7 +27,7 @@ class UserAccEntity {
         $stmt->close();
         
         if ($fetchuser) {
-            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['profile_id'], $fetchuser['activeStatus']);
+            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
         } else {
             $user = null;
         }
