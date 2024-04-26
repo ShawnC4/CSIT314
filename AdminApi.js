@@ -1,6 +1,6 @@
 class AdminApi {
     constructor() {
-        this.fetchUserProfiles();
+
     }
 
     createProfileApiCall = (event) => {
@@ -29,11 +29,52 @@ class AdminApi {
             alert(`Profile ${profileName} was created successfully!`);
         })
     }
+
+    createAccountApiCall = (event) => {
+        event.preventDefault();
+        const accountUsername = document.getElementById('paccountUsername').value;
+        const accountEmail = document.getElementById('accountEmail').value;
+        const accountPassword = document.getElementById('accountPassword');
+        const activeStatus = document.getElementById('activeStatus').checked;
+        const accountProfile_id = document.getElementById('accountProfile_id').value;
+
+        // Check if profile name already exists
+        if (this.accountExists(accountUsername)) {
+            alert('Account already exists!');
+            return; // Exit function if profile already exists
+        }
+        
+        fetch('AdminLanding.php?action=createAccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            this.fetchUserAccounts();
+            alert(`Account ${accountUsername} was created successfully!`);
+        })
+    }
+
     profileExists = (profileName) => {
         const profiles = document.querySelectorAll('#profileList > div');
         for (let i = 0; i < profiles.length; i++) {
             const name = profiles[i].querySelector('span').textContent.trim();
             if (name === profileName) {
+                return true; // Profile exists
+            }
+        }
+        return false; // Profile does not exist
+    }
+
+    accountExists = (accountUsername) => {
+        const accounts = document.querySelectorAll('#accountList > div');
+        for (let i = 0; i < accounts.length; i++) {
+            const name = accounts[i].querySelector('span').textContent.trim();
+            if (name === accountUsername) {
                 return true; // Profile exists
             }
         }
@@ -162,15 +203,73 @@ class AdminApi {
             }
         });
     }
+
+    fetchUserAccounts() {
+        fetch('AdminLanding.php?action=getAccounts')
+        .then(response => response.json())
+        .then(accounts => {
+            console.log(accounts);
+            const accountList = document.getElementById('accountList');
+            accountList.innerHTML = ''; // Clear previous content
+            accounts.forEach(account => {
+                // Create container for account information
+                const accountContainer = document.createElement('div');
+                
+                // Display profile name
+                const accountName = document.createElement('span');
+                accountName.textContent = profile.name + ' ';
+                accountContainer.appendChild(accountName);
+
+                //Display account status 
+                const accountStatus =  document.createElement('span');
+                accountStatus.textContent = account.activeStatus == 1 ? 'Active' : 'Inactive';
+                accountContainer.appendChild(accountStatus);
+
+                //Create view button
+                const viewButton = document.createElement('button')
+                viewButton.textContent = 'View'
+                viewButton.addEventListener('click', () => {
+                    viewAccount(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+                });
+                accountContainer.appendChild(viewButton)
+
+                // Create edit button
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', () => {
+                    // Call displayUpdate function to display the form for updating profile
+                    displayUpdate(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+                });
+                accountContainer.appendChild(editButton);
+
+                // Create suspend button
+                const suspendButton = document.createElement('button');
+                if (account.activeStatus != true) {
+                    suspendButton.classList.add("disable-btn");
+                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
+                }
+                suspendButton.textContent = 'Suspend';
+                suspendButton.addEventListener('click', () => {
+                    // Handle suspend functionality here
+                    if (confirm('Are you sure you want to suspend this profile?')) {
+                        this.suspendAccountApiCall(account.id);
+                    }
+                });
+                accountContainer.appendChild(suspendButton);
+            
+                // Append account container to profile list
+                accountList.appendChild(accountContainer);
+            });
+        })
+        .catch(error => console.error('Error fetching user accounts:', error));
+    }
 };
 
 window.onload = function() {
     loadContent('AdminUP.php');
 };
 
-const admin = new AdminApi();
-
-function displayCreate() {
+function displayCreateUP() {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -178,11 +277,11 @@ function displayCreate() {
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
-    <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-    <br><label for="description">Description:</label><br>
-    <input type="text" id="description" name="description" placeholder="Description"><br>
-    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
+        <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
+        <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+        <br><label for="description">Description:</label><br>
+        <input type="text" id="description" name="description" placeholder="Description"><br>
+        <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
     
@@ -212,6 +311,36 @@ function displayCreate() {
     modalFeatures();
 }
 
+function displayCreateUA() {
+    const Form = document.getElementById('modal-content');
+    
+    Form.style.display = 'block';
+        
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <form id="UpForm">
+        <input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
+        <input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
+        <input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
+        <label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+        <label for="profile_id">Profile ID:</label><br>
+        <input type="number" id="accountProfile_id" name="accountProfile_id" placeholder="Profile ID" required><br>
+        <button id="SubmitUpForm" type="submit">Submit</button><br>
+    </form>
+    `;
+    
+    document.getElementById('UpForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Call the create profile API function if validation passes
+        admin.createAccountApiCall(event);
+        
+        document.getElementById("myModal").style.display = "none";
+    });
+
+    modalFeatures();
+}
+
 function viewProfile(id, name, activeStatus, description){
     const Form = document.getElementById('modal-content');
 
@@ -233,7 +362,7 @@ function viewProfile(id, name, activeStatus, description){
     modalFeatures();
 }
 
-function displayUpdate(profileId, profileName, activeStatus, description) {
+function displayUpdateUP(profileId, profileName, activeStatus, description) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -315,19 +444,15 @@ function modalFeatures () {
     span.onclick = function() {
     modal.style.display = "none";
     }
-
-    // When the user clicks anywhere outside of the modal, close it
-    //window.onclick = function(event) {
-    //    if (event.target == modal) {
-    //        modal.style.display = "none";
-    //    }
-    //}
     
 }
 
+const admin = new AdminApi();
+
 function initialize() {
     admin.fetchUserProfiles();
-    document.getElementById('createProfile').addEventListener('click', displayCreate);
+
+    document.getElementById('createProfile').addEventListener('click', displayCreateUP);
     document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
 }
 

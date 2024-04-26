@@ -4,8 +4,8 @@ require_once 'AdminViewUPController.php';
 require_once 'AdminUpdateUPController.php';
 require_once 'AdminSuspendUPController.php';
 
-//CREATE//
-$controllerCreate = new AdminCreateUPController();
+//CREATE UP//
+$controllerCreateUP = new AdminCreateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -13,7 +13,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $activeStatus = $requestData['activeStatus'];
     $description = $requestData['description'];
     
-    $response = $controllerCreate->createProfile($profileName, $activeStatus, $description);
+    $response = $controllerCreateUP->createProfile($profileName, $activeStatus, $description);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+//CREATE UA//
+$controllerCreateUA = new AdminCreateUAController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $Username = $requestData['accountUsername'];
+    $Email = $requestData['accountEmail'];
+    $Password = $requestData['accountPassword'];
+    $activeStatus = $requestData['activeStatus'];
+    $Profile_id = $requestData['accountProfile_id'];
+    
+    $response = $controllerCreateUA->createAccount($Username, $Email, $Password, $activeStatus, $Profile_id);
 
     // Send JSON response
     header('Content-Type: application/json');

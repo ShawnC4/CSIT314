@@ -35,5 +35,25 @@ class UserAccEntity {
         return $user; // Return user data
     }
 
+    public function createUserAccount($Username, $Email, $Password, $activeStatus, $Profile_id) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) VALUES (?, ?, ?, ?, ?)");
+        
+        // Bind parameters
+        $stmt->bind_param("sssii", $Username, $Email, $Password, $activeStatus, $Profile_id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Account creation successful
+            return true;
+        } else {
+            // Account creation failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
 }
 ?>
