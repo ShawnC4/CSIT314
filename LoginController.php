@@ -1,7 +1,9 @@
 <?php
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
+require_once 'UserAccClass.php';
 require_once 'UserProfileEntity.php';
+require_once 'UserProfileClass.php';
 
 class LoginController {
     private $entity, $entityP;
@@ -14,20 +16,20 @@ class LoginController {
 
     public function auth($username, $password, $profile) {
         // Retrieve user data from the database based on the provided username
-        $user = $this->entity->findAccByUsername($username, $profile);
-    
-        // Validate user credentials
-        if ($user && $password == $user->getPassword()) {
-            // Check if user's profile is active
-            if ($user->isActive()) {
-                // User's profile is active, proceed with login
-                return ["success" => true];
+        $userA = $this->entity->findAccByUsername($username, $profile);
+        
+        if ($userA && $password == $userA->getPassword()) {
+            if ($userA->isActive()) {
+                $userP = $this->entityP->findProfileById($userA->getProfileId());
+                if ($userP && $userP->isActive()) {
+                    return ["success" => true];
+                } else {
+                    return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];
+                }
             } else {
-                // User's profile is inactive, deny login
                 return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
             }
         } else {
-            // Invalid credentials
             return ["success" => false, "error" => "Invalid username or password"];
         }
     }

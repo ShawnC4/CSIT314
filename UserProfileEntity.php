@@ -1,5 +1,6 @@
 <?php
 require_once 'Konohadb.php';
+require_once 'UserProfileClass.php';
 
 class UserProfileEntity {
     private $db, $conn;
@@ -7,6 +8,32 @@ class UserProfileEntity {
     public function __construct() {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
+    }
+
+    public function findProfileById($profile) {
+        // Prepare SQL statement
+        
+        $stmt = $this->conn->prepare("SELECT * FROM user_profiles WHERE id = ?");
+        $stmt->bind_param("i", $profile);
+        
+        $stmt->execute();
+        
+        // Get result
+        $result = $stmt->get_result();
+
+        // Fetch user data
+        $fetchuser = $result->fetch_assoc();
+        
+        // Close statement
+        $stmt->close();
+        
+        if ($fetchuser) {
+            $user = new UserProfile($fetchuser['id'], $fetchuser['name'], $fetchuser['activeStatus'], $fetchuser['description']);
+        } else {
+            $user = null;
+        }
+
+        return $user; // Return user data
     }
 
     public function createUserProfile ($profileName, $activeStatus, $description) {
@@ -34,7 +61,15 @@ class UserProfileEntity {
         if ($result) {
             // Fetch profiles and add them to the array
             while ($row = $result->fetch_assoc()) {
-                $profiles[] = $row;
+                $profile = new UserProfile(
+                    $row['id'],
+                    $row['name'],
+                    $row['activeStatus'],
+                    $row['description']
+                );
+                // Add the UserProfile object to the array
+                $profiles[] = $profile;
+                //$profiles[] = $row;
             }
         } else {
             // Handle error if query fails

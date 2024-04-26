@@ -1,5 +1,12 @@
 # add own mysql password in konohadb.php
-
+# create a config.php file so we don't have to keep changing the password when pulling.
+# <?php
+# define('DB_SERVER', 'localhost');
+# define('DB_USER', 'your_own_username');
+# define('DB_PASSWORD', 'your_own_password');
+# define('DB_NAME', 'konohadb');
+# ?>
+# there is alr a gitignore file so the config file will be ignored and wont commit and push to github
 # Just to test code
 CREATE TABLE user_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,13 +28,14 @@ CREATE TABLE user_accounts (
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    activeStatus BOOLEAN NOT NULL,
     profile_id INT,
     FOREIGN KEY (profile_id) REFERENCES user_profiles(id)
 );
 
 -- Populate user accounts for Buyer profile with password 'buyer_password'
-INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_pass', t.n), '1'
+INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) 
+SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buyer_pass', t.n), TRUE, '1'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -35,8 +43,8 @@ FROM (
 ) t;
 
 -- Populate user accounts for Seller profile with password 'seller_password'
-INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_pass', t.n), '2'
+INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) 
+SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('seller_pass', t.n), TRUE, '2'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -44,8 +52,8 @@ FROM (
 ) t;
 
 -- Populate user accounts for Agent profile with password 'agent_password'
-INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_pass', t.n), '3'
+INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) 
+SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('agent_pass', t.n), TRUE, '3'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
@@ -53,8 +61,8 @@ FROM (
 ) t;
 
 -- Populate user accounts for Admin profile with password 'admin_password'
-INSERT INTO user_accounts (username, email, password, profile_id) 
-SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_pass', t.n), '4'
+INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) 
+SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('admin_pass', t.n), TRUE, '4'
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES

@@ -1,77 +1,3 @@
-<?php
-require 'AdminCreateUPController.php';
-require 'AdminViewUPController.php';
-require 'AdminUpdateUPController.php';
-require 'AdminSuspendUPController.php';
-
-//CREATE//
-$controllerCreate = new AdminCreateUPController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $profileName = $requestData['profileName'];
-    $activeStatus = $requestData['activeStatus'];
-    $description = $requestData['description'];
-    
-    $response = $controllerCreate->createProfile($profileName, $activeStatus, $description);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit();
-}
-
-
-//VIEW ALL PROFILE//
-$controllerView = new AdminViewUPController();
-
-// Handle POST request to authenticate user
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-    $profiles = $controllerView->getUserProfiles();
-
-    header('Content-Type: application/json');
-    echo json_encode($profiles);
-    exit();
-}
-
-//UPDATE//
-$controllerUpdate = new AdminUpdateUPController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $profileId = $requestData['profileId'];
-    $profileName = $requestData['profileName'];
-    $activeStatus = $requestData['activeStatus'];
-    $description = $requestData['description'];
-    
-    $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}
-
-//SUSPEND// 
-$controllerSuspend = new AdminSuspendUPController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    if (isset($requestData['profileId'])) {
-        $profileId = $requestData['profileId'];
-        $response = $controllerSuspend->suspendProfile($profileId);
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Profile ID is missing']);
-        exit();
-    }
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         </div>
         <br>
         <div id="UPUA">
-            
         </div>
         <br>
         <div>
