@@ -27,12 +27,44 @@ class UserAccEntity {
         $stmt->close();
         
         if ($fetchuser) {
-            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
+            $user = new UserAcc($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
         } else {
             $user = null;
         }
 
         return $user; // Return user data
+    }
+
+    public function getUserAccounts() {
+        $accounts = array(); 
+
+        // Prepare SQL statement to select profiles
+        $sql = "SELECT * FROM user_accounts";
+
+        // Execute the query
+        $result = $this->conn->query($sql);
+
+        // Check if the query was successful
+        if ($result) {
+
+            while ($row = $result->fetch_assoc()) {
+                $account = new UserAcc(
+                    $row['username'],
+                    $row['password'],
+                    $row['email'],
+                    $row['activeStatus'],
+                    $row['profile_id']
+                );
+ 
+                $accounts[] = $account;
+            }
+        } else {
+            // Handle error if query fails
+            echo "Error fetching accounts: " . $this->conn->error;
+        }
+
+        // Return the array of profiles
+        return $accounts;
     }
 
     public function createUserAccount($Username, $Email, $Password, $activeStatus, $Profile_id) {

@@ -59,7 +59,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
         </div>
     </div>
     <br>
-    <div id="accountList">
+    <div id="accountList" style="width: 100%; height: 85%; overflow: auto;">
       
     </div> 
     <br>

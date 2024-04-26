@@ -32,7 +32,7 @@ class AdminApi {
 
     createAccountApiCall = (event) => {
         event.preventDefault();
-        const accountUsername = document.getElementById('paccountUsername').value;
+        const accountUsername = document.getElementById('accountUsername').value;
         const accountEmail = document.getElementById('accountEmail').value;
         const accountPassword = document.getElementById('accountPassword');
         const activeStatus = document.getElementById('activeStatus').checked;
@@ -215,10 +215,15 @@ class AdminApi {
                 // Create container for account information
                 const accountContainer = document.createElement('div');
                 
-                // Display profile name
+                // Display account name
                 const accountName = document.createElement('span');
-                accountName.textContent = profile.name + ' ';
+                accountName.textContent = account.username + ' ';
                 accountContainer.appendChild(accountName);
+
+                // Display account email
+                const accountEmail = document.createElement('span');
+                accountEmail.textContent = account.email + ' ';
+                accountContainer.appendChild(accountEmail);
 
                 //Display account status 
                 const accountStatus =  document.createElement('span');
@@ -315,17 +320,25 @@ function displayCreateUA() {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
-        
+    
+    //**HARD CODED USER PROFILE**//**NEED CHANGE**
+    //**HARD CODED USER PROFILE**//**NEED CHANGE**
+    //**HARD CODED USER PROFILE**//**NEED CHANGE**
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
-        <input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
-        <input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
-        <input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
-        <label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-        <label for="profile_id">Profile ID:</label><br>
-        <input type="number" id="accountProfile_id" name="accountProfile_id" placeholder="Profile ID" required><br>
-        <button id="SubmitUpForm" type="submit">Submit</button><br>
+        <br><input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
+        <br><input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
+        <br><input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
+        <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+        <br><label for="accountProfile_id">Profile:</label>
+        <select id="accountProfile_id" name="accountProfile_id" required>
+            <option value="1">Buyer</option>
+            <option value="2">Seller</option>
+            <option value="3">Agent</option>
+            <option value="4">Admin</option>
+        </select><br>
+        <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
     
@@ -449,11 +462,18 @@ function modalFeatures () {
 
 const admin = new AdminApi();
 
-function initialize() {
-    admin.fetchUserProfiles();
+function initializeUP() {
+    admin.fetchUserProfiles();;
 
     document.getElementById('createProfile').addEventListener('click', displayCreateUP);
     document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
+
+}
+
+function initializeUA() {
+    admin.fetchUserAccounts();
+
+    document.getElementById('createAccount').addEventListener('click', displayCreateUA);
 }
 
 
@@ -462,7 +482,11 @@ function loadContent(page) {
     xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         document.getElementById("UPUA").innerHTML = this.responseText;
-        initialize();
+        if (page == 'AdminUP.php') {
+            initializeUP();
+        } else {
+            initializeUA();
+        }
     }
     };
     xhttp.open("GET", page, true);

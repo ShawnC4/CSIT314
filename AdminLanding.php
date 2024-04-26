@@ -4,6 +4,9 @@ require_once 'AdminViewUPController.php';
 require_once 'AdminUpdateUPController.php';
 require_once 'AdminSuspendUPController.php';
 
+require_once 'AdminCreateUAController.php';
+require_once 'AdminViewUAController.php';
+
 //CREATE UP//
 $controllerCreateUP = new AdminCreateUPController();
 
@@ -42,14 +45,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 
 
 //VIEW ALL PROFILE//
-$controllerView = new AdminViewUPController();
+$controllerViewUP = new AdminViewUPController();
 
 // Handle POST request to authenticate user
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-    $profiles = $controllerView->getUserProfiles();
+    $profiles = $controllerViewUP->getUserProfiles();
 
     header('Content-Type: application/json');
     echo json_encode($profiles);
+    exit();
+}
+
+//VIEW ALL ACCOUNTS//
+$controllerViewUA = new AdminViewUAController();
+
+// Handle POST request to authenticate user
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAccounts') {
+    $accounts = $controllerViewUA->getUserAccounts();
+
+    header('Content-Type: application/json');
+    echo json_encode($accounts);
     exit();
 }
 

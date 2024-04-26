@@ -1,10 +1,9 @@
 <?php
 class UserAcc {
 
-    private $id, $username, $password, $email, $profile_id, $activeStatus;
+    public $username, $password, $email, $profile_id, $activeStatus;
 
-    public function __construct($id, $username, $password, $email, $activeStatus, $profile_id) {
-        $this->id = $id;
+    public function __construct($username, $password, $email, $activeStatus, $profile_id) {
         $this->username = $username;
         $this->password = $password;
         $this->email = $email;
