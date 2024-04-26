@@ -231,12 +231,16 @@ class AdminApi {
                 accountContainer.appendChild(accountStatus);
 
                 //Create view button
-                const viewButton = document.createElement('button')
-                viewButton.textContent = 'View'
-                viewButton.addEventListener('click', () => {
-                    viewAccount(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                fetch(`AdminLanding.php?action=getProfileById&profile_id=${account.profile_id}`)
+                .then(response => response.json())
+                .then(profile => {
+                    viewButton.addEventListener('click', () => {
+                        viewAccount(account.username, account.email, account.password, account.activeStatus, profile.name);
+                    });
+                    accountContainer.appendChild(viewButton)
                 });
-                accountContainer.appendChild(viewButton)
 
                 // Create edit button
                 const editButton = document.createElement('button');
@@ -317,38 +321,50 @@ function displayCreateUP() {
 }
 
 function displayCreateUA() {
-    const Form = document.getElementById('modal-content');
     
-    Form.style.display = 'block';
-    
-    //**HARD CODED USER PROFILE**//**NEED CHANGE**
-    //**HARD CODED USER PROFILE**//**NEED CHANGE**
-    //**HARD CODED USER PROFILE**//**NEED CHANGE**
-    Form.innerHTML = `
-    <span class="close">&times;</span>
-    <form id="UpForm">
-        <br><input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
-        <br><input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
-        <br><input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
-        <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-        <br><label for="accountProfile_id">Profile:</label>
-        <select id="accountProfile_id" name="accountProfile_id" required>
-            <option value="1">Buyer</option>
-            <option value="2">Seller</option>
-            <option value="3">Agent</option>
-            <option value="4">Admin</option>
-        </select><br>
-        <br><button id="SubmitUpForm" type="submit">Submit</button><br>
-    </form>
-    `;
-    
-    document.getElementById('UpForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent form submission
+    fetch('AdminLanding.php?action=getProfiles')
+    .then(response => response.json())
+    .then(profiles => {
+        const Form = document.getElementById('modal-content');
 
-        // Call the create profile API function if validation passes
-        admin.createAccountApiCall(event);
-        
-        document.getElementById("myModal").style.display = "none";
+        Form.style.display = 'block';
+
+        // Create the select element for profiles
+        const profileSelect = document.createElement('select');
+        profileSelect.id = 'accountProfile_id';
+        profileSelect.name = 'accountProfile_id';
+        profileSelect.required = true;
+
+        // Iterate over fetched profiles and create options
+        profiles.forEach(profile => {
+            const option = document.createElement('option');
+            option.value = profile.id;
+            option.textContent = profile.name;
+            profileSelect.appendChild(option);
+        });
+
+        // Create other form elements
+        Form.innerHTML = `
+            <span class="close">&times;</span>
+            <form id="UpForm">
+                <br><input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
+                <br><input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
+                <br><input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
+                <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+                <br><label for="accountProfile_id">Profile:</label><br>
+                ${profileSelect.outerHTML}<br> <!-- Append profileSelect -->
+                <br><button id="SubmitUpForm" type="submit">Submit</button><br>
+            </form>
+        `;
+
+        document.getElementById('UpForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Call the create account API function if validation passes
+            admin.createAccountApiCall(event);
+
+            document.getElementById("myModal").style.display = "none";
+        });
     });
 
     modalFeatures();
@@ -369,6 +385,28 @@ function viewProfile(id, name, activeStatus, description){
     <p><strong>Name:</strong> ${name}</p>
     <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
     <p><strong>Description:</strong> ${description}</p>
+    </div>
+    `;
+
+    modalFeatures();
+}
+
+function viewAccount(username, email, password, activeStatus, profile){
+    const Form = document.getElementById('modal-content');
+
+    const isActive = activeStatus == true;
+
+    Form.style.display = 'block';
+
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <div class = "account-view">
+    <h2>Account Details</h2>
+    <p><strong>Username:</strong> ${username}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Password:</strong>${password}</p>
+    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
+    <p><strong>profile:</strong> ${profile}</p>
     </div>
     `;
 

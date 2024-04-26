@@ -41,6 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
+    $profiles = $controllerCreateUA->getUserProfiles();
+    header('Content-Type: application/json');
+
+    echo json_encode($profiles);
+    exit();
 }
 
 
@@ -65,6 +71,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 
     header('Content-Type: application/json');
     echo json_encode($accounts);
+    exit();
+
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfileById') {
+    $profile = $controllerViewUA->getProfileById($_GET['profile_id']);
+
+    header('Content-Type: application/json');
+    echo json_encode($profile);
     exit();
 }
 

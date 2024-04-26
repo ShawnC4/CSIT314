@@ -42,26 +42,4 @@ class LoginController {
     }
 }
 
-// Instantiate Controller object
-/*$controller = new LoginController();
-
-// Handle POST request to authenticate user
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'login') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $username = $requestData['username'];
-    $password = $requestData['password'];
-    $profile = $requestData['profile'];
-
-    // Perform login authentication
-    $response = $controller->auth($username, $password, $profile);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-    $profiles = $controller->getUserProfiles();
-
-    header('Content-Type: application/json');
-    echo json_encode($profiles);
-}*/
 ?>
