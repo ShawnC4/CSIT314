@@ -1,6 +1,6 @@
 class AdminApi {
     constructor() {
-        this.fetchUserProfiles();
+        
     }
 
     createProfileApiCall = (event) => {
@@ -15,7 +15,7 @@ class AdminApi {
             return; // Exit function if profile already exists
         }
         
-        fetch('AdminLanding.php?action=createProfile', {
+        fetch('AdminUP.php?action=createProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,7 +41,7 @@ class AdminApi {
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
-        fetch('AdminLanding.php?action=updateProfile', {
+        fetch('AdminUP.php?action=updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ class AdminApi {
         .catch(error => console.error('Error updating user profile:', error));
     }
     suspendProfileApiCall = (profileId) => {
-        fetch('AdminLanding.php?action=suspendProfile', {
+        fetch('AdminUP.php?action=suspendProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ class AdminApi {
     }
     
     fetchUserProfiles() {
-        fetch('AdminLanding.php?action=getProfiles')
+        fetch('AdminUP.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);
@@ -325,7 +325,7 @@ function modalFeatures () {
     
 }
 
-function initialize() {
+function initializeProfile() {
     admin.fetchUserProfiles();
     document.getElementById('createProfile').addEventListener('click', displayCreate);
     document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
@@ -337,7 +337,10 @@ function loadContent(page) {
     xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         document.getElementById("UPUA").innerHTML = this.responseText;
-        initialize();
+		if(page == "AdminUP.php")
+			initializeProfile();
+		else if (page == "AdminUA.php")
+			console.log(page);
     }
     };
     xhttp.open("GET", page, true);
