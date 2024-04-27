@@ -9,11 +9,22 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
-        // Check if profile name already existss
-        if (this.profileExists(profileName)) {
+        
+        fetch('AdminLanding.php?action=UPExists', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ profileName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data) {
             alert('Profile already exists!');
-            return; // Exit function if profile already exists
-        }
+            return;
+            }
+        })
         
         fetch('AdminLanding.php?action=createProfile', {
             method: 'POST',
@@ -38,11 +49,22 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const accountProfile_id = document.getElementById('accountProfile_id').value;
 
-        // Check if profile name already exists
-        if (this.accountExists(accountUsername)) {
-            alert('Account already exists!');
-            return; // Exit function if profile already exists
-        }
+        
+        fetch('AdminLanding.php?action=UAExists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ accountUsername })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data) {
+                alert('Account already exists!');
+                return;
+            }
+        });
         
         fetch('AdminLanding.php?action=createAccount', {
             method: 'POST',
@@ -96,6 +118,7 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
+
     suspendProfileApiCall = (profileId) => {
         fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
@@ -365,9 +388,10 @@ function displayCreateUA() {
 
             document.getElementById("myModal").style.display = "none";
         });
+
+        modalFeatures();
     });
 
-    modalFeatures();
 }
 
 function viewProfile(id, name, activeStatus, description){
