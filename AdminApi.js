@@ -63,22 +63,22 @@ class AdminApi {
             if (data['exists']) {
                 alert('Account already exists!');
                 return;
+            } else {
+                fetch('AdminLanding.php?action=createAccount', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    this.fetchUserAccounts();
+                    alert(`Account ${accountUsername} was created successfully!`);
+                });
             }
         });
-        
-        fetch('AdminLanding.php?action=createAccount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
-        })
-        .then(response => response.text())
-        .then(data => {
-            console.log(data);
-            this.fetchUserAccounts();
-            alert(`Account ${accountUsername} was created successfully!`);
-        })
     }
 
     profileExists = (profileName) => {

@@ -23,12 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     echo json_encode($response);
     exit();
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'UPExists') {
-    $UPExists = $controllerCreateUP->profileExists($_GET['profileName']);
-    header('Content-Type: application/json');
+    $data = json_decode(file_get_contents('php://input'), true);
 
+    $UPExists = $controllerCreateUP->profileExists($data['profileName']);
+    header('Content-Type: application/json');
     echo json_encode($UPExists);
     exit();
 }
+
 
 //CREATE UA//
 $controllerCreateUA = new AdminCreateUAController();
@@ -54,7 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     echo json_encode($profiles);
     exit();
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'UAExists') {
-    $UAExists = $controllerCreateUA->accountExists($_GET['accountUsername']);
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $UAExists = $controllerCreateUA->accountExists($data['accountUsername']);
     header('Content-Type: application/json');
 
     echo json_encode($UAExists);
