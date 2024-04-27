@@ -28,10 +28,10 @@ class AdminCreateUAController {
             // Retrieve the name of the account
             $username = $account->getUsername();
             if ($username === $accountUsername) {
-                return true; // Account exists
+                return ["exists" => true]; 
             }
         }
-        return false; 
+        return ["exists" => false]; 
     }
 }
 

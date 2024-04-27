@@ -20,25 +20,25 @@ class AdminApi {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if (data) {
-            alert('Profile already exists!');
-            return;
+            if (data['exists']) {
+                alert('Profile already exists!');
+            } else {
+                fetch('AdminLanding.php?action=createProfile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ profileName, activeStatus, description })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    this.fetchUserProfiles();
+                    alert(`Profile ${profileName} was created successfully!`);
+                });
             }
         })
         
-        fetch('AdminLanding.php?action=createProfile', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ profileName, activeStatus, description })
-        })
-        .then(response => response.text())
-        .then(data => {
-            console.log(data);
-            this.fetchUserProfiles();
-            alert(`Profile ${profileName} was created successfully!`);
-        })
     }
 
     createAccountApiCall = (event) => {
@@ -60,7 +60,7 @@ class AdminApi {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if (data) {
+            if (data['exists']) {
                 alert('Account already exists!');
                 return;
             }

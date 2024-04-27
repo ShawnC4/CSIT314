@@ -19,10 +19,10 @@ class AdminCreateUPController {
             // Retrieve the name of the profile
             $name = $profile->getName();
             if ($name === $profileName) {
-                return true; // Profile exists
+                return ["exists" => true];
             }
         }
-        return false; // Profile does not exist
+        return ["exists" => false];
     }
 }
 
