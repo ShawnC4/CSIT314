@@ -126,9 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $email = $requestData['email'];
     $password = $requestData['password'];
     $activeStatus = $requestData['activeStatus'];
-    $profile_id = $requestData['profile_id'];
+    $id = $requestData['id'];
     
-    $response = $controllerUpdateUA->updateUserAccount($username, $email, $password, $activeStatus, $profile_id);
+    $response = $controllerUpdateUA->updateUserAccount($username, $email, $password, $activeStatus, $id);
 
     // Send JSON response
     header('Content-Type: application/json');

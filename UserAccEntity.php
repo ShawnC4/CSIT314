@@ -87,12 +87,12 @@ class UserAccEntity {
         $stmt->close();
     }
 
-    public function updateUserAccount($username, $email, $password, $activeStatus, $profile_id) {
+    public function updateUserAccount($username, $email, $password, $activeStatus, $id) {
         // Prepare SQL statement
-        $stmt = $this->conn->prepare("UPDATE user_accounts SET email = ?, password = ?, activeStatus = ? WHERE username = ? AND profile_id = ?");
+        $stmt = $this->conn->prepare("UPDATE user_accounts SET username = ?, email = ?, password = ?, activeStatus = ? WHERE id = ?");
         
         // Bind parameters
-        $stmt->bind_param("sssii", $email, $password, $activeStatus, $username, $profile_id);
+        $stmt->bind_param("sssii", $username, $email, $password, $activeStatus, $id);
         
         // Execute the statement
         if ($stmt->execute()) {

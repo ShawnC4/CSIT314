@@ -8,9 +8,9 @@ class AdminUpdateUAController {
         $this->entity = new UserAccEntity();
     }
 
-    public function updateUserAccount($username, $email, $password, $activeStatus, $profile_id) {
+    public function updateUserAccount($username, $email, $password, $activeStatus, $id) {
         // Call the updateUserAccount method from UserAccEntity
-        $result = $this->entity->updateUserAccount($username, $email, $password, $activeStatus, $profile_id);
+        $result = $this->entity->updateUserAccount($username, $email, $password, $activeStatus, $id);
         
         return $result;
     }

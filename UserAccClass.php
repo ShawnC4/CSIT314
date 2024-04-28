@@ -8,7 +8,7 @@ class UserAcc {
         $this->password = $password;
         $this->email = $email;
         $this->activeStatus = $activeStatus;
-        $this->profile_id = $profile_id;   
+        $this->profile_id = $profile_id;
     }
 
     public function getUsername () {

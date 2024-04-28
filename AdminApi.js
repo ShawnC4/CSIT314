@@ -91,26 +91,26 @@ class AdminApi {
         })
         .then(response => response.text())
         .then(data => {
-            console.log(data);
+            //console.log(data);
             this.fetchUserProfiles();  
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
 
-    updateAccountApiCall = (username, email, password, activeStatus, profile_id) => {
+    updateAccountApiCall = (username, email, password, activeStatus, id) => {
         fetch('AdminLanding.php?action=updateAccount', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, email, password, activeStatus, profile_id })
+            body: JSON.stringify({ username, email, password, activeStatus, id })
         })
         .then(response => response.json())
         .then(data => {
             console.log(data);
             this.fetchUserAccounts();
         })
-        .catch(error => console.error('Error updating user account:', error));
+        .catch(error => console.error('Error updating user account :', error));
     }
     
     suspendProfileApiCall = (profileId) => {
@@ -170,7 +170,7 @@ class AdminApi {
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
-                    displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
+                    displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(editButton);
 
@@ -524,7 +524,8 @@ function displayUpdateUP(profileId, profileName, activeStatus, description) {
     modalFeatures();
 }
 
-function displayUpdateUA(username, email, password, activeStatus, profile_id) {
+function displayUpdateUA(username, email, password, activeStatus, id) {
+
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -532,45 +533,70 @@ function displayUpdateUA(username, email, password, activeStatus, profile_id) {
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
-    <input type="text" id="accountUsername" name="accountUsername" value="${username}">
-    <input type="hidden" id="accountProfile_id" name="accountProfile_id" value="${profile_id}">
-    <br><input type="email" id="accountEmail" name="accountEmail" value="${email}" placeholder="Email" required><br>
-    <br><input type="password" id="accountPassword" name="accountPassword" value="${password}" placeholder="Password" required><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus" ${activeStatus ? 'checked' : ''}>Active Status</label><br>
+    <h2>Edit Account</h2>
+    <input type="text" id="id" name="id" value="${id}">
+    <br><label><input type="text" id="username" name="username" value="${username}" placeholder="Account Name">Username</label><br>
+    <br><label><input type="email" id="email" name="email" value="${email}" placeholder="Email">Email</label><br>
+    <br><label><input type="text" id="password" name="password" value="${password}" placeholder="Password">Password</label><br>
+    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
     <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
     
+    // Store original values after populating the form
+    const originalUsername = document.getElementById('username').value;
+    const activeStatusCheckbox = document.getElementById('activeStatus');
+    activeStatusCheckbox.checked = activeStatus == true;
+    const originalPassword = document.getElementById('password').value;
+    
     document.getElementById('UpForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        const updatedUsername = document.getElementById('accountUsername').value;
-        const updatedEmail = document.getElementById('accountEmail').value;
-        const updatedPassword = document.getElementById('accountPassword').value;
+        const updatedId = document.getElementById('id').value;
+        const updatedUsername = document.getElementById('username').value;
         const updatedActiveStatus = document.getElementById('activeStatus').checked;
-        const updatedProfile_id = document.getElementById('accountProfile_id').value;
+        const updatedEmail = document.getElementById('email').value;
+        const updatedPassword = document.getElementById('password').value;
     
-        // Validation
-        if (!updatedUsername.trim() || !updatedEmail.trim() || !updatedPassword.trim()) {
-            alert("Username, email, and password cannot be empty");
+        // Check if any information was edited
+        if (updatedUsername.trim() === originalUsername.trim() && activeStatusCheckbox === updatedActiveStatus &&
+            originalEmail.trim() === updatedEmail.trim() && originalPassword === updatedPassword) {
+                alert("Nothing was changed");
+                return;
+        }
+
+        // Add empty field checks
+        if (updatedUsername.trim() === '') {
+            alert("Username cannot be empty");
+            return;
+        } 
+        
+        else if (updatedEmail.trim() === '') {
+            alert("Email cannot be empty");
             return;
         }
-    
-        // Confirmation popup
-        const confirmation = confirm(`Are you sure you want to update ${username}'s details?`);
-        if (!confirmation) {
+
+        else if (updatedPassword.trim() === '') {
+            alert("Password cannot be empty");
             return;
         }
-    
-        // Call the update user account API function
-        admin.updateAccountApiCall(updatedUsername, updatedEmail, updatedPassword, updatedActiveStatus, updatedProfile_id);
         
-        // Success message
-        alert('User account updated successfully!');
-        
+        else {
+                // If validation passes, proceed with confirmation popup
+                const confirmation = confirm(`Are you sure you want to update ${originalUsername}'s details?`);
+                if (confirmation) {
+                // Call the update account API function
+                admin.updateAccountApiCall(updatedUsername, updatedEmail, updatedPassword, updatedActiveStatus, updatedId);
+                document.getElementById("myModal").style.display = "none";
+                }
+            }
+        });
+
+    document.getElementById('SubmitUpForm').addEventListener('click', () => {
         document.getElementById("myModal").style.display = "none";
     });
 
     modalFeatures();
+
 }
 
 function modalFeatures () {
