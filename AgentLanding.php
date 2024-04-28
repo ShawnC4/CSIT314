@@ -1,3 +1,7 @@
+<?php
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,18 +10,23 @@
     <title>Agent Page</title>
 </head>
 <body>
-<?php
-    session_start();
-
-    // Check if user is not logged in
-    if (!isset($_SESSION['logged']) || $_SESSION['logged'] === false) {
-        header("Location: index.php");
-        exit;
-    }
-?>
-    <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
-    <br>
-    <a href="logout.php">Logout</a>
-    <>
+    
+    <div id="flex">
+        <div>
+            <h1>Welcome</h1>
+        </div>
+        <div class="button-container">
+            <button onclick="loadContent('AdminUP.php')">User Profile</button>
+            <button onclick="loadContent('AdminUA.php')">User Account</button>
+        </div>
+        <br>
+        <div id="content">
+            
+        </div>
+        <br>
+        <div>
+            <a href="logout.php">Logout</a>
+        </div>
+    </div>
 </body>
 </html>

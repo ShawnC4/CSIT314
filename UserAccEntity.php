@@ -27,7 +27,7 @@ class UserAccEntity {
         $stmt->close();
         
         if ($fetchuser) {
-            $user = new UserAcc($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
+            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
         } else {
             $user = null;
         }
@@ -49,6 +49,7 @@ class UserAccEntity {
 
             while ($row = $result->fetch_assoc()) {
                 $account = new UserAcc(
+                    $row['id'],
                     $row['username'],
                     $row['password'],
                     $row['email'],

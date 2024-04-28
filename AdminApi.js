@@ -542,14 +542,14 @@ function initializeUA() {
 function loadContent(page) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("UPUA").innerHTML = this.responseText;
-        if (page == 'AdminUP.php') {
-            initializeUP();
-        } else {
-            initializeUA();
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("UPUA").innerHTML = this.responseText;
+            if (page == 'AdminUP.php') {
+                initializeUP();
+            } else {
+                initializeUA();
+            }
         }
-    }
     };
     xhttp.open("GET", page, true);
     xhttp.send();
