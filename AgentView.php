@@ -1,10 +1,12 @@
 <?php
+    session_start();
     require_once 'AgentViewPropController.php';
 
     $agentViewPropController = new AgentViewPropController();
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentProperties') {
 
+        //$properties = $agentViewPropController->getAgentProperties($_GET['agentId']);
         $properties = $agentViewPropController->getAgentProperties(31);
         header('Content-Type: application/json');
 
@@ -36,5 +38,8 @@
         </tbody>
     </table>
 </body>
+<script>
+    window.userId = "<?php echo $_SESSION['userId']; ?>";
+</script>
 <script src="AgentViewApi.js"></script>
 </html>

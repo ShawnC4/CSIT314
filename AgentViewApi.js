@@ -4,7 +4,7 @@ class AgentViewApi {
     }
      
     getAgentProperties() {
-        fetch(`AgentView.php?action=getAgentProperties`)
+        fetch(`AgentView.php?action=getAgentProperties&agentId=${window.userId}`)
         .then(response => response.json())
         .then(properties => {
             console.log(properties);
