@@ -1,74 +1,3 @@
-<?php
-require_once 'AdminCreateUPController.php';
-require_once 'AdminViewUPController.php';
-require_once 'AdminUpdateUPController.php';
-require_once 'AdminSuspendUPController.php';
-
-//CREATE//
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $profileName = $requestData['profileName'];
-    $activeStatus = $requestData['activeStatus'];
-    $description = $requestData['description'];
-	
-    $controllerCreate = new AdminCreateUPController();
-    $response = $controllerCreate->createProfile($profileName, $activeStatus, $description);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit();
-}
-
-
-//VIEW ALL PROFILE//
-// Handle POST request to authenticate user
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-	$controllerView = new AdminViewUPController();
-	$profiles = $controllerView->getUserProfiles();
-
-    header('Content-Type: application/json');
-    echo json_encode($profiles);
-    exit();
-}
-
-//UPDATE//
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $profileId = $requestData['profileId'];
-    $profileName = $requestData['profileName'];
-    $activeStatus = $requestData['activeStatus'];
-    $description = $requestData['description'];
-    
-	$controllerUpdate = new AdminUpdateUPController();
-    $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}
-
-//SUSPEND// 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    if (isset($requestData['profileId'])) {
-        $profileId = $requestData['profileId'];
-		
-		$controllerSuspend = new AdminSuspendUPController();
-        $response = $controllerSuspend->suspendProfile($profileId);
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Profile ID is missing']);
-        exit();
-    }
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +51,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <br>
     <button id="createProfile">Create User Profile</button>
     <br>
-    <input type="text" id="searchInput" placeholder="Search profiles">
+    <input type="text" id="searchProfile" placeholder="Search profiles">
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">
@@ -135,4 +64,5 @@ body {font-family: Arial, Helvetica, sans-serif;}
     </div> 
     <br>
 </body>
+
 </html>
