@@ -1,5 +1,5 @@
 <?php
-require 'UserProfileEntity.php';
+require_once 'UserProfileEntity.php';
 
 class AdminUpdateUPController {
     private $entity;
@@ -14,7 +14,7 @@ class AdminUpdateUPController {
     }
 }
 
-$controller = new AdminUpdateUPController();
+/*$controller = new AdminUpdateUPController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -28,5 +28,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
-}
+}*/
 ?>
