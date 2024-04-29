@@ -45,7 +45,9 @@
     </table>
 </body>
 <script>
-    window.userId = "<?php echo $_SESSION['userId']; ?>";
+    if (<?php echo isset($_SESSION['userId'])?>) {
+        window.userId = "<?php echo $_SESSION['userId']; ?>";
+    }
 </script>
 <script src="AgentViewApi.js"></script>
 </html>
