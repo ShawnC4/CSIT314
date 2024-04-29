@@ -43,7 +43,7 @@ class AgentViewApi {
                     const updateButton = document.createElement('button');
                     updateButton.textContent = 'Update';
                     updateButton.addEventListener('click', () => {
-                        editProperty(property.id);
+                        this.updateProperty(property.id);
                     });
                     buttonCell.appendChild(updateButton);
 
@@ -91,6 +91,35 @@ class AgentViewApi {
         })
         .catch(error => console.error('Error fetching property:', error));
     }
+
+
+
+
+    //SEARCH
+    searchEngineProperty = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const searchInput = document.getElementById('searchProperty').value.toLowerCase();
+
+        // Select all profile containers
+        const propertyContainers = document.querySelectorAll('#propertyList > tr');
+
+        // Iterate over each profile container
+        propertyContainers.forEach(container => {
+            // Get text content of profile name within container and convert it to lowercase
+            const propertyName = container.querySelector('td').textContent.toLowerCase();
+
+            // Check if profile name includes search input
+            if (propertyName.includes(searchInput)) {
+
+                // display container if profile name includes search input
+                container.style.visibility = 'visible';
+            }
+            else {
+                // hide container if profile name does not include search input
+                container.style.visibility = 'collapse';
+            }
+        });
+    }
 }
 
 function modalFeatures () {
@@ -113,6 +142,8 @@ const agentViewApi = new AgentViewApi();
 
 function initialize() {
     agentViewApi.getAgentProperties();
+
+    document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
 }
 
 window.onload = initialize();

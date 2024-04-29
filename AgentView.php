@@ -81,6 +81,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <div>
     <h1>Properties</h1>
     </div>
+    <br>
+    <button id="createProperty">Create Property</button>
+    <br>
+    <input type="text" id="searchProperty" placeholder="Search properties">
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">
