@@ -98,6 +98,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
                 <tr>
                     <th>Property Name</th>
                     <th>Seller ID</th>
+                    <th>Location</th>
                     <th>Price</th>
                     <th>Action</th>
                 </tr>
