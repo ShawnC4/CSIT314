@@ -23,6 +23,13 @@ class AgentViewPropController {
 
         return $seller;
     }
+
+    public function getProperty($id) {
+        // Retrieve user profiles from the database
+        $property = $this->entity->getPropertyById($id);
+
+        return $property;
+    }
 }
 
 ?>
