@@ -12,6 +12,12 @@
 
         echo json_encode($properties);
         exit();
+    } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getSellerName') {
+        $seller = $agentViewPropController->getSellerName($_GET['sellerId']);
+        header('Content-Type: application/json');
+
+        echo json_encode($seller);
+        exit();
     }
 ?>
 
