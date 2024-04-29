@@ -6,6 +6,7 @@ require_once 'AdminSuspendUPController.php';
 
 require_once 'AdminCreateUAController.php';
 require_once 'AdminViewUAController.php';
+require_once 'AdminSuspendUAController.php';
 
 //CREATE UP//
 $controllerCreateUP = new AdminCreateUPController();
@@ -131,7 +132,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         exit();
     }
 }
+$controllerSuspendUA = new AdminSuspendUAController();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    if (isset($requestData['accountId'])) {
+        $accountId = $requestData['accountId'];
+        $response = $controllerSuspendUA->suspendAccount($accountId);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Account ID is missing']);
+        exit();
+    }
+}
 ?>
 
 <!DOCTYPE html>

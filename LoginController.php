@@ -1,5 +1,5 @@
 <?php
-$session_start();
+session_start();
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
 require_once 'UserAccClass.php';

@@ -88,5 +88,21 @@ class UserAccEntity {
         $stmt->close();
     }
 
+    //Suspend user for userAccount
+    public function suspendUserAccount($accountId) {
+        $sql = "UPDATE user_accounts SET activeStatus = 0 WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $accountId);
+    
+        if ($stmt->execute()) {
+            $stmt->close();
+            return ['success' => true, 'message' => 'Account has been suspended successfully.'];
+        } else {
+            $stmt->close();
+            return ['success' => false, 'message' => 'Failed to suspend the account.'];
+        }
+    }
+    
+
 }
 ?>

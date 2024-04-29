@@ -118,7 +118,7 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
+    //Suspend Profile
     suspendProfileApiCall = (profileId) => {
         fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
@@ -140,6 +140,26 @@ class AdminApi {
             // Refresh the profiles list here if necessary
         })
         .catch(error => console.error('Error suspending user profile:', error));
+    }
+    //Suspend Account
+    suspendAccountApiCall = (accountId) => {
+        return fetch('AdminLanding.php?action=suspendAccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ accountId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.success) {
+                alert('Account suspended successfully');
+            } else {
+                alert('Failed to suspend account');
+            }
+        })
+        .catch(error => console.error('Error suspending user account:', error));
     }
     
     fetchUserProfiles() {
@@ -285,6 +305,7 @@ class AdminApi {
                     // Handle suspend functionality here
                     if (confirm('Are you sure you want to suspend this profile?')) {
                         this.suspendAccountApiCall(account.id);
+                        loadContent('AdminUA.php')
                     }
                 });
                 accountContainer.appendChild(suspendButton);
