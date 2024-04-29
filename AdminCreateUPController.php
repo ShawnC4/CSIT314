@@ -12,20 +12,18 @@ class AdminCreateUPController {
         $result = $this->entity->createUserProfile($profileName, $activeStatus, $description);
         return $result;
     }
+
+    public function profileExists($profileName) {
+        $profiles = $this->entity->getUserProfiles();
+        foreach ($profiles as $profile) {
+            // Retrieve the name of the profile
+            $name = $profile->getName();
+            if ($name === $profileName) {
+                return ["exists" => true];
+            }
+        }
+        return ["exists" => false];
+    }
 }
 
-/*$controller = new AdminCreateUPController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-    $profileName = $requestData['profileName'];
-    $activeStatus = $requestData['activeStatus'];
-    $description = $requestData['description'];
-    
-    $response = $controller->createProfile($profileName, $activeStatus, $description);
-
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}*/
 ?>

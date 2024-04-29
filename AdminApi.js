@@ -9,25 +9,36 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
-        // Check if profile name already existss
-        if (this.profileExists(profileName)) {
-            alert('Profile already exists!');
-            return; // Exit function if profile already exists
-        }
         
-        fetch('AdminLanding.php?action=createProfile', {
+        fetch('AdminLanding.php?action=UPExists', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ profileName, activeStatus, description })
+            body: JSON.stringify({ profileName })
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
             console.log(data);
-            this.fetchUserProfiles();
-            alert(`Profile ${profileName} was created successfully!`);
+            if (data['exists']) {
+                alert('Profile already exists!');
+            } else {
+                fetch('AdminLanding.php?action=createProfile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ profileName, activeStatus, description })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    this.fetchUserProfiles();
+                    alert(`Profile ${profileName} was created successfully!`);
+                });
+            }
         })
+        
     }
 
     createAccountApiCall = (event) => {
@@ -38,25 +49,36 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const accountProfile_id = document.getElementById('accountProfile_id').value;
 
-        // Check if profile name already exists
-        if (this.accountExists(accountUsername)) {
-            alert('Account already exists!');
-            return; // Exit function if profile already exists
-        }
         
-        fetch('AdminLanding.php?action=createAccount', {
+        fetch('AdminLanding.php?action=UAExists', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
+            body: JSON.stringify({ accountUsername })
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
             console.log(data);
-            this.fetchUserAccounts();
-            alert(`Account ${accountUsername} was created successfully!`);
-        })
+            if (data['exists']) {
+                alert('Account already exists!');
+                return;
+            } else {
+                fetch('AdminLanding.php?action=createAccount', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    this.fetchUserAccounts();
+                    alert(`Account ${accountUsername} was created successfully!`);
+                });
+            }
+        });
     }
 
     profileExists = (profileName) => {
@@ -75,10 +97,10 @@ class AdminApi {
         for (let i = 0; i < accounts.length; i++) {
             const name = accounts[i].querySelector('span').textContent.trim();
             if (name === accountUsername) {
-                return true; // Account exists
+                return true; // Profile exists
             }
         }
-        return false; // Account does not exist
+        return false; // Profile does not exist
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
@@ -91,7 +113,7 @@ class AdminApi {
         })
         .then(response => response.text())
         .then(data => {
-            //console.log(data);
+            console.log(data);
             this.fetchUserProfiles();  
         })
         .catch(error => console.error('Error updating user profile:', error));
@@ -112,7 +134,8 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user account :', error));
     }
-    
+
+    //Suspend Profile
     suspendProfileApiCall = (profileId) => {
         fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
@@ -134,6 +157,26 @@ class AdminApi {
             // Refresh the profiles list here if necessary
         })
         .catch(error => console.error('Error suspending user profile:', error));
+    }
+    //Suspend Account
+    suspendAccountApiCall = (accountId) => {
+        return fetch('AdminLanding.php?action=suspendAccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ accountId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.success) {
+                alert('Account suspended successfully');
+            } else {
+                alert('Failed to suspend account');
+            }
+        })
+        .catch(error => console.error('Error suspending user account:', error));
     }
     
     fetchUserProfiles() {
@@ -170,7 +213,7 @@ class AdminApi {
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
-                    displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
+                    displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(editButton);
 
@@ -254,6 +297,7 @@ class AdminApi {
                     // Handle suspend functionality here
                     if (confirm('Are you sure you want to suspend this profile?')) {
                         this.suspendAccountApiCall(account.id);
+                        loadContent('AdminUA.php')
                     }
                 });
                 accountContainer.appendChild(suspendButton);
@@ -407,9 +451,10 @@ function displayCreateUA() {
 
             document.getElementById("myModal").style.display = "none";
         });
+
+        modalFeatures();
     });
 
-    modalFeatures();
 }
 
 function viewProfile(id, name, activeStatus, description){
@@ -632,17 +677,18 @@ function initializeUA() {
     document.getElementById('searchAccount').addEventListener('input', admin.searchEngineAccount);
 }
 
+
 function loadContent(page) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("UPUA").innerHTML = this.responseText;
-        if (page == 'AdminUP.php') {
-            initializeUP();
-        } else {
-            initializeUA();
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("UPUA").innerHTML = this.responseText;
+            if (page == 'AdminUP.php') {
+                initializeUP();
+            } else {
+                initializeUA();
+            }
         }
-    }
     };
     xhttp.open("GET", page, true);
     xhttp.send();

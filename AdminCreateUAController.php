@@ -20,6 +20,19 @@ class AdminCreateUAController {
 
         return $profiles;
     }
+
+    public function accountExists($accountUsername) {
+        $accounts = $this->entity->getUserAccounts();
+    
+        foreach ($accounts as $account) {
+            // Retrieve the name of the account
+            $username = $account->getUsername();
+            if ($username === $accountUsername) {
+                return ["exists" => true]; 
+            }
+        }
+        return ["exists" => false]; 
+    }
 }
 
 ?>

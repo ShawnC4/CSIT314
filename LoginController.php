@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Controller class to process login requests
 require_once 'UserAccEntity.php';
 require_once 'UserAccClass.php';
@@ -22,6 +23,7 @@ class LoginController {
             if ($userA->isActive()) {
                 $userP = $this->entityP->findProfileById($userA->getProfileId());
                 if ($userP && $userP->isActive()) {
+                    $_SESSION['userID'] = $userA->getId();
                     return ["success" => true];
                 } else {
                     return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];
