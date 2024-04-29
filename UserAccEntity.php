@@ -113,6 +113,27 @@ class UserAccEntity {
         $stmt->close();
     }
 
+    // Update user account
+    public function updateUserAccount($username, $email, $password, $activeStatus, $id) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("UPDATE user_accounts SET username = ?, email = ?, password = ?, activeStatus = ? WHERE id = ?");
+        
+        // Bind parameters
+        $stmt->bind_param("sssii", $username, $email, $password, $activeStatus, $id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Account update successful
+            return true;
+        } else {
+            // Account update failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
     //Suspend user for userAccount
     public function suspendUserAccount($accountId) {
         $sql = "UPDATE user_accounts SET activeStatus = 0 WHERE id = ?";
