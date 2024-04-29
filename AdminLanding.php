@@ -7,7 +7,6 @@ require_once 'AdminSuspendUPController.php';
 require_once 'AdminCreateUAController.php';
 require_once 'AdminViewUAController.php';
 require_once 'AdminSuspendUAController.php';
-require_once 'AdminUpdateUAController.php';
 
 //CREATE UP//
 $controllerCreateUP = new AdminCreateUPController();
@@ -98,18 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit();
 }
 
-//UPDATE UA//
-$controllerUpdateUA = new AdminUpdateUAController();
+//UPDATE//
+$controllerUpdate = new AdminUpdateUPController();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateAccount') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
     $requestData = json_decode(file_get_contents('php://input'), true);
-    $username = $requestData['username'];
-    $email = $requestData['email'];
-    $password = $requestData['password'];
+    $profileId = $requestData['profileId'];
+    $profileName = $requestData['profileName'];
     $activeStatus = $requestData['activeStatus'];
-    $id = $requestData['id'];
+    $description = $requestData['description'];
     
-    $response = $controllerUpdateUA->updateUserAccount($username, $email, $password, $activeStatus, $id);
+    $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
 
     // Send JSON response
     header('Content-Type: application/json');

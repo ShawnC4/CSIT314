@@ -118,23 +118,7 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-
-    updateAccountApiCall = (username, email, password, activeStatus, id) => {
-        fetch('AdminLanding.php?action=updateAccount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, email, password, activeStatus, id })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            this.fetchUserAccounts();
-        })
-        .catch(error => console.error('Error updating user account :', error));
-    }
-    
+    //Suspend Profile
     suspendProfileApiCall = (profileId) => {
         fetch('AdminLanding.php?action=suspendProfile', {
             method: 'POST',
@@ -212,7 +196,7 @@ class AdminApi {
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
-                    displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
+                    displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(editButton);
 
@@ -236,6 +220,31 @@ class AdminApi {
             });
         })
         .catch(error => console.error('Error fetching user profiles:', error));
+    }
+
+    searchProfile = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+        // Select all profile containers
+        const profileContainers = document.querySelectorAll('#profileList > div');
+
+        // Iterate over each profile container
+        profileContainers.forEach(container => {
+            // Get text content of profile name within container and convert it to lowercase
+            const profileName = container.querySelector('span').textContent.toLowerCase();
+
+            // Check if profile name includes search input
+            if (profileName.includes(searchInput)) {
+
+                // display container if profile name includes search input
+                container.style.display = 'block';
+            }
+            else {
+                // hide container if profile name does not include search input
+                container.style.display = 'none';
+            }
+        });
     }
 
     fetchUserAccounts() {
@@ -281,7 +290,7 @@ class AdminApi {
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
-                    displayUpdateUA(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+                    displayUpdate(account.username, account.email, account.password, account.activeStatus, account.profile_id);
                 });
                 accountContainer.appendChild(editButton);
 
@@ -306,56 +315,6 @@ class AdminApi {
             });
         })
         .catch(error => console.error('Error fetching user accounts:', error));
-    }
-
-    searchEngineProfile = () => {
-        // Get value entered in search input field and convert it to lowercase
-        const searchInput = document.getElementById('searchProfile').value.toLowerCase();
-
-        // Select all profile containers
-        const profileContainers = document.querySelectorAll('#profileList > div');
-
-        // Iterate over each profile container
-        profileContainers.forEach(container => {
-            // Get text content of profile name within container and convert it to lowercase
-            const profileName = container.querySelector('span').textContent.toLowerCase();
-
-            // Check if profile name includes search input
-            if (profileName.includes(searchInput)) {
-
-                // display container if profile name includes search input
-                container.style.display = 'block';
-            }
-            else {
-                // hide container if profile name does not include search input
-                container.style.display = 'none';
-            }
-        });
-    }
-
-    searchEngineAccount= () => {
-        // Get value entered in search input field and convert it to lowercase
-        const searchInput = document.getElementById('searchAccount').value.toLowerCase();
-
-        // Select all profile containers
-        const accountContainers = document.querySelectorAll('#accountList > div');
-
-        // Iterate over each profile container
-        accountContainers.forEach(container => {
-            // Get text content of profile name within container and convert it to lowercase
-            const accountName = container.querySelector('span').textContent.toLowerCase();
-
-            // Check if profile name includes search input
-            if (accountName.includes(searchInput)) {
-
-                // display container if profile name includes search input
-                container.style.display = 'block';
-            }
-            else {
-                // hide container if profile name does not include search input
-                container.style.display = 'none';
-            }
-        });
     }
 };
 
@@ -568,81 +527,6 @@ function displayUpdateUP(profileId, profileName, activeStatus, description) {
     modalFeatures();
 }
 
-function displayUpdateUA(username, email, password, activeStatus, id) {
-
-    const Form = document.getElementById('modal-content');
-    
-    Form.style.display = 'block';
-    
-    Form.innerHTML = `
-    <span class="close">&times;</span>
-    <form id="UpForm">
-    <h2>Edit Account</h2>
-    <input type="text" id="id" name="id" value="${id}">
-    <br><label><input type="text" id="username" name="username" value="${username}" placeholder="Account Name">Username</label><br>
-    <br><label><input type="email" id="email" name="email" value="${email}" placeholder="Email">Email</label><br>
-    <br><label><input type="text" id="password" name="password" value="${password}" placeholder="Password">Password</label><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
-    </form>
-    `;
-    
-    // Store original values after populating the form
-    const originalUsername = document.getElementById('username').value;
-    const activeStatusCheckbox = document.getElementById('activeStatus');
-    activeStatusCheckbox.checked = activeStatus == true;
-    const originalPassword = document.getElementById('password').value;
-    
-    document.getElementById('UpForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const updatedId = document.getElementById('id').value;
-        const updatedUsername = document.getElementById('username').value;
-        const updatedActiveStatus = document.getElementById('activeStatus').checked;
-        const updatedEmail = document.getElementById('email').value;
-        const updatedPassword = document.getElementById('password').value;
-    
-        // Check if any information was edited
-        if (updatedUsername.trim() === originalUsername.trim() && activeStatusCheckbox === updatedActiveStatus &&
-            originalEmail.trim() === updatedEmail.trim() && originalPassword === updatedPassword) {
-                alert("Nothing was changed");
-                return;
-        }
-
-        // Add empty field checks
-        if (updatedUsername.trim() === '') {
-            alert("Username cannot be empty");
-            return;
-        } 
-        
-        else if (updatedEmail.trim() === '') {
-            alert("Email cannot be empty");
-            return;
-        }
-
-        else if (updatedPassword.trim() === '') {
-            alert("Password cannot be empty");
-            return;
-        }
-        
-        else {
-                // If validation passes, proceed with confirmation popup
-                const confirmation = confirm(`Are you sure you want to update ${originalUsername}'s details?`);
-                if (confirmation) {
-                // Call the update account API function
-                admin.updateAccountApiCall(updatedUsername, updatedEmail, updatedPassword, updatedActiveStatus, updatedId);
-                document.getElementById("myModal").style.display = "none";
-                }
-            }
-        });
-
-    document.getElementById('SubmitUpForm').addEventListener('click', () => {
-        document.getElementById("myModal").style.display = "none";
-    });
-
-    modalFeatures();
-
-}
-
 function modalFeatures () {
     // Get the modal
     var modal = document.getElementById("myModal");
@@ -662,10 +546,10 @@ function modalFeatures () {
 const admin = new AdminApi();
 
 function initializeUP() {
-    admin.fetchUserProfiles();
+    admin.fetchUserProfiles();;
 
     document.getElementById('createProfile').addEventListener('click', displayCreateUP);
-    document.getElementById('searchProfile').addEventListener('input', admin.searchEngineProfile);
+    document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
 
 }
 

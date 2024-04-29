@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<<< HEAD:BuyerLanding.php
     <title>Buyer Page</title>
-========
-    <title>Agent Page</title>
->>>>>>>> gordon:AgentLanding.php
 </head>
 <body>
 <?php
