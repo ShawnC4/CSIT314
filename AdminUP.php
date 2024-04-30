@@ -51,7 +51,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <br>
     <button id="createProfile">Create User Profile</button>
     <br>
-    <input type="text" id="searchInput" placeholder="Search profiles">
+    <input type="text" id="searchProfile" placeholder="Search profiles">
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">
