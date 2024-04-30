@@ -9,31 +9,6 @@ class UserAccEntity {
         $this->conn = $this->db->getConn();
     }
 
-    public function findAccById($id) {
-        // Prepare SQL statement
-        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        
-        $stmt->execute();
-        
-        // Get result
-        $result = $stmt->get_result();
-
-        // Fetch user data
-        $fetchuser = $result->fetch_assoc();
-        
-        // Close statement
-        $stmt->close();
-        
-        if ($fetchuser) {
-            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
-        } else {
-            $user = null;
-        }
-
-        return $user; // Return user data
-    }
-
     public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
         
@@ -106,27 +81,6 @@ class UserAccEntity {
             return true;
         } else {
             // Account creation failed
-            return false;
-        }
-        
-        // Close statement
-        $stmt->close();
-    }
-
-    // Update user account
-    public function updateUserAccount($username, $email, $password, $activeStatus, $id) {
-        // Prepare SQL statement
-        $stmt = $this->conn->prepare("UPDATE user_accounts SET username = ?, email = ?, password = ?, activeStatus = ? WHERE id = ?");
-        
-        // Bind parameters
-        $stmt->bind_param("sssii", $username, $email, $password, $activeStatus, $id);
-        
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Account update successful
-            return true;
-        } else {
-            // Account update failed
             return false;
         }
         

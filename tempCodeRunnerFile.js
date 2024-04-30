@@ -1,6 +1,6 @@
 class AdminApi {
     constructor() {
-
+        this.fetchUserProfiles();
     }
 
     createProfileApiCall = (event) => {
@@ -9,76 +9,24 @@ class AdminApi {
         const activeStatus = document.getElementById('activeStatus').checked;
         const description = document.getElementById('description').value;
 
+        // Check if profile name already exists
+        if (this.profileExists(profileName)) {
+            alert('Profile already exists!');
+            return; // Exit function if profile already exists
+        }
         
-        fetch('AdminLanding.php?action=UPExists', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ profileName })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if (data['exists']) {
-                alert('Profile already exists!');
-            } else {
-                fetch('AdminLanding.php?action=createProfile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ profileName, activeStatus, description })
-                })
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                    this.fetchUserProfiles();
-                    alert(`Profile ${profileName} was created successfully!`);
-                });
-            }
-        })
-        
-    }
-
-    createAccountApiCall = (event) => {
-        event.preventDefault();
-        const accountUsername = document.getElementById('accountUsername').value;
-        const accountEmail = document.getElementById('accountEmail').value;
-        const accountPassword = document.getElementById('accountPassword');
-        const activeStatus = document.getElementById('activeStatus').checked;
-        const accountProfile_id = document.getElementById('accountProfile_id').value;
-
-        
-        fetch('AdminLanding.php?action=UAExists', {
+        fetch('AdminCreateUPController.php?action=createProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ accountUsername })
+            body: JSON.stringify({ profileName, activeStatus, description })
         })
-        .then(response => response.json())
+        .then(response => response.text())
         .then(data => {
             console.log(data);
-            if (data['exists']) {
-                alert('Account already exists!');
-                return;
-            } else {
-                fetch('AdminLanding.php?action=createAccount', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
-                })
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                    this.fetchUserAccounts();
-                    alert(`Account ${accountUsername} was created successfully!`);
-                });
-            }
-        });
+            this.fetchUserProfiles();
+        })
     }
 
     profileExists = (profileName) => {
@@ -92,19 +40,8 @@ class AdminApi {
         return false; // Profile does not exist
     }
 
-    accountExists = (accountUsername) => {
-        const accounts = document.querySelectorAll('#accountList > div');
-        for (let i = 0; i < accounts.length; i++) {
-            const name = accounts[i].querySelector('span').textContent.trim();
-            if (name === accountUsername) {
-                return true; // Profile exists
-            }
-        }
-        return false; // Profile does not exist
-    }
-
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
-        fetch('AdminLanding.php?action=updateProfile', {
+        fetch('AdminUpdateUPController.php?action=updateProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,9 +55,9 @@ class AdminApi {
         })
         .catch(error => console.error('Error updating user profile:', error));
     }
-    //Suspend Profile
+
     suspendProfileApiCall = (profileId) => {
-        fetch('AdminLanding.php?action=suspendProfile', {
+        fetch('AdminSuspendUPController.php?action=suspendProfile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -141,29 +78,9 @@ class AdminApi {
         })
         .catch(error => console.error('Error suspending user profile:', error));
     }
-    //Suspend Account
-    suspendAccountApiCall = (accountId) => {
-        return fetch('AdminLanding.php?action=suspendAccount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ accountId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if(data.success) {
-                alert('Account suspended successfully');
-            } else {
-                alert('Failed to suspend account');
-            }
-        })
-        .catch(error => console.error('Error suspending user account:', error));
-    }
     
     fetchUserProfiles() {
-        fetch('AdminLanding.php?action=getProfiles')
+        fetch('AdminViewUPController.php?action=getProfiles')
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);
@@ -246,83 +163,15 @@ class AdminApi {
             }
         });
     }
-
-    fetchUserAccounts() {
-        fetch('AdminLanding.php?action=getAccounts')
-        .then(response => response.json())
-        .then(accounts => {
-            console.log(accounts);
-            const accountList = document.getElementById('accountList');
-            accountList.innerHTML = ''; // Clear previous content
-            accounts.forEach(account => {
-                // Create container for account information
-                const accountContainer = document.createElement('div');
-                
-                // Display account name
-                const accountName = document.createElement('span');
-                accountName.textContent = account.username + ' ';
-                accountContainer.appendChild(accountName);
-
-                // Display account email
-                const accountEmail = document.createElement('span');
-                accountEmail.textContent = account.email + ' ';
-                accountContainer.appendChild(accountEmail);
-
-                //Display account status 
-                const accountStatus =  document.createElement('span');
-                accountStatus.textContent = account.activeStatus == 1 ? 'Active' : 'Inactive';
-                accountContainer.appendChild(accountStatus);
-
-                //Create view button
-                const viewButton = document.createElement('button');
-                viewButton.textContent = 'View';
-                fetch(`AdminLanding.php?action=getProfileById&profile_id=${account.profile_id}`)
-                .then(response => response.json())
-                .then(profile => {
-                    viewButton.addEventListener('click', () => {
-                        viewAccount(account.username, account.email, account.password, account.activeStatus, profile.name);
-                    });
-                    accountContainer.appendChild(viewButton)
-                });
-
-                // Create edit button
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.addEventListener('click', () => {
-                    // Call displayUpdate function to display the form for updating profile
-                    displayUpdate(account.username, account.email, account.password, account.activeStatus, account.profile_id);
-                });
-                accountContainer.appendChild(editButton);
-
-                // Create suspend button
-                const suspendButton = document.createElement('button');
-                if (account.activeStatus != true) {
-                    suspendButton.classList.add("disable-btn");
-                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
-                }
-                suspendButton.textContent = 'Suspend';
-                suspendButton.addEventListener('click', () => {
-                    // Handle suspend functionality here
-                    if (confirm('Are you sure you want to suspend this profile?')) {
-                        this.suspendAccountApiCall(account.id);
-                        loadContent('AdminUA.php')
-                    }
-                });
-                accountContainer.appendChild(suspendButton);
-            
-                // Append account container to profile list
-                accountList.appendChild(accountContainer);
-            });
-        })
-        .catch(error => console.error('Error fetching user accounts:', error));
-    }
 };
 
 window.onload = function() {
     loadContent('AdminUP.php');
 };
 
-function displayCreateUP() {
+const admin = new AdminApi();
+
+function displayCreate() {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -330,11 +179,11 @@ function displayCreateUP() {
     Form.innerHTML = `
     <span class="close">&times;</span>
     <form id="UpForm">
-        <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
-        <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-        <br><label for="description">Description:</label><br>
-        <input type="text" id="description" name="description" placeholder="Description"><br>
-        <br><button id="SubmitUpForm" type="submit">Submit</button><br>
+    <br><input type="text" id="profileName" name="profileName" placeholder="Profile Name"><br>
+    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
+    <br><label for="description">Description:</label><br>
+    <input type="text" id="description" name="description" placeholder="Description"><br>
+    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
     </form>
     `;
     
@@ -357,62 +206,11 @@ function displayCreateUP() {
 
         // Call the create profile API function if validation passes
         admin.createProfileApiCall(event);
-        
+        alert(`Profile ${profileName} was created successfully!`)
         document.getElementById("myModal").style.display = "none";
     });
 
     modalFeatures();
-}
-
-function displayCreateUA() {
-    
-    fetch('AdminLanding.php?action=getProfiles')
-    .then(response => response.json())
-    .then(profiles => {
-        const Form = document.getElementById('modal-content');
-
-        Form.style.display = 'block';
-
-        // Create the select element for profiles
-        const profileSelect = document.createElement('select');
-        profileSelect.id = 'accountProfile_id';
-        profileSelect.name = 'accountProfile_id';
-        profileSelect.required = true;
-
-        // Iterate over fetched profiles and create options
-        profiles.forEach(profile => {
-            const option = document.createElement('option');
-            option.value = profile.id;
-            option.textContent = profile.name;
-            profileSelect.appendChild(option);
-        });
-
-        // Create other form elements
-        Form.innerHTML = `
-            <span class="close">&times;</span>
-            <form id="UpForm">
-                <br><input type="text" id="accountUsername" name="accountUsername" placeholder="Username" required><br>
-                <br><input type="email" id="accountEmail" name="accountEmail" placeholder="Email" required><br>
-                <br><input type="password" id="accountPassword" name="accountPassword" placeholder="Password" required><br>
-                <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-                <br><label for="accountProfile_id">Profile:</label><br>
-                ${profileSelect.outerHTML}<br> <!-- Append profileSelect -->
-                <br><button id="SubmitUpForm" type="submit">Submit</button><br>
-            </form>
-        `;
-
-        document.getElementById('UpForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
-
-            // Call the create account API function if validation passes
-            admin.createAccountApiCall(event);
-
-            document.getElementById("myModal").style.display = "none";
-        });
-
-        modalFeatures();
-    });
-
 }
 
 function viewProfile(id, name, activeStatus, description){
@@ -436,29 +234,7 @@ function viewProfile(id, name, activeStatus, description){
     modalFeatures();
 }
 
-function viewAccount(username, email, password, activeStatus, profile){
-    const Form = document.getElementById('modal-content');
-
-    const isActive = activeStatus == true;
-
-    Form.style.display = 'block';
-
-    Form.innerHTML = `
-    <span class="close">&times;</span>
-    <div class = "account-view">
-    <h2>Account Details</h2>
-    <p><strong>Username:</strong> ${username}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Password:</strong>${password}</p>
-    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
-    <p><strong>profile:</strong> ${profile}</p>
-    </div>
-    `;
-
-    modalFeatures();
-}
-
-function displayUpdateUP(profileId, profileName, activeStatus, description) {
+function displayUpdate(profileId, profileName, activeStatus, description) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -478,7 +254,7 @@ function displayUpdateUP(profileId, profileName, activeStatus, description) {
     // Store original values after populating the form
     const originalProfileName = document.getElementById('profileName').value; // Moved inside
     const activeStatusCheckbox = document.getElementById('activeStatus');
-    activeStatusCheckbox.checked = activeStatus == true;  // Set checked based on actual value
+    activeStatusCheckbox.checked = activeStatus;  // Set checked based on actual value
     const originalDescription = document.getElementById('description').value.trim(); // Use trim for description
     
     document.getElementById('UpForm').addEventListener('submit', function(event) {
@@ -540,37 +316,30 @@ function modalFeatures () {
     span.onclick = function() {
     modal.style.display = "none";
     }
+
+    // When the user clicks anywhere outside of the modal, close it
+    //window.onclick = function(event) {
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
     
 }
 
-const admin = new AdminApi();
-
-function initializeUP() {
-    admin.fetchUserProfiles();;
-
-    document.getElementById('createProfile').addEventListener('click', displayCreateUP);
+function initialize() {
+    admin.fetchUserProfiles();
+    document.getElementById('createProfile').addEventListener('click', displayCreate);
     document.getElementById('searchInput').addEventListener('input', admin.searchProfile);
-
-}
-
-function initializeUA() {
-    admin.fetchUserAccounts();
-
-    document.getElementById('createAccount').addEventListener('click', displayCreateUA);
 }
 
 
 function loadContent(page) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("UPUA").innerHTML = this.responseText;
-            if (page == 'AdminUP.php') {
-                initializeUP();
-            } else {
-                initializeUA();
-            }
-        }
+    if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("UPUA").innerHTML = this.responseText;
+        initialize();
+    }
     };
     xhttp.open("GET", page, true);
     xhttp.send();
