@@ -10,18 +10,11 @@ class AgentViewPropController {
         $this->entityU = new UserAccEntity();
     }
 
-    public function getAgentProperties($id) {
+    public function getAgentProperties($agent) {
         // Retrieve user profiles from the database
-        $properties = $this->entity->getAgentProperties($id);
+        $properties = $this->entity->getAgentProperties($agent);
 
         return $properties;
-    }
-
-    public function getSellerName($id) {
-        // Retrieve user profiles from the database
-        $seller = $this->entityU->findAccById($id);
-
-        return $seller;
     }
 
     public function getProperty($id) {

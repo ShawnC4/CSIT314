@@ -1,5 +1,5 @@
 <?php
-
+ session_start();
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Agent Page</title>
-    <script src="AgentLandingApi.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,4 +28,10 @@
         <h1 class="welcome-message">Welcome to the Property Agent Page!</h1>
     </div>
 </body>
+<script>
+    if (<?php echo isset($_SESSION['userID']) ? 'true' : 'false'; ?>) {
+        window.userID = "<?php echo $_SESSION['userID']; ?>";
+    }
+</script>
+<script src="AgentLandingApi.js"></script>
 </html>

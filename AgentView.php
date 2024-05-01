@@ -7,17 +7,11 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentProperties') {
 
-        //$properties = $agentViewPropController->getAgentProperties($_GET['agentId']);
-        $properties = $agentViewPropController->getAgentProperties(31);
+        $properties = $agentViewPropController->getAgentProperties($_GET['agentId']);
+        //$properties = $agentViewPropController->getAgentProperties('agent_1');
         header('Content-Type: application/json');
 
         echo json_encode($properties);
-        exit();
-    } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getSellerName') {
-        $seller = $agentViewPropController->getSellerName($_GET['sellerId']);
-        header('Content-Type: application/json');
-
-        echo json_encode($seller);
         exit();
     } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProperty') {
         $property = $agentViewPropController->getProperty($_GET['propertyId']);
@@ -82,8 +76,6 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <h1>Properties</h1>
     </div>
     <br>
-    <button id="createProperty">Create Property</button>
-    <br>
     <input type="text" id="searchProperty" placeholder="Search properties">
     <div id="myModal" class="modal">
         <!-- Modal content -->
@@ -109,10 +101,4 @@ body {font-family: Arial, Helvetica, sans-serif;}
         </table>
     </div>
 </body>
-<script>
-    if (<?php echo isset($_SESSION['userId'])?>) {
-        window.userId = "<?php echo $_SESSION['userId']; ?>";
-    }
-</script>
-<script src="AgentViewApi.js"></script>
 </html>
