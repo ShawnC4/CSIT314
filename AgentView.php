@@ -23,20 +23,25 @@
     <title>Agent View</title>
 </head>
 <body>
+    <div>
     <h1>Agent View</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Property Name</th>
-                <th>Seller ID</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="propertyList">
-            
-        </tbody>
-    </table>
+    </div>
+    <br>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property Name</th>
+                    <th>Seller ID</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="propertyList">
+                
+            </tbody>
+        </table>
+    </div>
 </body>
 <script>
     window.userId = "<?php echo $_SESSION['userId']; ?>";
