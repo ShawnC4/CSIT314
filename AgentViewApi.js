@@ -25,6 +25,11 @@ class AgentViewApi {
                     usernameCell.textContent = seller.username;
                     row.appendChild(usernameCell);
 
+                    //location
+                    const locationCell = document.createElement('td');
+                    locationCell.textContent = property.location;
+                    row.appendChild(locationCell);
+
                     //price
                     const priceCell = document.createElement('td');
                     priceCell.textContent = property.price;
@@ -106,10 +111,12 @@ class AgentViewApi {
         // Iterate over each profile container
         propertyContainers.forEach(container => {
             // Get text content of profile name within container and convert it to lowercase
-            const propertyName = container.querySelector('td').textContent.toLowerCase();
+            const propertyName = container.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            const propertyLocation = container.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const propertyPrice = container.querySelector('td:nth-child(4)').textContent.toLowerCase();
 
             // Check if profile name includes search input
-            if (propertyName.includes(searchInput)) {
+            if (propertyName.includes(searchInput) || propertyLocation.includes(searchInput) || propertyPrice.includes(searchInput)){
 
                 // display container if profile name includes search input
                 container.style.visibility = 'visible';
@@ -142,6 +149,8 @@ const agentViewApi = new AgentViewApi();
 
 function initialize() {
     agentViewApi.getAgentProperties();
+
+    document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
 }
 
 window.onload = initialize();
