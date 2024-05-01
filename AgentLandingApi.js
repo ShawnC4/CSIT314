@@ -6,11 +6,13 @@ function loadContent(page) {
             var element = document.querySelector(".body"); // Change to the appropriate selector
             if (element !== null) {
                 element.innerHTML = this.responseText;
-
-                var script = document.createElement('script');
-                script.src = 'AgentViewApi.js'; // The path to the AgentView.js file
-                script.type = 'text/javascript';
-                document.body.appendChild(script);
+                
+                if (page === 'AgentView.php' && typeof AgentViewApi === 'undefined') {
+                    var script = document.createElement('script');
+                    script.src = 'AgentViewApi.js';
+                    script.type = 'text/javascript';
+                    document.body.appendChild(script);
+                }
             } else {
                 console.error("Element not found.");
             }
