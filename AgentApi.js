@@ -57,6 +57,38 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching properties:', error));
     }
 
+    getAgentRatings() {
+        fetch(`AgentRating.php?action=getAgentRatings&agentId=${window.userID}`)
+        .then(response => response.json())
+        .then(ratings => {
+            console.log(ratings);
+            const ratingList = document.getElementById('ratingList');
+            ratingList.innerHTML = '';
+            ratings.forEach(rating => {
+                const ratingDiv = document.createElement('div');
+                ratingDiv.classList.add('rating');
+                const userP = document.createElement('p');
+                userP.classList.add('user');
+                userP.textContent = rating.customer_id;
+                ratingDiv.appendChild(userP);
+                const scoreP = document.createElement('p');
+                scoreP.classList.add('score');
+                scoreP.textContent = `Rating: ${rating.rating}`;
+                ratingDiv.appendChild(scoreP);
+                ratingList.appendChild(ratingDiv);
+            });
+
+            // Calculate average rating
+            const totalRatings = ratings.length;
+            const totalScore = ratings.reduce((sum, rating) => sum + parseInt(rating.rating), 0);
+            const averageRating = totalScore / totalRatings;
+            // Append average rating to element
+            const avgRatingElement = document.getElementById('AvgRating');
+            avgRatingElement.textContent = `${averageRating.toFixed(2)} out of 5 stars`;
+        })
+        .catch(error => console.error('Error fetching ratings:', error));
+    }
+
     viewProperty(propertyId) {
         fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
         .then(response => response.json())
@@ -136,6 +168,10 @@ function initializeView() {
     document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
 }
 
+function initializeRating() {
+    agentViewApi.getAgentRatings();
+}
+
 window.onload = () => {
     loadContent('AgentView.php');
 }
@@ -151,6 +187,8 @@ function loadContent(page) {
                 
                 if (page === 'AgentView.php') {
                     initializeView();
+                } else if (page === "AgentRating.php") {
+                    initializeRating();
                 }
             } else {
                 console.error("Element not found.");
