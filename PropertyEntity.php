@@ -30,10 +30,10 @@ class PropertyEntity {
         return $property;
     }
 
-    public function getAgentProperties($id) {
+    public function getAgentProperties($agent) {
         $properties = array(); 
 
-        $sql = "SELECT * FROM property WHERE agent_id = $id";
+        $sql = "SELECT * FROM property WHERE agent_id = '$agent'";
 
         $result = $this->conn->query($sql);
 

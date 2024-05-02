@@ -23,7 +23,7 @@ class LoginController {
             if ($userA->isActive()) {
                 $userP = $this->entityP->findProfileById($userA->getProfileId());
                 if ($userP && $userP->isActive()) {
-                    $_SESSION['userID'] = $userA->getId();
+                    $_SESSION['userID'] = $userA->getUsername();
                     return ["success" => true];
                 } else {
                     return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];

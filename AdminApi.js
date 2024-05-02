@@ -45,7 +45,7 @@ class AdminApi {
         event.preventDefault();
         const accountUsername = document.getElementById('accountUsername').value;
         const accountEmail = document.getElementById('accountEmail').value;
-        const accountPassword = document.getElementById('accountPassword');
+        const accountPassword = document.getElementById('accountPassword').value;
         const activeStatus = document.getElementById('activeStatus').checked;
         const accountProfile_id = document.getElementById('accountProfile_id').value;
 
@@ -59,7 +59,6 @@ class AdminApi {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             if (data['exists']) {
                 alert('Account already exists!');
                 return;
@@ -73,34 +72,11 @@ class AdminApi {
                 })
                 .then(response => response.text())
                 .then(data => {
-                    console.log(data);
                     this.fetchUserAccounts();
                     alert(`Account ${accountUsername} was created successfully!`);
                 });
             }
         });
-    }
-
-    profileExists = (profileName) => {
-        const profiles = document.querySelectorAll('#profileList > div');
-        for (let i = 0; i < profiles.length; i++) {
-            const name = profiles[i].querySelector('span').textContent.trim();
-            if (name === profileName) {
-                return true; // Profile exists
-            }
-        }
-        return false; // Profile does not exist
-    }
-
-    accountExists = (accountUsername) => {
-        const accounts = document.querySelectorAll('#accountList > div');
-        for (let i = 0; i < accounts.length; i++) {
-            const name = accounts[i].querySelector('span').textContent.trim();
-            if (name === accountUsername) {
-                return true; // Profile exists
-            }
-        }
-        return false; // Profile does not exist
     }
 
     updateProfileApiCall = (profileId, profileName, activeStatus, description) => {
@@ -119,13 +95,13 @@ class AdminApi {
         .catch(error => console.error('Error updating user profile:', error));
     }
 
-    updateAccountApiCall = (username, email, password, activeStatus, id) => {
+    updateAccountApiCall = (username, email, password, activeStatus, profile_id) => {
         fetch('AdminLanding.php?action=updateAccount', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, email, password, activeStatus, id })
+            body: JSON.stringify({ username, email, password, activeStatus, profile_id })
         })
         .then(response => response.json())
         .then(data => {
@@ -172,6 +148,7 @@ class AdminApi {
             console.log(data);
             if(data.success) {
                 alert('Account suspended successfully');
+				loadContent('AdminUA.php');
             } else {
                 alert('Failed to suspend account');
             }
@@ -213,15 +190,15 @@ class AdminApi {
                 editButton.textContent = 'Edit';
                 editButton.addEventListener('click', () => {
                     // Call displayUpdate function to display the form for updating profile
-                    displayUpdate(profile.id, profile.name, profile.activeStatus, profile.description);
+                    displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
                 });
                 profileContainer.appendChild(editButton);
 
                 // Create suspend button
                 const suspendButton = document.createElement('button');
                 if (profile.activeStatus != true) {
-                    suspendButton.classList.add("disable-btn");
-                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
+                    //suspendButton.classList.add("disable-btn");
+                    suspendButton.disabled = true;  // Disables the button, preventing user interaction  
                 }
                 suspendButton.textContent = 'Suspend';
                 suspendButton.addEventListener('click', () => {
@@ -268,14 +245,10 @@ class AdminApi {
                 //Create view button
                 const viewButton = document.createElement('button');
                 viewButton.textContent = 'View';
-                fetch(`AdminLanding.php?action=getProfileById&profile_id=${account.profile_id}`)
-                .then(response => response.json())
-                .then(profile => {
-                    viewButton.addEventListener('click', () => {
-                        viewAccount(account.username, account.email, account.password, account.activeStatus, profile.name);
-                    });
-                    accountContainer.appendChild(viewButton)
+				viewButton.addEventListener('click', () => {
+                    viewAccount(account.username, account.email, account.password, account.activeStatus, account.profile_id);
                 });
+				accountContainer.appendChild(viewButton);
 
                 // Create edit button
                 const editButton = document.createElement('button');
@@ -289,15 +262,13 @@ class AdminApi {
                 // Create suspend button
                 const suspendButton = document.createElement('button');
                 if (account.activeStatus != true) {
-                    suspendButton.classList.add("disable-btn");
-                    //suspendButton.disabled = true;  // Disables the button, preventing user interaction  
+                    suspendButton.disabled = true; // Disables the button, preventing user interaction  
                 }
                 suspendButton.textContent = 'Suspend';
                 suspendButton.addEventListener('click', () => {
                     // Handle suspend functionality here
                     if (confirm('Are you sure you want to suspend this profile?')) {
-                        this.suspendAccountApiCall(account.id);
-                        loadContent('AdminUA.php')
+                        this.suspendAccountApiCall(account.username);
                     }
                 });
                 accountContainer.appendChild(suspendButton);
@@ -478,26 +449,31 @@ function viewProfile(id, name, activeStatus, description){
     modalFeatures();
 }
 
-function viewAccount(username, email, password, activeStatus, profile){
-    const Form = document.getElementById('modal-content');
+function viewAccount(username, email, password, activeStatus, profile_id){
+    fetch(`AdminLanding.php?action=getProfileById&profile_id=${profile_id}`)
+	.then(response => response.json())
+	.then(profile => {
+		
+		const Form = document.getElementById('modal-content');
 
-    const isActive = activeStatus == true;
+		const isActive = activeStatus == true;
 
-    Form.style.display = 'block';
+		Form.style.display = 'block';
 
-    Form.innerHTML = `
-    <span class="close">&times;</span>
-    <div class = "account-view">
-    <h2>Account Details</h2>
-    <p><strong>Username:</strong> ${username}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Password:</strong>${password}</p>
-    <p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
-    <p><strong>profile:</strong> ${profile}</p>
-    </div>
-    `;
+		Form.innerHTML = `
+		<span class="close">&times;</span>
+		<div class = "account-view">
+		<h2>Account Details</h2>
+		<p><strong>Username:</strong> ${username}</p>
+		<p><strong>Email:</strong> ${email}</p>
+		<p><strong>Password:</strong>${password}</p>
+		<p><strong>Status:</strong> ${isActive ? 'Active' : 'Inactive'}</p>
+		<p><strong>profile:</strong> ${profile.name}</p>
+		</div>
+		`;
 
-    modalFeatures();
+		modalFeatures();
+	});
 }
 
 function displayUpdateUP(profileId, profileName, activeStatus, description) {
@@ -569,79 +545,94 @@ function displayUpdateUP(profileId, profileName, activeStatus, description) {
     modalFeatures();
 }
 
-function displayUpdateUA(username, email, password, activeStatus, id) {
+function displayUpdateUA(username, email, password, activeStatus, profile_id) {
 
-    const Form = document.getElementById('modal-content');
-    
-    Form.style.display = 'block';
-    
-    Form.innerHTML = `
-    <span class="close">&times;</span>
-    <form id="UpForm">
-    <h2>Edit Account</h2>
-    <input type="text" id="id" name="id" value="${id}">
-    <br><label><input type="text" id="username" name="username" value="${username}" placeholder="Account Name">Username</label><br>
-    <br><label><input type="email" id="email" name="email" value="${email}" placeholder="Email">Email</label><br>
-    <br><label><input type="text" id="password" name="password" value="${password}" placeholder="Password">Password</label><br>
-    <br><label><input type="checkbox" id="activeStatus" name="activeStatus">Active Status</label><br>
-    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
-    </form>
-    `;
-    
-    // Store original values after populating the form
-    const originalUsername = document.getElementById('username').value;
-    const activeStatusCheckbox = document.getElementById('activeStatus');
-    activeStatusCheckbox.checked = activeStatus == true;
-    const originalPassword = document.getElementById('password').value;
-    
-    document.getElementById('UpForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const updatedId = document.getElementById('id').value;
-        const updatedUsername = document.getElementById('username').value;
-        const updatedActiveStatus = document.getElementById('activeStatus').checked;
-        const updatedEmail = document.getElementById('email').value;
-        const updatedPassword = document.getElementById('password').value;
-    
-        // Check if any information was edited
-        if (updatedUsername.trim() === originalUsername.trim() && activeStatusCheckbox === updatedActiveStatus &&
-            originalEmail.trim() === updatedEmail.trim() && originalPassword === updatedPassword) {
-                alert("Nothing was changed");
-                return;
-        }
+    fetch(`AdminLanding.php?action=updateGetProfile`)
+	.then(response => response.json())
+    .then(profiles => {
+        const Form = document.getElementById('modal-content');
 
-        // Add empty field checks
-        if (updatedUsername.trim() === '') {
-            alert("Username cannot be empty");
-            return;
-        } 
-        
-        else if (updatedEmail.trim() === '') {
-            alert("Email cannot be empty");
-            return;
-        }
+        Form.style.display = 'block';
 
-        else if (updatedPassword.trim() === '') {
-            alert("Password cannot be empty");
-            return;
-        }
-        
-        else {
-                // If validation passes, proceed with confirmation popup
-                const confirmation = confirm(`Are you sure you want to update ${originalUsername}'s details?`);
-                if (confirmation) {
-                // Call the update account API function
-                admin.updateAccountApiCall(updatedUsername, updatedEmail, updatedPassword, updatedActiveStatus, updatedId);
-                document.getElementById("myModal").style.display = "none";
-                }
-            }
+        // Create the select element for profiles
+        const profileSelect = document.createElement('select');
+        profileSelect.id = 'accountProfile_id';
+        profileSelect.name = 'accountProfile_id';
+        profileSelect.required = true;
+
+        // Iterate over fetched profiles and create options
+        profiles.forEach(profile => {
+            const option = document.createElement('option');
+            option.value = profile.id;
+            option.textContent = profile.name;
+			if (profile.id == profile_id){
+				option.id = "selectProfile";
+			}
+            profileSelect.appendChild(option);
         });
 
-    document.getElementById('SubmitUpForm').addEventListener('click', () => {
-        document.getElementById("myModal").style.display = "none";
+        // Create other form elements
+        Form.innerHTML = `
+            <span class="close">&times;</span>
+            <form id="UpForm">
+				<br><label for="username">Username: </label>
+				<input type="text" id="username" name="username" value="${username}" placeholder="Account Name"><br>
+				<br><label for="email">Email: </label>
+				<input type="email" id="email" name="email" value="${email}" placeholder="Email"><br>
+				<br><label for="password">Password: </label>
+				<input type="text" id="password" name="password" value="${password}" placeholder="Password"><br>
+				<br><label for="activeStatus">Active Status:</label><br>
+				<input type="checkbox" id="activeStatus" name="activeStatus"><br>
+				<br><label for="accountProfile_id">Profile:</label><br>
+                ${profileSelect.outerHTML}<br> <!-- Append profileSelect -->
+				<br><button id="SubmitUpForm" type="submit">Submit</button><br>
+            </form>
+        `;
+
+        // Store original values after populating the form
+		const originalUsername = document.getElementById('username').value;
+		const activeStatusCheckbox = document.getElementById('activeStatus');
+		activeStatusCheckbox.checked = activeStatus == true;
+		document.getElementById('selectProfile').selected = true;
+		
+		document.getElementById('UpForm').addEventListener('submit', function(event) {
+			event.preventDefault();
+			const updatedUsername = document.getElementById('username').value;
+			const updatedEmail = document.getElementById('email').value;
+			const updatedPassword = document.getElementById('password').value;
+			const updatedActiveStatus = document.getElementById('activeStatus').checked;
+			const updatedRole = document.getElementById('accountProfile_id').value;
+
+			// Add empty field checks
+			if (updatedUsername.trim() === '') {
+				alert("Username cannot be empty");
+				return;
+			} 
+			
+			else if (updatedEmail.trim() === '') {
+				alert("Email cannot be empty");
+				return;
+			}
+
+			else if (updatedPassword.trim() === '') {
+				alert("Password cannot be empty");
+				return;
+			}
+			
+			else {
+					// If validation passes, proceed with confirmation popup
+					const confirmation = confirm(`Are you sure you want to update ${originalUsername}'s details?`);
+					if (confirmation) {
+					// Call the update account API function
+					admin.updateAccountApiCall(updatedUsername, updatedEmail, updatedPassword, updatedActiveStatus, updatedRole);
+					document.getElementById("myModal").style.display = "none";
+					}
+				}
+			});
+
+		modalFeatures();
     });
-
-    modalFeatures();
-
+	
 }
 
 function modalFeatures () {

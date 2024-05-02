@@ -1,7 +1,7 @@
 <?php
-class UserProfile {
+class UserProfile implements JsonSerializable{
 
-    public $id, $name, $activeStatus, $description;
+    private $id, $name, $activeStatus, $description;
 
     public function __construct($id, $name, $activeStatus, $description) {
         $this->id = $id;
@@ -25,5 +25,14 @@ class UserProfile {
     public function getDescription () {
         return $this->description;
     }
+	
+	public function jsonSerialize() {
+		return array(
+			'id' => $this->getId(),
+			'name' => $this->getName(),
+			'activeStatus' => $this->isActive(),
+			'description' => $this->getDescription()
+		);
+	}
 }
 ?>

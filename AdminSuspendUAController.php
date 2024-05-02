@@ -9,8 +9,8 @@ class AdminSuspendUAController {
         $this->entity = new UserAccEntity();
     }
 
-    public function suspendAccount($accountId) {
-        return $this->entity->suspendUserAccount($accountId);
+    public function suspendAccount($username) {
+        return $this->entity->suspendUserAccount($username);
     }
 }
 
