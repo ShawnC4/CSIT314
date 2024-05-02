@@ -33,5 +33,5 @@
         window.userID = "<?php echo $_SESSION['userID']; ?>";
     }
 </script>
-<script src="AgentLandingApi.js"></script>
+<script src="AgentApi.js"></script>
 </html>

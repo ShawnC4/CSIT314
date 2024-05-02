@@ -130,10 +130,33 @@ function modalFeatures () {
 
 const agentViewApi = new AgentViewApi();
 
-function initialize() {
+function initializeView() {
     agentViewApi.getAgentProperties();
 
     document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
 }
 
-window.onload = initialize();
+window.onload = () => {
+    loadContent('AgentView.php');
+}
+
+function loadContent(page) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Attempt to set the innerHTML property of an element
+            var element = document.querySelector(".body"); // Change to the appropriate selector
+            if (element !== null) {
+                element.innerHTML = this.responseText;
+                
+                if (page === 'AgentView.php') {
+                    initializeView();
+                }
+            } else {
+                console.error("Element not found.");
+            }
+        }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}
