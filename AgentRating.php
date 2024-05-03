@@ -1,3 +1,20 @@
+<?php
+    session_start();
+    require_once 'AgentRatingController.php';
+
+    //VIEW//
+    $agentRatingController = new AgentRatingController();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentRatings') {
+
+        $ratings = $agentRatingController->getAgentRatings($_GET['agentId']);
+        header('Content-Type: application/json');
+
+        echo json_encode($ratings);
+        exit();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,22 +30,12 @@
 
         <div class="overall-rating">
             <h2>Overall Rating</h2>
-            <p>4.5 out of 5 stars</p> <!-- Example rating, you can fetch this dynamically -->
+            <p id="AvgRating"></p> 
         </div>
 
-        <div class="top-agents">
-            <h2>Top Agents</h2>
-            <div class="agent">
-                <p>Agent ABC</p> <!-- Example agent name -->
-                <p>Rating: 4.8</p> <!-- Example rating -->
-                <p>Total Sales: 50</p> <!-- Example total sales -->
-            </div>
-            <div class="agent">
-                <p>Agent XYZ</p> <!-- Example agent name -->
-                <p>Rating: 4.6</p> <!-- Example rating -->
-                <p>Total Sales: 45</p> <!-- Example total sales -->
-            </div>
-            <!-- Add more agents as needed -->
+        <h2>Ratings</h2>
+        <div id="ratingList">
+            
         </div>
     </div>
 </body>
