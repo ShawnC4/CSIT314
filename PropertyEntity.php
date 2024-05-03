@@ -61,5 +61,47 @@ class PropertyEntity {
         return $properties;
     }
 
+    // Update Property
+    public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
+        // Bind parameters
+        $stmt->bind_param("ssiidssss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Property creation successful
+            return true;
+        } else {
+            // Property creation failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
+    // Update Property
+    public function updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("UPDATE property SET name = ?, type = ?, size = ?, rooms = ?, price = ?, location = ?, status, seller_id = ?, agent_id = ? WHERE id = ?");
+        
+        // Bind parameters
+        $stmt->bind_param("ssiidssssi", $name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Property update successful
+            return true;
+        } else {
+            // Property update failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
 }
 ?>
