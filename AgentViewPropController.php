@@ -17,6 +17,10 @@ class AgentViewPropController {
         return $properties;
     }
 
+    public function deleteProperty($propertyId){
+        return $this->entity->deleteProperty($propertyId);
+    }
+
     public function getProperty($id) {
         // Retrieve user profiles from the database
         $property = $this->entity->getPropertyById($id);

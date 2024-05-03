@@ -8,20 +8,7 @@ class PropertyEntity {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
     }
-    public function deleteProperty($propertyId) {
-        $sql = "DELETE FROM properties WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $propertyId);
-
-        if ($stmt->execute()) {
-            $stmt->close();
-            return true;
-        } else {
-            $stmt->close();
-            return false;
-        }
-    }
-
+    
     public function getPropertyById($id) {
         $stmt = $this->conn->prepare("SELECT * FROM property WHERE id = ?");
         $stmt->bind_param("i", $id);
@@ -72,6 +59,24 @@ class PropertyEntity {
         }
 
         return $properties;
+    }
+
+    public function deleteProperty($propertyId) {
+        $sql = "DELETE FROM property WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            throw new Exception("Unable to prepare statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("i", $propertyId);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            return true; // Return true if the deletion was successful
+        } else {
+            $stmt->close();
+            return false; // Return false if the deletion failed
+        }
     }
     
 }

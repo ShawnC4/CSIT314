@@ -2,7 +2,6 @@ class AgentViewApi {
     constructor() {
 
     }
-     
     getAgentProperties() {
         fetch(`AgentView.php?action=getAgentProperties&agentId=${window.userID}`)
         .then(response => response.json())
@@ -13,6 +12,7 @@ class AgentViewApi {
             properties.forEach(property => {
                 //name
                 const row = document.createElement('tr');
+                row.id = `property-row-${property.id}`;
                 const nameCell = document.createElement('td');
                 nameCell.textContent = property.name;
                 row.appendChild(nameCell);
@@ -47,7 +47,9 @@ class AgentViewApi {
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.addEventListener('click', () => {
-                    deleteProperty(property.id);
+                    if (confirm('Are you sure you want to delete this property ?')){
+                        this.deleteProperty(property.id,row);
+                    }
                 });
                 buttonCell.appendChild(deleteButton);
                 row.appendChild(buttonCell);
@@ -80,8 +82,30 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching property:', error));
     }
 
-
-
+    //Delete Property function
+    deleteProperty(propertyId) {  
+        fetch(`AgentView.php?action=deleteProperty&propertyId=${propertyId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ propertyId: propertyId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Property deleted successfully');
+                const row = document.getElementById(`property-row-${propertyId}`);
+                if (row) {
+                    row.remove(); // Remove the row from the table
+                }
+            } else {
+                alert('Failed to delete property');
+            }
+        })
+        .catch(error => console.error('Error deleting property:', error));
+    }
+        
 
     //SEARCH
     searchEngineProperty = () => {
