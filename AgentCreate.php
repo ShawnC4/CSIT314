@@ -39,30 +39,3 @@
     </div>
 </body>
 </html>
-
-<script>
-createAgentProperty = (event) => {
-        event.preventDefault();
-        const propertyName = document.getElementById('name').value;
-        const propertyType = document.getElementById('type').value;
-        const propertySize = document.getElementById('sqfeet').value;
-        const propertyRooms = document.getElementById('rooms').value;
-        const propertyPrice = document.getElementById('price').value;
-        const propertyLocation = document.getElementById('location').value;
-        const propertySeller = document.getElementById('seller').value;
-        const propertyAgent
-    
-        fetch('AgentView.php?action=createProperty', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ accountUsername, accountEmail, accountPassword, activeStatus, accountProfile_id })
-        })
-        .then(response => response.text())
-        .then(data => {
-            this.fetchUserAccounts();
-            alert(`Account ${accountUsername} was created successfully!`);
-        });
-    }
-</script>

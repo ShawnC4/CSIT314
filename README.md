@@ -145,6 +145,8 @@ CREATE TABLE property (
     price DECIMAL(10, 2) NOT NULL,
     location VARCHAR(100) NOT NULL,
     status ENUM('sold', 'available') NOT NULL,
+    image VARCHAR(255) NOT NULL,
+    views INT NOT NULL,
     seller_id VARCHAR(50),
     agent_id VARCHAR(50),
     FOREIGN KEY (seller_id) REFERENCES user_accounts(username),
@@ -152,39 +154,77 @@ CREATE TABLE property (
 );
 
 -- Insert properties for Agent 1
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'seller_2', 'agent_1'),
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'seller_1', 'agent_1'),
-    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'seller_3', 'agent_1'),
-    ('Property 2', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'seller_5', 'agent_1'),
-    ('Property 4', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'seller_3', 'agent_1');
+    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_1'),
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_1'),
+    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1'),
+    ('Property 2', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_1'),
+    ('Property 4', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1');
 
 -- Insert properties for Agent 2
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'seller_1', 'agent_2'),
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'seller_3', 'agent_2'),
-    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'seller_2', 'agent_2');
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_2'),
+    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_2'),
+    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_2');
 
 -- Insert properties for Agent 3
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'seller_4', 'agent_3'),
-    ('Property 2', 'GCB', 150, 2, 50000000.00, 'Location C', 'sold', 'seller_2', 'agent_3');
+    ('Property 1', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3'),
+    ('Property 2', 'GCB', 150, 2, 50000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_3');
 
 -- Insert properties for Agent 4
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'seller_4', 'agent_4'),
-    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'seller_4', 'agent_4'),
-    ('Property 3', 'HDB', 150, 2, 180000.00, 'Location C', 'sold', 'seller_3', 'agent_4');
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4'),
+    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4'),
+    ('Property 3', 'HDB', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_4');
 
 -- Insert properties for Agent 5
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'seller_3', 'agent_5'),    
-    ('Property 2', 'HDB', 300, 5, 550000.00, 'Location A', 'available', 'seller_5', 'agent_5'),
-    ('Property 3', 'HDB', 100, 3, 200000.00, 'Location B', 'available', 'seller_1', 'agent_5'),
-    ('Property 4', 'Condo', 200, 4, 250000.00, 'Location B', 'available', 'seller_2', 'agent_5'),
-    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'seller_1', 'agent_5');
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_5'),    
+    ('Property 2', 'HDB', 300, 5, 550000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_5'),
+    ('Property 3', 'HDB', 100, 3, 200000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5'),
+    ('Property 4', 'Condo', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_5'),
+    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5');
+    
+CREATE TABLE shortlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    buyer_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (property_id) REFERENCES property(id),
+    FOREIGN KEY (buyer_id) REFERENCES user_accounts(username),
+    UNIQUE KEY(property_id, buyer_id) -- Ensures each property is shortlisted only once by each buyer
+);
+
+-- Insert into shortlist table
+INSERT INTO shortlist (property_id, buyer_id)
+VALUES
+    (1, 'buyer_1'),
+    (1, 'buyer_4'),
+    (2, 'buyer_2'),
+    (2, 'buyer_4'),
+    (3, 'buyer_5'),
+    (3, 'buyer_1'),
+    (4, 'buyer_3'),
+    (4, 'buyer_2'),
+    (5, 'buyer_3'),
+    (5, 'buyer_5'),
+    (6, 'buyer_1'),
+    (6, 'buyer_4'),
+    (7, 'buyer_2'),
+    (7, 'buyer_4'),
+    (8, 'buyer_5'),
+    (8, 'buyer_1'),
+    (9, 'buyer_3'),
+    (9, 'buyer_2'),
+    (10, 'buyer_3'),
+    (10, 'buyer_5'),
+    (12, 'buyer_4'),
+    (18, 'buyer_1'),
+    (16, 'buyer_3'),
+    (13, 'buyer_2'),
+    (14, 'buyer_5');

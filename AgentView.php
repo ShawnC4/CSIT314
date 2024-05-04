@@ -20,7 +20,7 @@
         $Agent_id = $requestData['agent_id'];
         
         $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
-    
+
         // Send JSON response
         header('Content-Type: application/json');
         echo json_encode($response);
@@ -58,19 +58,38 @@
         $price = $requestData['price'];
         $location = $requestData['location'];
         $status = $requestData['status'];
+        $image = $requestData['image'];
+        $views = $requestData['views'];
         $seller_id = $requestData['seller_id'];
         $agent_id = $requestData['agent_id'];
         $id = $requestData['id'];
         
-        $response = $agentUpdatePropController->updateProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
+        $response = $agentUpdatePropController->updateProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id);
 
         // Send JSON response
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
     }
-
-
+    
+    //DELETE//
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'deleteProperty') {
+        // Get the body of the POST request
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true); // Convert JSON string into a PHP array
+    
+        if (isset($data['propertyId'])) {
+            $propertyId = $data['propertyId'];
+            $result = $agentViewPropController->deleteProperty($propertyId);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => $result]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Property ID is missing']);
+        }
+        exit();
+    }
+    
+    
 ?>
 
 <!DOCTYPE html>

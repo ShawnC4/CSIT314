@@ -15,5 +15,9 @@ class DBconn {
     public function getConn () {
         return $this->conn;
     }
+
+    public function closeConn() {
+        mysqli_close($this->conn);
+    }
 }
 ?>

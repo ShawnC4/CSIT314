@@ -1,8 +1,7 @@
-class AgentViewApi {
+class AgentApi {
     constructor() {
 
     }
-     
     getAgentProperties() {
         fetch(`AgentView.php?action=getAgentProperties&agentId=${window.userID}`)
         .then(response => response.json())
@@ -13,6 +12,7 @@ class AgentViewApi {
             properties.forEach(property => {
                 //name
                 const row = document.createElement('tr');
+                row.id = `property-row-${property.id}`;
                 const nameCell = document.createElement('td');
                 nameCell.textContent = property.name;
                 row.appendChild(nameCell);
@@ -40,14 +40,16 @@ class AgentViewApi {
                 const updateButton = document.createElement('button');
                 updateButton.textContent = 'Update';
                 updateButton.addEventListener('click', () => {
-                    displayUpdateProperty(property.name, property.type, property.size, property.rooms, property.price, property.location, property.status, property.seller_id, property.agent_id, property.id);
+                    displayUpdateProperty(property.name, property.type, property.size, property.rooms, property.price, property.location, property.status, property.image, property.views, property.seller_id, property.agent_id, property.id);
                 });
                 buttonCell.appendChild(updateButton);
                 //delete button
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.addEventListener('click', () => {
-                    deleteProperty(property.id);
+                    if (confirm('Are you sure you want to delete this property ?')){
+                        this.deleteProperty(property.id,row);
+                    }
                 });
                 buttonCell.appendChild(deleteButton);
                 row.appendChild(buttonCell);
@@ -57,6 +59,66 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching properties:', error));
     }
 
+    getAgentRatings() {
+        fetch(`AgentRating.php?action=getAgentRatings&agentId=${window.userID}`)
+        .then(response => response.json())
+        .then(ratings => {
+            console.log(ratings);
+            const ratingList = document.getElementById('ratingList');
+            ratingList.innerHTML = '';
+            ratings.forEach(rating => {
+                const ratingDiv = document.createElement('div');
+                ratingDiv.classList.add('rating');
+                const userP = document.createElement('p');
+                userP.classList.add('user');
+                userP.textContent = rating.customer_id;
+                ratingDiv.appendChild(userP);
+                const scoreP = document.createElement('p');
+                scoreP.classList.add('score');
+                scoreP.textContent = `Rating: ${rating.rating}`;
+                ratingDiv.appendChild(scoreP);
+                ratingList.appendChild(ratingDiv);
+            });
+
+            // Calculate average rating
+            const totalRatings = ratings.length;
+            const totalScore = ratings.reduce((sum, rating) => sum + parseInt(rating.rating), 0);
+            const averageRating = totalScore / totalRatings;
+            // Append average rating to element
+            const avgRatingElement = document.getElementById('AvgRating');
+            avgRatingElement.textContent = `${averageRating.toFixed(2)} out of 5 stars`;
+        })
+        .catch(error => console.error('Error fetching ratings:', error));
+    }
+
+    //Agent Review 
+    getAgentReviews() {
+        fetch(`AgentReview.php?action=getAgentReviews&agentId=${window.userID}`)
+        .then(response => response.json())
+        .then(reviews => {
+            console.log(reviews);
+            const reviewList = document.getElementById('reviewList'); // Make sure 'reviewList' is the correct ID in your HTML
+            reviewList.innerHTML = '';
+            reviews.forEach(review => {
+                const reviewDiv = document.createElement('div');
+               // reviewDiv.classList.add('review'); // 
+    
+                const userP = document.createElement('p');
+                userP.classList.add('user');
+                userP.textContent = review.customer_id; // 
+                reviewDiv.appendChild(userP);
+    
+                const reviewP = document.createElement('p');
+                //reviewP.classList.add('review-text'); //
+                reviewP.textContent = `Review: ${review.review}`; // 
+                reviewDiv.appendChild(reviewP);
+    
+                reviewList.appendChild(reviewDiv);
+            });
+        })
+        .catch(error => console.error('Error fetching reviews:', error));
+    }
+    
     viewProperty(propertyId) {
         fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
         .then(response => response.json())
@@ -80,13 +142,38 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching property:', error));
     }
 
-    updateAgentProperty = (name, type, size, rooms, price, location, status, seller_id, agent_id, id) => {
+    //Delete Property function
+    deleteProperty(propertyId) {  
+        fetch(`AgentView.php?action=deleteProperty&propertyId=${propertyId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ propertyId: propertyId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Property deleted successfully');
+                const row = document.getElementById(`property-row-${propertyId}`);
+                if (row) {
+                    row.remove(); // Remove the row from the table
+                }
+            } else {
+                alert('Failed to delete property');
+            }
+        })
+        .catch(error => console.error('Error deleting property:', error));
+    }
+
+    //UPDATE//
+    updateAgentProperty = (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id) => {
         fetch('AgentView.php?action=updateProperty', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name, type, size, rooms, price, location, status, seller_id, agent_id, id })
+            body: JSON.stringify({ name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id })
         })
         .then(response => response.text())
         .then(data => {
@@ -95,22 +182,22 @@ class AgentViewApi {
         })
         .catch(error => console.error('Error updating property:', error));
     }
-
-    //SEARCH
+    
+    //SEARCH//
     searchEngineProperty = () => {
         // Get value entered in search input field and convert it to lowercase
         const searchInput = document.getElementById('searchProperty').value.toLowerCase();
-    
+
         // Select all profile containers
         const propertyContainers = document.querySelectorAll('#propertyList > tr');
-    
+
         // Iterate over each profile container
         propertyContainers.forEach(container => {
             // Get text content of name, seller, and location within container and convert it to lowercase
             const propertyName = container.querySelector('td:nth-child(1)').textContent.toLowerCase();
             const sellerName = container.querySelector('td:nth-child(2)').textContent.toLowerCase();
             const propertyLocation = container.querySelector('td:nth-child(3)').textContent.toLowerCase();
-    
+
             // Check if name, seller, or location includes search input
             if (propertyName.includes(searchInput) || sellerName.includes(searchInput) || propertyLocation.includes(searchInput)){
                 // display container if name, seller, or location includes search input
@@ -124,7 +211,7 @@ class AgentViewApi {
     
 }
 
-function displayUpdateProperty(name, type, size, rooms, price, location, status, seller_id, agent_id, id) {
+function displayUpdateProperty(name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -133,15 +220,17 @@ function displayUpdateProperty(name, type, size, rooms, price, location, status,
     <span class="close">&times;</span>
     <form id="UpForm">
     <input type="hidden" id="id" name="id" value="${id}">
-    <br><input type="text" id="name" name="name" value="${name}" placeholder="Name"><br>
-    <br><input type="text" id="type" name="type" value="${type}" placeholder="Type"><br>
-    <br><input type="text" id="size" name="size" value="${size}" placeholder="Square Feet"><br>
-    <br><input type="text" id="rooms" name="rooms" value="${rooms}" placeholder="Rooms"><br>
-    <br><input type="text" id="price" name="price" value="${price}" placeholder="Price"><br>
-    <br><input type="text" id="location" name="location" value="${location}" placeholder="Location"><br>
-    <br><input type="text" id="status" name="status" value="${status}" placeholder="Status"><br>
-    <input type="hidden" id="seller_id" name="seller_id" value="${seller_id}"><br>
-    <input type="hidden" id="agent_id" name="agent_id" value="${agent_id}"><br>
+    <br><input type="text" id="name" name="name" value="${name}" placeholder="Name">
+    <br><input type="text" id="type" name="type" value="${type}" placeholder="Type">
+    <br><input type="text" id="size" name="size" value="${size}" placeholder="Square Feet">
+    <br><input type="text" id="rooms" name="rooms" value="${rooms}" placeholder="Rooms">
+    <br><input type="text" id="price" name="price" value="${price}" placeholder="Price">
+    <br><input type="text" id="location" name="location" value="${location}" placeholder="Location">
+    <br><input type="text" id="status" name="status" value="${status}" placeholder="Status">
+    <input type="text" id="image" name="image" value="${image}">
+    <input type="text" id="views" name="views" value="${views}">
+    <input type="text" id="seller_id" name="seller_id" value="${seller_id}">
+    <input type="text" id="agent_id" name="agent_id" value="${agent_id}">
     <br><button id="SubmitUpdateProperty" type="submit">Submit</button><br>
     </form>
     `;
@@ -165,6 +254,8 @@ function displayUpdateProperty(name, type, size, rooms, price, location, status,
         const updatedPrice = document.getElementById('price').value;
         const updatedLocation = document.getElementById('location').value;
         const updatedStatus = document.getElementById('status').value;
+        const updatedImage = document.getElementById('image').value;
+        const updatedViews = document.getElementById('views').value;
         const updatedSeller = document.getElementById('seller_id').value;
         const updatedAgent = document.getElementById('agent_id').value;
 
@@ -192,7 +283,7 @@ function displayUpdateProperty(name, type, size, rooms, price, location, status,
             const confirmation = confirm(`Are you sure you want to update ${originalName}'s details?`);
             if (confirmation) {
                 // Call the update property API function
-                agentViewApi.updateAgentProperty(updatedName, updatedType, updatedSize, updatedRooms, updatedPrice, updatedLocation, updatedStatus, updatedSeller, updatedAgent, updatedId);
+                Agent.updateAgentProperty(updatedName, updatedType, updatedSize, updatedRooms, updatedPrice, updatedLocation, updatedStatus, updatedImage, updatedViews, updatedSeller, updatedAgent, updatedId);
                 document.getElementById("myModal").style.display = "none";
             }
         }
@@ -204,7 +295,6 @@ function displayUpdateProperty(name, type, size, rooms, price, location, status,
 
     modalFeatures();
 }
-
 
 function modalFeatures () {
     // Get the modal
@@ -222,16 +312,24 @@ function modalFeatures () {
     
 }
 
-const agentViewApi = new AgentViewApi();
+const Agent = new AgentApi();
 
 function initializeView() {
-    agentViewApi.getAgentProperties();
+    Agent.getAgentProperties();
 
-    document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
+    document.getElementById('searchProperty').addEventListener('input', Agent.searchEngineProperty);
+}
+
+function initializeRating() {
+    Agent.getAgentRatings();
 }
 
 window.onload = () => {
     loadContent('AgentView.php');
+}
+
+function initializeReview() {
+    Agent.getAgentReviews();
 }
 
 function loadContent(page) {
@@ -245,6 +343,10 @@ function loadContent(page) {
                 
                 if (page === 'AgentView.php') {
                     initializeView();
+                } else if (page === "AgentRating.php") {
+                    initializeRating();
+                } else if (page === "AgentReview.php") {
+                    initializeReview();
                 }
             } else {
                 console.error("Element not found.");
