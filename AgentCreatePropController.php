@@ -8,8 +8,8 @@ class AgentCreatePropController {
         $this->entity = new PropertyEntity();
     }
 
-    public function createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id) {
-        $properties = $this->entity->createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
+    public function createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
+        $properties = $this->entity->createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
         return $properties;
     }
 

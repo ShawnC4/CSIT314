@@ -16,10 +16,12 @@
         $Price = $requestData['price'];
         $Location = $requestData['location'];
         $Status = $requestData['status'];
+        $Image = $requestData['image'];
+        $Views = $requestData['views'];
         $Seller_id = $requestData['seller_id'];
         $Agent_id = $requestData['agent_id'];
         
-        $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
+        $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
 
         // Send JSON response
         header('Content-Type: application/json');

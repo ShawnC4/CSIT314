@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Create Page</title>
     <link rel="stylesheet" href="style.css">
+
+    <script>
+        createNewProperty = (event) => {
+            event.preventDefault();
+            const propertyName = document.getElementById('name').value;
+            const propertyType = document.getElementById('type').value;
+            const propertySize = document.getElementById('sqfeet').value;
+            const propertyRooms = document.getElementById('rooms').value;
+            const propertyPrice = document.getElementById('price').value;
+            const propertyLocation = document.getElementById('location').value;
+            const propertyStatus = "available";
+            const propertyImage = document.getElementById('image').files[0];
+            const propertyViews = 0;
+            const propertySeller = document.getElementById('seller').value;
+            const propertyAgent = "agent_1";
+
+            const formData = new FormData();
+            formData.append('propertyName', propertyName);
+            formData.append('propertyType', propertyType);
+            formData.append('propertySize', propertySize);
+            formData.append('propertyRooms', propertyRooms);
+            formData.append('propertyPrice', propertyPrice);
+            formData.append('propertyLocation', propertyLocation);
+            formData.append('propertyStatus', propertyStatus);
+            formData.append('propertyImage', propertyImage);
+            formData.append('propertyViews', propertyViews);
+            formData.append('propertySeller', propertySeller);
+            formData.append('propertyAgent', propertyAgent);
+
+            fetch('AgentView.php?action=createProperty', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                //this.fetchUserAccounts();
+                alert(`Property ${propertyName} was created successfully!`);
+            });
+        }
+
+    </script>
+
 </head>
 <body>
     <div class="body">

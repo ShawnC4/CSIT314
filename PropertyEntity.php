@@ -127,12 +127,16 @@ class PropertyEntity {
     }
 
     // Create Property
-    public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id) {
+    public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
+
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
         // Prepare SQL statement
-        $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         // Bind parameters
-        $stmt->bind_param("ssiidssss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
+        $stmt->bind_param("ssiidsssiss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
         
         // Execute the statement
         if ($stmt->execute()) {
