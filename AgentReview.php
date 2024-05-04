@@ -1,3 +1,20 @@
+<?php
+    session_start();
+    require_once 'AgentReviewController.php';
+
+    //VIEW//
+    $agentReviewController = new AgentReviewController();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentReviews') {
+
+        $reviews = $agentReviewController->getAgentReviews($_GET['agentId']);
+        header('Content-Type: application/json');
+
+        echo json_encode($reviews);
+        exit();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,29 +27,12 @@
     
     <div class="body">
         <h1>Customer Testimonials and Reviews</h1>
-
-        <div class="testimonial">
-            <div class="testimonial-content">
-                <p>"Agent ABC impressed us with their dedication to meeting our needs. Their professionalism and commitment shine through in every aspect."</p>
-            </div>
-            <div class="testimonial-image">
-                <!-- You can include an image/icon here if needed -->
-                <img src="images/pic-1.png" alt="Customer Image">
-            </div>
-        </div>
-
-        <div class="testimonial">
-            <div class="testimonial-content">
-                <p>"We had a fantastic experience with Agent XYZ. They went above and beyond to ensure that we found the perfect property. Highly recommended!"</p>
-            </div>
-            <div class="testimonial-image">
-                <!-- You can include an image/icon here if needed -->
-                <img src="images/pic-6.png" alt="Customer Image">
-            </div>
-        </div>
-
         <!-- Add more testimonials as needed -->
-
+        <div id ="reviewList"></div>
+        
     </div>
+
+        
+</div>
 </body>
 </html>

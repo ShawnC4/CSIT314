@@ -91,6 +91,34 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching ratings:', error));
     }
 
+    //Agent Review 
+    getAgentReviews() {
+        fetch(`AgentReview.php?action=getAgentReviews&agentId=${window.userID}`)
+        .then(response => response.json())
+        .then(reviews => {
+            console.log(reviews);
+            const reviewList = document.getElementById('reviewList'); // Make sure 'reviewList' is the correct ID in your HTML
+            reviewList.innerHTML = '';
+            reviews.forEach(review => {
+                const reviewDiv = document.createElement('div');
+               // reviewDiv.classList.add('review'); // 
+    
+                const userP = document.createElement('p');
+                userP.classList.add('user');
+                userP.textContent = review.customer_id; // 
+                reviewDiv.appendChild(userP);
+    
+                const reviewP = document.createElement('p');
+                //reviewP.classList.add('review-text'); //
+                reviewP.textContent = `Review: ${review.review}`; // 
+                reviewDiv.appendChild(reviewP);
+    
+                reviewList.appendChild(reviewDiv);
+            });
+        })
+        .catch(error => console.error('Error fetching reviews:', error));
+    }
+    
     viewProperty(propertyId) {
         fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
         .then(response => response.json())
@@ -137,7 +165,7 @@ class AgentViewApi {
         })
         .catch(error => console.error('Error deleting property:', error));
     }
-        
+    
 
     //SEARCH
     searchEngineProperty = () => {
@@ -200,6 +228,16 @@ window.onload = () => {
     loadContent('AgentView.php');
 }
 
+function initializeReview() {
+    agentViewApi.getAgentReviews();
+}
+
+///window.onload = () => {
+    //loadContent('AgentView.php');
+//}
+
+
+
 function loadContent(page) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -213,6 +251,8 @@ function loadContent(page) {
                     initializeView();
                 } else if (page === "AgentRating.php") {
                     initializeRating();
+                } else if (page === "AgentReview.php") {
+                    initializeReview();
                 }
             } else {
                 console.error("Element not found.");
