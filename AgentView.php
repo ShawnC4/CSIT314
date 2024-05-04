@@ -1,6 +1,8 @@
 <?php
     session_start();
+    require_once 'AgentCreatePropController.php';
     require_once 'AgentViewPropController.php';
+    require_once 'AgentUpdatePropController.php';
 
     //VIEW//
     $agentViewPropController = new AgentViewPropController();
@@ -18,29 +20,6 @@
         header('Content-Type: application/json');
 
         echo json_encode($property);
-        exit();
-    }
-
-    //CREATE//
-    $agentCreatePropController = new AgentCreatePropController();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProperty') {
-        $requestData = json_decode(file_get_contents('php://input'), true);
-        $Name = $requestData['Name'];
-        $Type = $requestData['Type'];
-        $Size = $requestData['Size'];
-        $Rooms = $requestData['Rooms'];
-        $Price = $requestData['Price'];
-        $Location = $requestData['Location'];
-        $Status = $requestData['Name'];
-        $Agent_id = $requestData['Type'];
-        $Size = $requestData['Size'];
-        
-        $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id);
-
-        // Send JSON response
-        header('Content-Type: application/json');
-        echo json_encode($response);
         exit();
     }
 

@@ -40,7 +40,7 @@ class AgentViewApi {
                 const updateButton = document.createElement('button');
                 updateButton.textContent = 'Update';
                 updateButton.addEventListener('click', () => {
-                    this.updateProperty(property.id);
+                    displayUpdateProperty(property.name, property.type, property.size, property.rooms, property.price, property.location, property.status, property.seller_id, property.agent_id, property.id);
                 });
                 buttonCell.appendChild(updateButton);
                 //delete button
@@ -91,7 +91,7 @@ class AgentViewApi {
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            this.fetchUserProfiles();  
+            this.getAgentProperties();  
         })
         .catch(error => console.error('Error updating property:', error));
     }
@@ -125,7 +125,24 @@ class AgentViewApi {
 }
 
 function displayUpdateProperty (name, type, size, rooms, price, location, status, seller_id, agent_id, id) {
-
+    const Form = document.getElementById('modal-content');
+    
+    Form.style.display = 'block';
+    
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <form id="UpForm">
+    <input type="hidden" id="id" name="id" value="${id}">
+    <br><input type="text" id="name" name="name" value="${name}" placeholder="Name"><br>
+    <br><input type="text" id="type" name="type" value="${type}" placeholder="Type"><br>
+    <br><input type="text" id="size" name="size" value="${size}" placeholder="Square Feet"><br>
+    <br><input type="text" id="rooms" name="rooms" value="${rooms}" placeholder="Rooms"><br>
+    <br><input type="text" id="price" name="price" value="${price}" placeholder="Price"><br>
+    <br><input type="text" id="location" name="location" value="${location}" placeholder="Location"><br>
+    <br><label><input type="checkbox" id="status" name="status">Status</label><br>
+    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
+    </form>
+    `;
 }
 
 function modalFeatures () {
