@@ -8,9 +8,9 @@ class AgentUpdatePropController {
         $this->entity = new PropertyEntity();
     }
 
-    public function updateProfile($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id) {
-        $result = $this->entity->updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
-        return $result;
+    public function updateProperty ($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id) {
+        $properties = $this->entity->updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
+        return $properties;
     }
 }
 
