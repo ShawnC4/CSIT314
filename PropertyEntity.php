@@ -149,6 +149,10 @@ class PropertyEntity {
 
     // Update Property
     public function updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id) {
+
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
         // Prepare SQL statement
         $stmt = $this->conn->prepare("UPDATE property SET name = ?, type = ?, size = ?, rooms = ?, price = ?, location = ?, status = ?, image = ?, views = ?, seller_id = ?, agent_id = ? WHERE id = ?");
         

@@ -178,7 +178,7 @@ class AgentApi {
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            this.getAgentProperties();  
+            this.getAgentProperties();
         })
         .catch(error => console.error('Error updating property:', error));
     }
@@ -227,10 +227,10 @@ function displayUpdateProperty(name, type, size, rooms, price, location, status,
     <br><input type="text" id="price" name="price" value="${price}" placeholder="Price">
     <br><input type="text" id="location" name="location" value="${location}" placeholder="Location">
     <br><input type="text" id="status" name="status" value="${status}" placeholder="Status">
-    <input type="text" id="image" name="image" value="${image}">
-    <input type="text" id="views" name="views" value="${views}">
-    <input type="text" id="seller_id" name="seller_id" value="${seller_id}">
-    <input type="text" id="agent_id" name="agent_id" value="${agent_id}">
+    <input type="hidden" id="image" name="image" value="${image}">
+    <input type="hidden" id="views" name="views" value="${views}">
+    <input type="hidden" id="seller_id" name="seller_id" value="${seller_id}">
+    <input type="hidden" id="agent_id" name="agent_id" value="${agent_id}">
     <br><button id="SubmitUpdateProperty" type="submit">Submit</button><br>
     </form>
     `;
