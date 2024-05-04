@@ -57,6 +57,8 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching properties:', error));
     }
 
+    
+
     viewProperty(propertyId) {
         fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
         .then(response => response.json())
@@ -80,7 +82,7 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching property:', error));
     }
 
-    updateProperty = (name, type, size, rooms, price, location, status, seller_id, agent_id, id) => {
+    updateAgentProperty = (name, type, size, rooms, price, location, status, seller_id, agent_id, id) => {
         fetch('AgentView.php?action=updateProperty', {
             method: 'POST',
             headers: {
@@ -124,7 +126,7 @@ class AgentViewApi {
     
 }
 
-function displayUpdateProperty (name, type, size, rooms, price, location, status, seller_id, agent_id, id) {
+function displayUpdateProperty(name, type, size, rooms, price, location, status, seller_id, agent_id, id) {
     const Form = document.getElementById('modal-content');
     
     Form.style.display = 'block';
@@ -139,11 +141,72 @@ function displayUpdateProperty (name, type, size, rooms, price, location, status
     <br><input type="text" id="rooms" name="rooms" value="${rooms}" placeholder="Rooms"><br>
     <br><input type="text" id="price" name="price" value="${price}" placeholder="Price"><br>
     <br><input type="text" id="location" name="location" value="${location}" placeholder="Location"><br>
-    <br><label><input type="checkbox" id="status" name="status">Status</label><br>
-    <br><button id="SubmitUpForm" type="submit">Submit</button><br>
+    <br><input type="text" id="status" name="status" value="${status}" placeholder="Status"><br>
+    <input type="hidden" id="seller_id" name="seller_id" value="${seller_id}"><br>
+    <input type="hidden" id="agent_id" name="agent_id" value="${agent_id}"><br>
+    <br><button id="SubmitUpdateProperty" type="submit">Submit</button><br>
     </form>
     `;
+
+    // Store original values after populating the form
+    const originalName = document.getElementById('name').value; 
+    const originalType = document.getElementById('type').value; 
+    const originalSize = document.getElementById('size').value; 
+    const originalRooms = document.getElementById('rooms').value; 
+    const originalPrice = document.getElementById('price').value; 
+    const originalLocation = document.getElementById('location').value; 
+    const originalStatus = document.getElementById('status').value; 
+
+    document.getElementById('UpForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const updatedId = document.getElementById('id').value;
+        const updatedName = document.getElementById('name').value;
+        const updatedType = document.getElementById('type').value;
+        const updatedSize = document.getElementById('size').value;
+        const updatedRooms = document.getElementById('rooms').value;
+        const updatedPrice = document.getElementById('price').value;
+        const updatedLocation = document.getElementById('location').value;
+        const updatedStatus = document.getElementById('status').value;
+        const updatedSeller = document.getElementById('seller_id').value;
+        const updatedAgent = document.getElementById('agent_id').value;
+
+        // Check if any information was edited
+        if (updatedName.trim() === originalName &&
+            updatedType.trim() === originalType &&
+            updatedSize.trim() === originalSize &&
+            updatedRooms.trim() === originalRooms &&
+            updatedPrice.trim() === originalPrice &&
+            updatedLocation.trim() === originalLocation &&
+            updatedStatus.trim() === originalStatus) {
+            
+            alert("Nothing was changed");
+            return;
+        }
+
+        // Add empty field checks
+        if (updatedName.trim() === '' || updatedType.trim() === '' || updatedSize.trim() === '' || updatedRooms.trim() === '' || updatedPrice.trim() === '' || updatedLocation.trim() === '' || updatedStatus.trim() === '') {
+            alert("All fields are required");
+            return;
+        } 
+        
+        else {
+            // If validation passes, proceed with confirmation popup
+            const confirmation = confirm(`Are you sure you want to update ${originalName}'s details?`);
+            if (confirmation) {
+                // Call the update property API function
+                agentViewApi.updateAgentProperty(updatedName, updatedType, updatedSize, updatedRooms, updatedPrice, updatedLocation, updatedStatus, updatedSeller, updatedAgent, updatedId);
+                document.getElementById("myModal").style.display = "none";
+            }
+        }
+    });
+
+    document.getElementById('SubmitUpdateProperty').addEventListener('click', () => {
+        document.getElementById("myModal").style.display = "none";
+    });
+
+    modalFeatures();
 }
+
 
 function modalFeatures () {
     // Get the modal

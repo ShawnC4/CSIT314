@@ -85,7 +85,7 @@ class PropertyEntity {
     // Update Property
     public function updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id) {
         // Prepare SQL statement
-        $stmt = $this->conn->prepare("UPDATE property SET name = ?, type = ?, size = ?, rooms = ?, price = ?, location = ?, status, seller_id = ?, agent_id = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE property SET name = ?, type = ?, size = ?, rooms = ?, price = ?, location = ?, status = ?, seller_id = ?, agent_id = ? WHERE id = ?");
         
         // Bind parameters
         $stmt->bind_param("ssiidssssi", $name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
