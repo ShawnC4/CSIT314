@@ -1,4 +1,13 @@
 <?php
+error_reporting(0); // Suppress warnings
+ini_set('display_errors', 0); // Prevent errors from being displayed
+session_start(); // Start the session
+
+// Check if the agent's user ID is set in the session
+if(isset($_SESSION['userID'])) {
+    $agentUserID = $_SESSION['userID'];
+} 
+
 require_once 'AgentCreatePropController.php';
 
 // Check if the form is submitted
@@ -14,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Image = ""; // Placeholder for image file path, to be filled below
     $Views = 0; // Default views
     $Seller_id = $_POST['seller'];
-    $Agent_id = "agent_1";
+    $Agent_id = $agentUserID;
 
     // Handle image upload
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -38,3 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Head content -->
+</head>
+<body>
+    <!-- Body content -->
+    <a href="AgentLanding.php"><button>Return to Home</button></a>
+</body>
+</html>

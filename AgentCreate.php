@@ -1,3 +1,13 @@
+<?php
+session_start(); // Start the session
+
+// Check if the agent's user ID is set in the session
+if(isset($_SESSION['userID'])) {
+    $agentUserID = $_SESSION['userID'];
+    // Now you can use $agentUserID wherever you need the agent's user ID in this page
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +29,7 @@
             const propertyImage = document.getElementById('image').files[0];
             const propertyViews = 0;
             const propertySeller = document.getElementById('seller').value;
-            const propertyAgent = "agent_1";
+            const propertyAgent = "<?php echo $agentUserID; ?>";
 
             const formData = new FormData();
             formData.append('propertyName', propertyName);
