@@ -61,7 +61,7 @@ class PropertyEntity {
         return $properties;
     }
 
-    // Update Property
+    // Create Property
     public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Seller_id, $Agent_id) {
         // Prepare SQL statement
         $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");

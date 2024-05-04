@@ -45,20 +45,27 @@
     }
 
     //UPDATE//
-    $controllerUpdate = new AgentUpdatePropController();
+    $agentUpdatePropController = new AgentUpdatePropController();
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProperty') {
         $requestData = json_decode(file_get_contents('php://input'), true);
-        $profileId = $requestData['profileId'];
-        $profileName = $requestData['profileName'];
-        $activeStatus = $requestData['activeStatus'];
-        $description = $requestData['description'];
+        $name = $requestData['name'];
+        $type = $requestData['type'];
+        $size = $requestData['size'];
+        $rooms = $requestData['rooms'];
+        $price = $requestData['price'];
+        $location = $requestData['location'];
+        $status = $requestData['status'];
+        $seller_id = $requestData['seller_id'];
+        $agent_id = $requestData['agent_id'];
+        $id = $requestData['id'];
         
-        $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
+        $response = $agentUpdatePropController->updateProperty($name, $type, $size, $rooms, $price, $location, $status, $seller_id, $agent_id, $id);
 
         // Send JSON response
         header('Content-Type: application/json');
         echo json_encode($response);
+        exit();
     }
 
 

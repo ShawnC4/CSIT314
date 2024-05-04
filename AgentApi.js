@@ -80,6 +80,22 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching property:', error));
     }
 
+    updateProperty = (name, type, size, rooms, price, location, status, seller_id, agent_id, id) => {
+        fetch('AgentView.php?action=updateProperty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, type, size, rooms, price, location, status, seller_id, agent_id, id })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            this.fetchUserProfiles();  
+        })
+        .catch(error => console.error('Error updating property:', error));
+    }
+
     //SEARCH
     searchEngineProperty = () => {
         // Get value entered in search input field and convert it to lowercase
@@ -106,6 +122,10 @@ class AgentViewApi {
         });
     }
     
+}
+
+function displayUpdateProperty (name, type, size, rooms, price, location, status, seller_id, agent_id, id) {
+
 }
 
 function modalFeatures () {
