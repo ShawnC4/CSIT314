@@ -57,8 +57,6 @@ class AgentViewApi {
         .catch(error => console.error('Error fetching properties:', error));
     }
 
-    
-
     viewProperty(propertyId) {
         fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
         .then(response => response.json())
