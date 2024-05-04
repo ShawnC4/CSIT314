@@ -1,4 +1,4 @@
-class AgentViewApi {
+class AgentApi {
     constructor() {
 
     }
@@ -212,16 +212,16 @@ function modalFeatures () {
     
 }
 
-const agentViewApi = new AgentViewApi();
+const AgentApi = new AgentApi();
 
 function initializeView() {
-    agentViewApi.getAgentProperties();
+    AgentApi.getAgentProperties();
 
-    document.getElementById('searchProperty').addEventListener('input', agentViewApi.searchEngineProperty);
+    document.getElementById('searchProperty').addEventListener('input', AgentApi.searchEngineProperty);
 }
 
 function initializeRating() {
-    agentViewApi.getAgentRatings();
+    AgentApi.getAgentRatings();
 }
 
 window.onload = () => {
@@ -229,14 +229,8 @@ window.onload = () => {
 }
 
 function initializeReview() {
-    agentViewApi.getAgentReviews();
+    AgentApi.getAgentReviews();
 }
-
-///window.onload = () => {
-    //loadContent('AgentView.php');
-//}
-
-
 
 function loadContent(page) {
     var xhttp = new XMLHttpRequest();

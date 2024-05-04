@@ -1,33 +1,79 @@
 <?php
+session_start();
 
-function getPropertyDetails($propertyId) {
-    return [
-        'id' => $propertyId,
-        'name' => 'Sample Property',
-        'type' => 'House',
-        'size' => '1000 sqft',
-    ];
-}
+require_once 'SellerViewPropertyController.php';
 
+//VIEW//
+$SellerViewPropertyController = new SellerViewPropertyController();
 
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getPropertyDetails') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
+    if(isset($_GET['sellerId'])) {
+        
+        $properties = $SellerViewPropertyController->getSellerProperties($_GET['sellerId']);
+        header('Content-Type: application/json');
+        echo json_encode($properties);
+        exit();
+    }
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
     if(isset($_GET['propertyId'])) {
-        // Logic to fetch property details from the database based on the property ID
-        $propertyId = $_GET['propertyId'];
-        $propertyDetails = getPropertyDetails($propertyId); // Implement this function to retrieve property details
+        $propertyDetails = $SellerViewPropertyController->getPropertyByID($_GET['propertyId']);
+        
         header('Content-Type: application/json');
         echo json_encode($propertyDetails);
         exit();
     }
-
-
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+/* The Modal (background) */
+.propertyModal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#details {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Hub</title>
@@ -48,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         <div class="property-listings">
             <!-- Property 1 -->
             <div class="property">
-            <img src="images/Prop-1.jpg" alt="Property 1">
+                <img src="images/Prop-1.jpg" alt="Property 1">
                 <div class="property-details">
                     <!-- Add more details as needed -->
                     <div class="status">Available</div>
@@ -77,28 +123,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             <!-- Add more property listings as needed -->
         </div>
     </div>
-
-    <!-- JavaScript Section -->
-    <script>
-        // Function to view details of the property
-        function viewDetails(propertyId) {
-            // Logic to view property details
-            console.log('View details of Property ' + propertyId);
-        }
-
-        // Function to give rating for the property
-        function giveRating(propertyId) {
-            // Logic to give rating for the property
-            console.log('Give rating for Property ' + propertyId);
-        }
-
-        // Function to give review for the property
-        function giveReview(propertyId) {
-            // Logic to give review for the property
-            console.log('Give review for Property ' + propertyId);
-        }
-    </script>
-
+    <div id="myModal" class="propertyModal">
+        <!-- Modal content -->
+        <div class="modal-content" id="modal-content">
+            
+        </div>
+    </div>
 </body>
+<script>
+    if (<?php echo isset($_SESSION['userID']) ? 'true' : 'false'; ?>) {
+        window.userID = "<?php echo $_SESSION['userID']; ?>";
+    }
+</script>
 <script src="SellerApi.js"></script>
 </html>
