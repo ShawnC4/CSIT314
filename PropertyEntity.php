@@ -126,6 +126,56 @@ class PropertyEntity {
         return $properties;
     }
 
+    // Create Property
+    public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
+
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        
+        // Bind parameters
+        $stmt->bind_param("ssiidsssiss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Property creation successful
+            return true;
+        } else {
+            // Property creation failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
+    // Update Property
+    public function updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id) {
+
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("UPDATE property SET name = ?, type = ?, size = ?, rooms = ?, price = ?, location = ?, status = ?, image = ?, views = ?, seller_id = ?, agent_id = ? WHERE id = ?");
+        
+        // Bind parameters
+        $stmt->bind_param("ssiidsssissi", $name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Property update successful
+            return true;
+        } else {
+            // Property update failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
     public function deleteProperty($propertyId) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();

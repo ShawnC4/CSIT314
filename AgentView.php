@@ -1,6 +1,33 @@
 <?php
     session_start();
+    require_once 'AgentCreatePropController.php';
     require_once 'AgentViewPropController.php';
+    require_once 'AgentUpdatePropController.php';
+
+    //CREATE//
+    $agentCreatePropController = new AgentCreatePropController();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProperty') {
+        $requestData = json_decode(file_get_contents('php://input'), true);
+        $Name = $requestData['name'];
+        $Type = $requestData['type'];
+        $Size = $requestData['size'];
+        $Rooms = $requestData['rooms'];
+        $Price = $requestData['price'];
+        $Location = $requestData['location'];
+        $Status = $requestData['status'];
+        $Image = $requestData['image'];
+        $Views = $requestData['views'];
+        $Seller_id = $requestData['seller_id'];
+        $Agent_id = $requestData['agent_id'];
+        
+        $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
+
+        // Send JSON response
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    } 
 
     //VIEW//
     $agentViewPropController = new AgentViewPropController();
@@ -18,6 +45,32 @@
         header('Content-Type: application/json');
 
         echo json_encode($property);
+        exit();
+    }
+
+    //UPDATE//
+    $agentUpdatePropController = new AgentUpdatePropController();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProperty') {
+        $requestData = json_decode(file_get_contents('php://input'), true);
+        $name = $requestData['name'];
+        $type = $requestData['type'];
+        $size = $requestData['size'];
+        $rooms = $requestData['rooms'];
+        $price = $requestData['price'];
+        $location = $requestData['location'];
+        $status = $requestData['status'];
+        $image = $requestData['image'];
+        $views = $requestData['views'];
+        $seller_id = $requestData['seller_id'];
+        $agent_id = $requestData['agent_id'];
+        $id = $requestData['id'];
+        
+        $response = $agentUpdatePropController->updateProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id);
+
+        // Send JSON response
+        header('Content-Type: application/json');
+        echo json_encode($response);
         exit();
     }
     

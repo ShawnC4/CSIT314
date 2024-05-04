@@ -40,7 +40,7 @@ class AgentApi {
                 const updateButton = document.createElement('button');
                 updateButton.textContent = 'Update';
                 updateButton.addEventListener('click', () => {
-                    this.updateProperty(property.id);
+                    displayUpdateProperty(property.name, property.type, property.size, property.rooms, property.price, property.location, property.status, property.image, property.views, property.seller_id, property.agent_id, property.id);
                 });
                 buttonCell.appendChild(updateButton);
                 //delete button
@@ -165,9 +165,25 @@ class AgentApi {
         })
         .catch(error => console.error('Error deleting property:', error));
     }
-    
 
-    //SEARCH
+    //UPDATE//
+    updateAgentProperty = (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id) => {
+        fetch('AgentView.php?action=updateProperty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id })
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log(data);
+            this.getAgentProperties();
+        })
+        .catch(error => console.error('Error updating property:', error));
+    }
+    
+    //SEARCH//
     searchEngineProperty = () => {
         // Get value entered in search input field and convert it to lowercase
         const searchInput = document.getElementById('searchProperty').value.toLowerCase();
@@ -177,23 +193,107 @@ class AgentApi {
 
         // Iterate over each profile container
         propertyContainers.forEach(container => {
-            // Get text content of profile name within container and convert it to lowercase
+            // Get text content of name, seller, and location within container and convert it to lowercase
             const propertyName = container.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            const sellerName = container.querySelector('td:nth-child(2)').textContent.toLowerCase();
             const propertyLocation = container.querySelector('td:nth-child(3)').textContent.toLowerCase();
-            const propertyPrice = container.querySelector('td:nth-child(4)').textContent.toLowerCase();
 
-            // Check if profile name includes search input
-            if (propertyName.includes(searchInput) || propertyLocation.includes(searchInput) || propertyPrice.includes(searchInput)){
-
-                // display container if profile name includes search input
-                container.style.visibility = 'visible';
-            }
-            else {
-                // hide container if profile name does not include search input
-                container.style.visibility = 'collapse';
+            // Check if name, seller, or location includes search input
+            if (propertyName.includes(searchInput) || sellerName.includes(searchInput) || propertyLocation.includes(searchInput)){
+                // display container if name, seller, or location includes search input
+                container.style.display = '';
+            } else {
+                // hide container if name, seller, or location does not include search input
+                container.style.display = 'none';
             }
         });
     }
+    
+}
+
+function displayUpdateProperty(name, type, size, rooms, price, location, status, image, views, seller_id, agent_id, id) {
+    const Form = document.getElementById('modal-content');
+    
+    Form.style.display = 'block';
+    
+    Form.innerHTML = `
+    <span class="close">&times;</span>
+    <form id="UpForm">
+    <input type="hidden" id="id" name="id" value="${id}">
+    <br><input type="text" id="name" name="name" value="${name}" placeholder="Name">
+    <br><input type="text" id="type" name="type" value="${type}" placeholder="Type">
+    <br><input type="text" id="size" name="size" value="${size}" placeholder="Square Feet">
+    <br><input type="text" id="rooms" name="rooms" value="${rooms}" placeholder="Rooms">
+    <br><input type="text" id="price" name="price" value="${price}" placeholder="Price">
+    <br><input type="text" id="location" name="location" value="${location}" placeholder="Location">
+    <br><input type="text" id="status" name="status" value="${status}" placeholder="Status">
+    <input type="hidden" id="image" name="image" value="${image}">
+    <input type="hidden" id="views" name="views" value="${views}">
+    <input type="hidden" id="seller_id" name="seller_id" value="${seller_id}">
+    <input type="hidden" id="agent_id" name="agent_id" value="${agent_id}">
+    <br><button id="SubmitUpdateProperty" type="submit">Submit</button><br>
+    </form>
+    `;
+
+    // Store original values after populating the form
+    const originalName = document.getElementById('name').value; 
+    const originalType = document.getElementById('type').value; 
+    const originalSize = document.getElementById('size').value; 
+    const originalRooms = document.getElementById('rooms').value; 
+    const originalPrice = document.getElementById('price').value; 
+    const originalLocation = document.getElementById('location').value; 
+    const originalStatus = document.getElementById('status').value; 
+
+    document.getElementById('UpForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const updatedId = document.getElementById('id').value;
+        const updatedName = document.getElementById('name').value;
+        const updatedType = document.getElementById('type').value;
+        const updatedSize = document.getElementById('size').value;
+        const updatedRooms = document.getElementById('rooms').value;
+        const updatedPrice = document.getElementById('price').value;
+        const updatedLocation = document.getElementById('location').value;
+        const updatedStatus = document.getElementById('status').value;
+        const updatedImage = document.getElementById('image').value;
+        const updatedViews = document.getElementById('views').value;
+        const updatedSeller = document.getElementById('seller_id').value;
+        const updatedAgent = document.getElementById('agent_id').value;
+
+        // Check if any information was edited
+        if (updatedName.trim() === originalName &&
+            updatedType.trim() === originalType &&
+            updatedSize.trim() === originalSize &&
+            updatedRooms.trim() === originalRooms &&
+            updatedPrice.trim() === originalPrice &&
+            updatedLocation.trim() === originalLocation &&
+            updatedStatus.trim() === originalStatus) {
+            
+            alert("Nothing was changed");
+            return;
+        }
+
+        // Add empty field checks
+        if (updatedName.trim() === '' || updatedType.trim() === '' || updatedSize.trim() === '' || updatedRooms.trim() === '' || updatedPrice.trim() === '' || updatedLocation.trim() === '' || updatedStatus.trim() === '') {
+            alert("All fields are required");
+            return;
+        } 
+        
+        else {
+            // If validation passes, proceed with confirmation popup
+            const confirmation = confirm(`Are you sure you want to update ${originalName}'s details?`);
+            if (confirmation) {
+                // Call the update property API function
+                Agent.updateAgentProperty(updatedName, updatedType, updatedSize, updatedRooms, updatedPrice, updatedLocation, updatedStatus, updatedImage, updatedViews, updatedSeller, updatedAgent, updatedId);
+                document.getElementById("myModal").style.display = "none";
+            }
+        }
+    });
+
+    document.getElementById('SubmitUpdateProperty').addEventListener('click', () => {
+        document.getElementById("myModal").style.display = "none";
+    });
+
+    modalFeatures();
 }
 
 function modalFeatures () {
@@ -212,16 +312,16 @@ function modalFeatures () {
     
 }
 
-const AgentApi = new AgentApi();
+const Agent = new AgentApi();
 
 function initializeView() {
-    AgentApi.getAgentProperties();
+    Agent.getAgentProperties();
 
-    document.getElementById('searchProperty').addEventListener('input', AgentApi.searchEngineProperty);
+    document.getElementById('searchProperty').addEventListener('input', Agent.searchEngineProperty);
 }
 
 function initializeRating() {
-    AgentApi.getAgentRatings();
+    Agent.getAgentRatings();
 }
 
 window.onload = () => {
@@ -229,7 +329,7 @@ window.onload = () => {
 }
 
 function initializeReview() {
-    AgentApi.getAgentReviews();
+    Agent.getAgentReviews();
 }
 
 function loadContent(page) {
