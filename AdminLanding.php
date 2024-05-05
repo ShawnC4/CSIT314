@@ -1,3 +1,184 @@
+<?php
+require_once 'AdminCreateUPController.php';
+require_once 'AdminViewUPController.php';
+require_once 'AdminUpdateUPController.php';
+require_once 'AdminSuspendUPController.php';
+
+require_once 'AdminCreateUAController.php';
+require_once 'AdminViewUAController.php';
+require_once 'AdminUpdateUAController.php';
+require_once 'AdminSuspendUAController.php';
+require_once 'AdminSearchUAController.php';
+
+//CREATE UP//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProfile') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $profileName = $requestData['profileName'];
+    $activeStatus = $requestData['activeStatus'];
+    $description = $requestData['description'];
+	
+    $controllerCreateUP = new AdminCreateUPController();
+    $response = $controllerCreateUP->createProfile($profileName, $activeStatus, $description);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+
+//CREATE UA//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $Username = $requestData['accountUsername'];
+    $Email = $requestData['accountEmail'];
+    $Password = $requestData['accountPassword'];
+    $activeStatus = $requestData['activeStatus'];
+    $Profile_id = $requestData['accountProfile_id'];
+    
+	$controllerCreateUA = new AdminCreateUAController();
+    $response = $controllerCreateUA->createAccount($Username, $Email, $Password, $activeStatus, $Profile_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
+	$controllerCreateUA = new AdminCreateUAController();
+    $profiles = $controllerCreateUA->getUserProfiles();
+    header('Content-Type: application/json');
+
+    echo json_encode($profiles);
+    exit();
+} 
+
+//VIEW ALL PROFILE//
+// Handle POST request to authenticate user
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
+	$controllerViewUP = new AdminViewUPController();
+	$profiles = $controllerViewUP->getUserProfiles();
+
+    header('Content-Type: application/json');
+    echo json_encode($profiles);
+    exit();
+}
+
+//VIEW ALL ACCOUNTS//
+// Handle POST request to authenticate user
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'getAccounts') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $pageNum = $requestData['page'];
+	
+	$controllerViewUA = new AdminViewUAController();
+	$accounts = $controllerViewUA->getUserAccounts($pageNum);
+
+    header('Content-Type: application/json');
+    echo json_encode($accounts);
+    exit();
+
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfileById') {
+    $controllerViewUA = new AdminViewUAController();
+	$profile = $controllerViewUA->getProfileById($_GET['profile_id']);
+
+    header('Content-Type: application/json');
+    echo json_encode($profile);
+    exit();
+}
+
+//UPDATE//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProfile') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $profileId = $requestData['profileId'];
+    $profileName = $requestData['profileName'];
+    $activeStatus = $requestData['activeStatus'];
+    $description = $requestData['description'];
+    
+	$controllerUpdate = new AdminUpdateUPController();
+    $response = $controllerUpdate->updateProfile($profileId, $profileName, $activeStatus, $description);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+	exit();
+}
+
+//UPDATE UA//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $username = $requestData['username'];
+    $email = $requestData['email'];
+    $password = $requestData['password'];
+    $activeStatus = $requestData['activeStatus'];
+    $profile_id = $requestData['profile_id'];
+    
+	$controllerUpdateUA = new AdminUpdateUAController();
+    $response = $controllerUpdateUA->updateUserAccount($username, $email, $password, $activeStatus, $profile_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'updateGetProfile') {
+    $controllerUpdateUA = new AdminUpdateUAController();
+	$profile = $controllerUpdateUA->getUserProfiles();
+
+    header('Content-Type: application/json');
+    echo json_encode($profile);
+    exit();
+}
+
+//SUSPEND// 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendProfile') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    if (isset($requestData['profileId'])) {
+        $profileId = $requestData['profileId'];
+		
+		$controllerSuspend = new AdminSuspendUPController();
+        $response = $controllerSuspend->suspendProfile($profileId);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Profile ID is missing']);
+        exit();
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    if (isset($requestData['username'])) {
+        $username = $requestData['username'];
+		
+		$controllerSuspendUA = new AdminSuspendUAController();
+        $response = $controllerSuspendUA->suspendAccount($username);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Username is missing']);
+        exit();
+    }
+}
+
+//Search UA//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchAccount') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $username = $requestData['username'];
+	
+    $controllerSearchUA = new AdminSearchUAController();
+    $response = $controllerSearchUA->searchUserAccount($username);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,12 +237,14 @@
         </div>
         <br>
         <div id="UPUA">
+            
         </div>
         <br>
         <div>
             <a href="logout.php">Logout</a>
         </div>
     </div>
+	<script src="AdminApi.js"></script>
 </body>
-<script src="AdminApi.js"></script>
+
 </html>
