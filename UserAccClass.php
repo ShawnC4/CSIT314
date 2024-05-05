@@ -1,7 +1,7 @@
 <?php
 class UserAcc implements JsonSerializable{
 
-    private $id, $username, $password, $email, $profile_id, $activeStatus;
+    private $username, $password, $email, $profile_id, $activeStatus;
 
     public function __construct($username, $password, $email, $activeStatus, $profile_id) {
         $this->username = $username;

@@ -1,5 +1,6 @@
 <?php
 require_once 'Konohadb.php';
+require 'RatingClass.php';
 
 class RatingEntity {
     private $db, $conn;
@@ -40,6 +41,31 @@ class RatingEntity {
         $this->db->closeConn();
 
         return $ratings;
+    }
+
+    // Create rating
+    public function createSaleRating($rating, $customer_id, $Agent_id) {
+
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("INSERT INTO ratings (rating, customer_id, agent_id) VALUES (?, ?, ?)");
+        
+        // Bind parameters
+        $stmt->bind_param("iss", $rating, $customer_id, $Agent_id);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Property creation successful
+            return true;
+        } else {
+            // Property creation failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
     }
 
 }

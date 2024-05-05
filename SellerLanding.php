@@ -2,6 +2,7 @@
 session_start();
 
 require_once 'SellerViewPropertyController.php';
+require_once 'SellerCreateRatingController.php';
 
 //VIEW//
 $SellerViewPropertyController = new SellerViewPropertyController();
@@ -23,6 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         exit();
     }
 }
+
+//CREATE RATING//
+$SellerCreateRatingController = new SellerCreateRatingController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $rating = $requestData['name'];
+    $customer_id = $requestData['customer_id'];
+    $agent_id = $requestData['agent_id'];
+    
+    $response = $agentCreatePropController->createRating($rating, $customer_id, $Agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
