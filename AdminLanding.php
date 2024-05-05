@@ -24,13 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'UPExists') {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    $UPExists = $controllerCreateUP->profileExists($data['profileName']);
-    header('Content-Type: application/json');
-    echo json_encode($UPExists);
-    exit();
 }
 
 
@@ -57,15 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 
     echo json_encode($profiles);
     exit();
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'UAExists') {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    $UAExists = $controllerCreateUA->accountExists($data['accountUsername']);
-    header('Content-Type: application/json');
-
-    echo json_encode($UAExists);
-    exit();
-}
+} 
 
 //VIEW ALL PROFILE//
 $controllerViewUP = new AdminViewUPController();
@@ -113,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
+	exit();
 }
 
 //UPDATE UA//
@@ -162,16 +148,16 @@ $controllerSuspendUA = new AdminSuspendUAController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'suspendAccount') {
     $requestData = json_decode(file_get_contents('php://input'), true);
-    if (isset($requestData['accountId'])) {
-        $accountId = $requestData['accountId'];
-        $response = $controllerSuspendUA->suspendAccount($accountId);
+    if (isset($requestData['username'])) {
+        $username = $requestData['username'];
+        $response = $controllerSuspendUA->suspendAccount($username);
 
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
     } else {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Account ID is missing']);
+        echo json_encode(['success' => false, 'message' => 'Username is missing']);
         exit();
     }
 }
@@ -242,6 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
             <a href="logout.php">Logout</a>
         </div>
     </div>
+	<script src="AdminApi.js"></script>
 </body>
-<script src="AdminApi.js"></script>
+
 </html>

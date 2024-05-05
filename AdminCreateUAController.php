@@ -1,17 +1,17 @@
 <?php
-require_once 'UserAccEntity.php';
-require_once 'UserProfileEntity.php';
+require_once 'UserAccount.php';
+require_once 'UserProfile.php';
 
 class AdminCreateUAController {
     private $entity, $entityP;
 
     public function __construct () {
-        $this->entity = new UserAccEntity();
-        $this->entityP = new UserProfileEntity();
+        $this->entity = new UserAccount();
+        $this->entityP = new UserProfile();
     }
 
-    public function createAccount ($Username, $Email, $Password, $activeStatus, $Profile_id) {
-        $result = $this->entity->createUserAccount($Username, $Email, $Password, $activeStatus, $Profile_id);
+    public function createAccount ($username, $email, $password, $activeStatus, $profile_id) {
+        $result = $this->entity->createUserAccount($username, $email, $password, $activeStatus, $profile_id);
         return $result;
     }
 
@@ -19,19 +19,6 @@ class AdminCreateUAController {
         $profiles = $this->entityP->getUserProfiles();
 
         return $profiles;
-    }
-
-    public function accountExists($accountUsername) {
-        $accounts = $this->entity->getUserAccounts();
-    
-        foreach ($accounts as $account) {
-            // Retrieve the name of the account
-            $username = $account->getUsername();
-            if ($username === $accountUsername) {
-                return ["exists" => true]; 
-            }
-        }
-        return ["exists" => false]; 
     }
 }
 
