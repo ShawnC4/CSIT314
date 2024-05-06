@@ -6,6 +6,32 @@ if(isset($_SESSION['userID'])) {
     $agentUserID = $_SESSION['userID'];
     // Now you can use $agentUserID wherever you need the agent's user ID in this page
 }
+
+require_once 'AgentCreatePropController.php';
+
+//CREATE//
+$agentCreatePropController = new AgentCreatePropController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProperty') {
+	$requestData = json_decode(file_get_contents('php://input'), true);
+	$name = $requestData['name'];
+	$type = $requestData['type'];
+	$size = $requestData['size'];
+	$rooms = $requestData['rooms'];
+	$price = $requestData['price'];
+	$location = $requestData['location'];
+	$status = $requestData['status'];
+	$image = $requestData['image'];
+	$views = $requestData['views'];
+	$seller_id = $requestData['seller_id'];
+	
+	$response = $agentCreatePropController->createProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agentUserID);
+
+	// Send JSON response
+	header('Content-Type: application/json');
+	echo json_encode($response);
+	exit();
+} 
 ?>
 
 <!DOCTYPE html>
@@ -17,46 +43,7 @@ if(isset($_SESSION['userID'])) {
     <link rel="stylesheet" href="style.css">
 
     <script>
-        createNewProperty = (event) => {
-            event.preventDefault();
-            const propertyName = document.getElementById('name').value;
-            const propertyType = document.getElementById('type').value;
-            const propertySize = document.getElementById('sqfeet').value;
-            const propertyRooms = document.getElementById('rooms').value;
-            const propertyPrice = document.getElementById('price').value;
-            const propertyLocation = document.getElementById('location').value;
-            const propertyStatus = "available";
-            const propertyImage = document.getElementById('image').files[0];
-            const propertyViews = 0;
-            const propertySeller = document.getElementById('seller').value;
-            const propertyAgent = "<?php echo $agentUserID; ?>";
-
-            const formData = new FormData();
-            formData.append('propertyName', propertyName);
-            formData.append('propertyType', propertyType);
-            formData.append('propertySize', propertySize);
-            formData.append('propertyRooms', propertyRooms);
-            formData.append('propertyPrice', propertyPrice);
-            formData.append('propertyLocation', propertyLocation);
-            formData.append('propertyStatus', propertyStatus);
-            formData.append('propertyImage', propertyImage);
-            formData.append('propertyViews', propertyViews);
-            formData.append('propertySeller', propertySeller);
-            formData.append('propertyAgent', propertyAgent);
-
-            fetch('AgentView.php?action=createProperty', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                //this.fetchUserAccounts();
-                alert(`Property ${propertyName} was created successfully!`);
-            });
-        }
+        
 
     </script>
 
@@ -64,7 +51,7 @@ if(isset($_SESSION['userID'])) {
 <body>
     <div class="body">
         <h2>Create Property Listing</h2>
-        <form action="submit_listing.php" method="POST" enctype="multipart/form-data">
+        <form id="createPropForm" enctype="multipart/form-data">
             <label for="name">Name:</label><br>
             <input type="text" id="name" name="name" required><br>
 

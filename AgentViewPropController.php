@@ -8,9 +8,9 @@ class AgentViewPropController {
         $this->entity = new PropertyEntity();
     }
 
-    public function getAgentProperties($agent) {
+    public function getPropertiesByAgent($agent) {
         // Retrieve user profiles from the database
-        $properties = $this->entity->getAgentProperties($agent);
+        $properties = $this->entity->getPropertiesByAgent($agent);
 
         return $properties;
     }

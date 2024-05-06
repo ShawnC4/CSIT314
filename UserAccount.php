@@ -1,9 +1,9 @@
 <?php
 require_once 'Konohadb.php';
 
-class UserAccount {
+class UserAccount implements JsonSerializable{
     private $db, $conn;
-	public $username, $password, $email, $profile_id, $activeStatus;
+	private $username, $password, $email, $profile_id, $activeStatus;
 	
 	public function __construct($username = null, $password = null, $email = null, $activeStatus = null, $profile_id = null) {		
 		if($username !== null && $password !== null && $email !== null && $activeStatus !== null && $profile_id !== null){
@@ -13,6 +13,28 @@ class UserAccount {
 			$this->activeStatus = $activeStatus;
 			$this->profile_id = $profile_id;
 		}
+    }
+	
+	public function getUsername () {
+        return $this->username;
+    }
+
+    public function getPassword() {
+        return $this->password;
+
+    }
+	
+	public function getEmail() {
+        return $this->email;
+
+    }
+
+    public function isActive(){
+        return $this->activeStatus;
+    }
+
+    public function getProfileId () {
+        return $this->profile_id;
     }
 
 	public function startConnection(){
@@ -80,21 +102,22 @@ class UserAccount {
         return $user; // Return user data
     }
 
-    public function getUserAccounts() {
+    public function getUserAccounts($page = 0) {
         $this->startConnection();
 		
 		$accounts = array(); 
-
+		
+		$page *= 25;
         // Prepare SQL statement to select profiles
-        $sql = "SELECT * FROM user_accounts";
-
-        // Execute the query
-        $result = $this->conn->query($sql);
-
-        // Check if the query was successful
-        if ($result) {
-
-            while ($row = $result->fetch_assoc()) {
+        $sql = "SELECT * FROM user_accounts ORDER BY username ASC LIMIT 25 OFFSET ?";
+		$stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $page);
+		
+        // Execute the query    
+        if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			
+			while ($row = $result->fetch_assoc()) {
                 $account = new UserAccount(
                     $row['username'],
                     $row['password'],
@@ -105,16 +128,40 @@ class UserAccount {
  
                 $accounts[] = $account;
             }
+			
+			$this->closeConnection();
+			$pageCount = $this->getCountUA();
+            return ['success' => true, 'accounts' => $accounts, 'count' => $pageCount];
         } else {
-            // Handle error if query fails
-            echo "Error fetching accounts: " . $this->conn->error;
+			$errorMessage = $this->conn->error;
+			$this->closeConnection();
+            return ['success' => false, 'errorMessage' => $errorMessage];
         }
-		
-		$this->closeConnection();
-
-        // Return the array of profiles
-        return $accounts;
     }
+	
+	public function getCountUA(){
+		$this->startConnection();
+		// Prepare SQL statement to select profiles
+		$sql = "SELECT * FROM user_accounts;";
+
+		// Execute the query
+		$result = $this->conn->query($sql);
+
+		// Check if the query was successful
+		if ($result) {
+			$row = $result->fetch_assoc();
+			// Count the rows (using mysqli_num_rows)
+			$count = intval(ceil(mysqli_num_rows($result) / 25));
+			$this->closeConnection();
+			return $count;
+		} else {
+            // Handle error if query fails
+            $errorMessage = $this->conn->error;
+			$this->closeConnection();
+            return 1;
+        }
+	}
+	
 
     public function createUserAccount($username, $email, $password, $activeStatus, $profile_id) {
         // Check if profile exists
@@ -178,6 +225,38 @@ class UserAccount {
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
+	
+	public function searchUserAccount($username){
+		$this->startConnection();
+		$sql = "SELECT * FROM user_accounts WHERE username LIKE CONCAT('%', ?, '%')";
+		$stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+		
+		$accounts = array(); 
+    
+        if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			
+			while ($row = $result->fetch_assoc()) {
+                $account = new UserAccount(
+                    $row['username'],
+                    $row['password'],
+                    $row['email'],
+                    $row['activeStatus'],
+                    $row['profile_id']
+                );
+ 
+                $accounts[] = $account;
+            }
+			
+			$this->closeConnection();
+            return ['success' => true, 'accounts' => $accounts];
+        } else {
+			$errorMessage = $this->conn->error;
+			$this->closeConnection();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
+	}
 
     //Suspend user for userAccount
     public function suspendUserAccount($username) {
@@ -195,5 +274,15 @@ class UserAccount {
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
+	
+	public function jsonSerialize() {
+		return array(
+			'username' => $this->getUsername(),
+			'password' => $this->getPassword(),
+			'email' => $this->getEmail(),
+			'activeStatus' => $this->isActive(),
+			'profile_id' => $this->getProfileId()
+		);
+	}
 }
 ?>

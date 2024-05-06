@@ -1,10 +1,9 @@
 <?php
 require_once 'Konohadb.php';
-require 'PropertyClass.php';
 
-class PropertyEntity {
+class PropertyEntity implements JsonSerializable{
     private $db, $conn;
-    public $id, $name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id;
+    private $id, $name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id;
 
     public function __construct($id = null, $name = null, $type = null, $size = null, $rooms = null, $price = null, $location = null, $status = null, $image = null, $views = null, $seller_id = null, $agent_id = null) {
         if ($id !== null && $name !== null && $type !== null && $size !== null && $rooms !== null && $price !== null && $location !== null && $status !== null && $image !== null && $views !== null && $seller_id !== null && $agent_id !== null) {
@@ -40,7 +39,20 @@ class PropertyEntity {
         $stmt->close();
         
         if ($fetchProperty) {
-            $property = new PropertyEntity($fetchProperty['id'], $fetchProperty['name'], $fetchProperty['type'], $fetchProperty['size'], $fetchProperty['rooms'], $fetchProperty['price'], $fetchProperty['location'], $fetchProperty['status'], $fetchProperty['image'], $fetchProperty['views'], $fetchProperty['seller_id'], $fetchProperty['agent_id']);
+            $property = new PropertyEntity(
+				$fetchProperty['id'], 
+				$fetchProperty['name'], 
+				$fetchProperty['type'], 
+				$fetchProperty['size'], 
+				$fetchProperty['rooms'], 
+				$fetchProperty['price'], 
+				$fetchProperty['location'], 
+				$fetchProperty['status'], 
+				$fetchProperty['image'], 
+				$fetchProperty['views'], 
+				$fetchProperty['seller_id'], 
+				$fetchProperty['agent_id']
+			);
         } else {
             $property = null;
         }
@@ -50,7 +62,7 @@ class PropertyEntity {
         return $property;
     }
 
-    public function getAgentProperties($agent) {
+    public function getPropertiesByAgent($agent) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
@@ -79,13 +91,14 @@ class PropertyEntity {
  
                 $properties[] = $property;
             }
+		
+			$this->db->closeConn();
+            return ['success' => true, 'properties' => $properties];
         } else {
-            echo "Error fetching properties: " . $this->conn->error;
-        }
-
-        $this->db->closeConn();
-
-        return $properties;
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
     public function getSellerProperties($seller) {
@@ -127,7 +140,7 @@ class PropertyEntity {
     }
 
     // Create Property
-    public function createAgentProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
+    public function createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
 
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -140,19 +153,19 @@ class PropertyEntity {
         
         // Execute the statement
         if ($stmt->execute()) {
-            // Property creation successful
-            return true;
+			// Property creation successful
+			$this->db->closeConn();
+            return ['success' => true];
         } else {
-            // Property creation failed
-            return false;
-        }
-        
-        // Close statement
-        $stmt->close();
+			// Property creation failed
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
     // Update Property
-    public function updateAgentProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id) {
+    public function updateProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id) {
 
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -165,15 +178,15 @@ class PropertyEntity {
         
         // Execute the statement
         if ($stmt->execute()) {
-            // Property update successful
-            return true;
+			// Property update successful
+			$this->db->closeConn();
+            return ['success' => true];
         } else {
-            // Property update failed
-            return false;
-        }
-        
-        // Close statement
-        $stmt->close();
+			// Property update failed
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
     public function deleteProperty($propertyId) {
@@ -183,21 +196,88 @@ class PropertyEntity {
         $sql = "DELETE FROM property WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) {
-            throw new Exception("Unable to prepare statement: " . $this->conn->error);
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
         }
 
         $stmt->bind_param("i", $propertyId);
 
         if ($stmt->execute()) {
-            $stmt->close();
-            return true; // Return true if the deletion was successful
+			// Property delete successful
+			$this->db->closeConn();
+            return ['success' => true];
         } else {
-            $stmt->close();
-            return false; // Return false if the deletion failed
+			// Property delete failed
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
+    }
+	
+	public function searchProperty($name, $agent) {
+		$this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
+		$properties = array(); 
+		$sql = "SELECT * FROM property WHERE name LIKE CONCAT('%', ?, '%') AND agent_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
         }
 
-        $this->db->closeConn();
-    }
-    
+        $stmt->bind_param("ss", $name, $agent);
+
+        if ($stmt->execute()) {
+			// Property search successful			
+			$result = $stmt->get_result();
+			
+			while ($row = $result->fetch_assoc()) {
+               $property = new PropertyEntity(
+                    $row['id'],
+                    $row['name'],
+                    $row['type'],
+                    $row['size'],
+                    $row['rooms'],
+                    $row['price'],
+                    $row['location'],
+                    $row['status'],
+                    $row['image'],
+                    $row['views'],
+                    $row['seller_id'],
+                    $row['agent_id']
+                );
+ 
+                $properties[] = $property;
+            }
+			
+			$this->db->closeConn();
+            return ['success' => true, 'properties' => $properties];
+        } else {
+			// Property search failed
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
+	}
+	
+    public function jsonSerialize() {
+		return array(
+			'id' => $this->id,
+            'name' => $this->name,
+            'type' => $this->type,
+            'size' => $this->size,
+            'rooms' => $this->rooms,
+            'price' => $this->price,
+            'location' => $this->location,
+            'status' => $this->status,
+            'image' => $this->image,
+            'views' => $this->views,
+            'seller_id' => $this->seller_id,
+            'agent_id' => $this->agent_id
+		);
+	}	
 }
 ?>

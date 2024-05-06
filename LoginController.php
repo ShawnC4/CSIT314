@@ -17,11 +17,11 @@ class LoginController {
         // Retrieve user data from the database based on the provided username
         $userA = $this->entity->findAccByUsername($username, $profile);
         
-        if ($userA && $password == $userA->password) {
-            if ($userA->activeStatus) {
-                $userP = $this->entityP->findProfileById($userA->profile_id);
-                if ($userP && $userP->activeStatus) {
-                    $_SESSION['userID'] = $userA->username;
+        if ($userA && $password == $userA->getPassword()) {
+            if ($userA->isActive()) {
+                $userP = $this->entityP->findProfileById($userA->getProfileId());
+                if ($userP && $userP->isActive()) {
+                    $_SESSION['userID'] = $userA->getUsername();
                     return ["success" => true];
                 } else {
                     return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];
