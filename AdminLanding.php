@@ -178,6 +178,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
+}else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'updateGetProfile') {
+    $profile = $controllerUpdateUA->getUserProfiles();
+
+    header('Content-Type: application/json');
+    echo json_encode($profile);
+    exit();
 }
 
 //SEARCH UA//
