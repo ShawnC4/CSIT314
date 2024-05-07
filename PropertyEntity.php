@@ -151,6 +151,8 @@ class PropertyEntity implements JsonSerializable{
         // Bind parameters
         $stmt->bind_param("ssiidsssiss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
         
+		mysqli_report(MYSQLI_REPORT_STRICT);
+		
         // Execute the statement
         if ($stmt->execute()) {
 			// Property creation successful

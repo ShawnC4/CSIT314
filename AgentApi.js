@@ -36,14 +36,14 @@ class AgentApi {
 			row.appendChild(locationCell);
 			//price
 			const priceCell = document.createElement('td');
-			priceCell.textContent = property.price;
+			priceCell.textContent = `$${property.price}`;
 			row.appendChild(priceCell);
 			//view button
 			const buttonCell = document.createElement('td');
 			const viewButton = document.createElement('button');
 			viewButton.textContent = 'View';
 			viewButton.addEventListener('click', () => {
-				this.viewProperty(property.id);
+				this.viewProperty(property.name, property.type, property.size, property.rooms, property.price, property.location, property.seller_id, property.status);
 			});
 			buttonCell.appendChild(viewButton);
 			//update button
@@ -127,27 +127,21 @@ class AgentApi {
         .catch(error => console.error('Error fetching reviews:', error));
     }
     
-    viewProperty(propertyId) {
-        fetch(`AgentView.php?action=getProperty&propertyId=${propertyId}`)
-        .then(response => response.json())
-        .then(property => {
-            console.log(property);
-            const modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = `
-                <span class="close">&times;</span>
-                <div class = "property-view">
-                <h2>Name: ${property.name}</h2>
-                <p>Type: ${property.type}</p>
-                <p>Sqft: ${property.size}</p>
-                <p>Rooms: ${property.rooms}</p>
-                <p>Price: $${property.price}</p>
-                <p>Location: ${property.location}</p>
-                <p>Seller: ${property.seller_id}</p>
-                <p>Status: ${property.status}</p>
-            `;
-            modalFeatures();
-        })
-        .catch(error => console.error('Error fetching property:', error));
+    viewProperty(name, type, size, rooms, price, location, seller_id, status) {
+		const modalContent = document.getElementById('modal-content');
+		modalContent.innerHTML = `
+			<span class="close">&times;</span>
+			<div class = "property-view">
+			<h2>Name: ${name}</h2>
+			<p>Type: ${type}</p>
+			<p>Sqft: ${size}</p>
+			<p>Rooms: ${rooms}</p>
+			<p>Price: $${price}</p>
+			<p>Location: ${location}</p>
+			<p>Seller: ${seller_id}</p>
+			<p>Status: ${status}</p>
+		`;
+		modalFeatures();
     }
 
     //Delete Property function
@@ -163,7 +157,7 @@ class AgentApi {
         .then(data => {
             if (data['success']) {
                 alert(`Property ${name} was deleted successfully!`);
-				this.getAgentProperties();
+				loadContent('AgentView.php');
             } else {
                 throw new Error(data['errorMessage']);
             }
@@ -250,11 +244,13 @@ class AgentApi {
                 alert(`Property ${name} was created successfully!`);
 				loadContent('AgentView.php');
 			}
-			else {
-				throw new Error(data['errorMessage']);
+			else if (data['errorMessage'].toLowerCase().includes("foreign key constraint")){
+				alert (`Seller "${seller_id}" does not exists!`);
 			}
+			else 
+				throw new Error(data['errorMessage']);
         })
-        .catch(error => console.error('Error updating user account :', error));
+        .catch(error => console.error('Error creating property :', error));
     }
     
 }

@@ -16,12 +16,6 @@
 
         echo json_encode($properties);
         exit();
-    } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProperty') {
-        $property = $agentViewPropController->getProperty($_GET['propertyId']);
-        header('Content-Type: application/json');
-
-        echo json_encode($property);
-        exit();
     }
 
     //UPDATE//
