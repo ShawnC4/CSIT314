@@ -159,5 +159,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     }
 </script>
 <script src="SellerApi.js"></script>
-const userID = "<?php echo $userID; ?>";
 </html>
