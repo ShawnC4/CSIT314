@@ -8,9 +8,9 @@ class SellerCreateRatingController {
         $this->entity = new RatingEntity();
     }
 
-    public function createRating($rating, $customer_id, $Agent_id) {
-        $ratings = $this->entity->createSaleRating($rating, $customer_id, $Agent_id);
-        return $ratings;
+    public function createRating($rating, $customer_id, $agent_id) {
+        $agentRatings = $this->entity->createSaleRating($rating, $customer_id, $agent_id);
+        return $agentRatings;
     }
 
 }

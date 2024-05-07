@@ -44,8 +44,7 @@ class RatingEntity {
     }
 
     // Create rating
-    public function createSaleRating($rating, $customer_id, $Agent_id) {
-
+    public function createSaleRating($rating, $customer_id, $agent_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
@@ -53,14 +52,14 @@ class RatingEntity {
         $stmt = $this->conn->prepare("INSERT INTO ratings (rating, customer_id, agent_id) VALUES (?, ?, ?)");
         
         // Bind parameters
-        $stmt->bind_param("iss", $rating, $customer_id, $Agent_id);
+        $stmt->bind_param("iss", $rating, $customer_id, $agent_id);
         
         // Execute the statement
         if ($stmt->execute()) {
-            // Property creation successful
+            // Rating creation successful
             return true;
         } else {
-            // Property creation failed
+            // Rating creation failed
             return false;
         }
         

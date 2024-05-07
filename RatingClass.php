@@ -10,7 +10,7 @@ class Rating {
         $this->agent_id = $agent_id;
     }
 
-    // Getters and Setters for each property
+    // Getters and Setters for each rating
     public function getRating() {
         return $this->rating;
     }
