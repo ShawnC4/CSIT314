@@ -45,25 +45,22 @@ class SellerApi {
 
                     propertyDetailsDiv.appendChild(viewButton);
 
-                    if (property.status === 'sold') {
-                        // Create button for Give Rating
-                        var ratingButton = document.createElement('button');
-                        ratingButton.textContent = 'Give Rating';
-                        ratingButton.addEventListener('click', () => {
-                            displayRating(property.id);
-                        });
+                    // Create button for Give Rating
+                    var ratingButton = document.createElement('button');
+                    ratingButton.textContent = 'Give Rating';
+                    ratingButton.addEventListener('click', () => {
+                        displayRating(property.id);
+                    });
+                    // Create button for Give Review
+                    var reviewButton = document.createElement('button');
+                    reviewButton.textContent = 'Give Review';
+                    reviewButton.addEventListener('click', () => {
+                        this.displayReview(property.id);
+                    });
 
-                        // Create button for Give Review
-                        var reviewButton = document.createElement('button');
-                        reviewButton.textContent = 'Give Review';
-                        reviewButton.addEventListener('click', () => {
-                            this.displayReview(property.id);
-                        });
-
-                        // Append Give Rating and Give Review buttons to container
-                        propertyDetailsDiv.appendChild(ratingButton);
-                        propertyDetailsDiv.appendChild(reviewButton);
-                    }
+                    // Append Give Rating and Give Review buttons to container
+                    propertyDetailsDiv.appendChild(ratingButton);
+                    propertyDetailsDiv.appendChild(reviewButton);
 
                     propertyDiv.appendChild(propertyDetailsDiv);
                     
