@@ -159,179 +159,239 @@ class AdminApi {
         .then(response => response.json())
         .then(profiles => {
             console.log(profiles);
-            const profileList = document.getElementById('profileList');
-            profileList.innerHTML = ''; // Clear previous content
-            profiles.forEach(profile => {
-                // Create container for profile information
-                const profileContainer = document.createElement('div');
-                
-                // Display profile name
-                const profileName = document.createElement('span');
-                profileName.textContent = profile.name + ' ';
-                profileContainer.appendChild(profileName);
-
-                //Display profile status 
-                const profileStatus =  document.createElement('span');
-                profileStatus.textContent = profile.activeStatus == 1 ? 'Active' : 'Inactive';
-                profileContainer.appendChild(profileStatus);
-
-                //Create view button
-                const viewButton = document.createElement('button')
-                viewButton.textContent = 'View'
-                viewButton.addEventListener('click', () => {
-                    viewProfile(profile.id, profile.name, profile.activeStatus, profile.description);
-                });
-                profileContainer.appendChild(viewButton)
-
-                // Create edit button
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.addEventListener('click', () => {
-                    // Call displayUpdate function to display the form for updating profile
-                    displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
-                });
-                profileContainer.appendChild(editButton);
-
-                // Create suspend button
-                const suspendButton = document.createElement('button');
-                if (profile.activeStatus != true) {
-                    //suspendButton.classList.add("disable-btn");
-                    suspendButton.disabled = true;  // Disables the button, preventing user interaction  
-                }
-                suspendButton.textContent = 'Suspend';
-                suspendButton.addEventListener('click', () => {
-                    // Handle suspend functionality here
-                    if (confirm(`Are you sure you want to suspend Profile ${profile.name}?`)) {
-                        this.suspendProfileApiCall(profile.id, profile.name);
-                    }
-                });
-                profileContainer.appendChild(suspendButton);
-            
-                // Append profile container to profile list
-                profileList.appendChild(profileContainer);
-            });
+			displayProfile(profiles);
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
 
-    fetchUserAccounts() {
-        fetch('AdminLanding.php?action=getAccounts')
+    fetchUserAccounts(page = 0) {
+		fetch('AdminLanding.php?action=getAccounts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ page })
+        })
         .then(response => response.json())
-        .then(accounts => {
-            console.log(accounts);
-            const accountList = document.getElementById('accountList');
-            accountList.innerHTML = ''; // Clear previous content
-            accounts.forEach(account => {
-                // Create container for account information
-                const accountContainer = document.createElement('div');
-                
-                // Display account name
-                const accountName = document.createElement('span');
-                accountName.textContent = account.username + ' ';
-                accountContainer.appendChild(accountName);
-
-                // Display account email
-                const accountEmail = document.createElement('span');
-                accountEmail.textContent = account.email + ' ';
-                accountContainer.appendChild(accountEmail);
-
-                //Display account status 
-                const accountStatus =  document.createElement('span');
-                accountStatus.textContent = account.activeStatus == 1 ? 'Active' : 'Inactive';
-                accountContainer.appendChild(accountStatus);
-
-                //Create view button
-                const viewButton = document.createElement('button');
-                viewButton.textContent = 'View';
-				viewButton.addEventListener('click', () => {
-                    viewAccount(account.username, account.email, account.password, account.activeStatus, account.profile_id);
-                });
-				accountContainer.appendChild(viewButton);
-
-                // Create edit button
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.addEventListener('click', () => {
-                    // Call displayUpdate function to display the form for updating profile
-                    displayUpdateUA(account.username, account.email, account.password, account.activeStatus, account.profile_id);
-                });
-                accountContainer.appendChild(editButton);
-
-                // Create suspend button
-                const suspendButton = document.createElement('button');
-                if (account.activeStatus != true) {
-                    suspendButton.disabled = true; // Disables the button, preventing user interaction  
-                }
-                suspendButton.textContent = 'Suspend';
-                suspendButton.addEventListener('click', () => {
-                    // Handle suspend functionality here
-                    if (confirm(`Are you sure you want to suspend Account ${account.username}?`)) {
-                        this.suspendAccountApiCall(account.username);
-                    }
-                });
-                accountContainer.appendChild(suspendButton);
-            
-                // Append account container to profile list
-                accountList.appendChild(accountContainer);
-            });
+        .then(data => {
+            console.log(data);
+            if(data['success']) {
+                const accountList = document.getElementById('accountList');
+				accountList.innerHTML = ''; // Clear previous content
+				
+				const pageSelect = document.createElement('select');
+				pageSelect.id = 'pageNum';
+				pageSelect.name = 'pageNum';
+		
+				// Iterate over fetched profiles and create options
+				for (let i = 0; i < data['count']; i++) {
+					const option = document.createElement('option');
+					option.value = i;
+					option.textContent = `Page ${i+1}`;
+					if (i == page)
+						option.selected = true;
+					pageSelect.appendChild(option);
+				}
+				
+				pageSelect.addEventListener('change', () => {
+					this.fetchUserAccounts(pageSelect.value);
+				});
+				
+				accountList.appendChild(pageSelect);
+				
+				let arr = displayAccount(data['accounts']);
+				arr.forEach(dom =>{
+					accountList.appendChild(dom);
+				});
+				
+            } else {
+                console.error('Error fetching user account:', data['errorMessage']);
+            }
+			
         })
         .catch(error => console.error('Error fetching user accounts:', error));
     }
 
     searchEngineProfile = () => {
         // Get value entered in search input field and convert it to lowercase
-        const searchInput = document.getElementById('searchProfile').value.toLowerCase();
-
-        // Select all profile containers
-        const profileContainers = document.querySelectorAll('#profileList > div');
-
-        // Iterate over each profile container
-        profileContainers.forEach(container => {
-            // Get text content of profile name within container and convert it to lowercase
-            const profileName = container.querySelector('span').textContent.toLowerCase();
-
-            // Check if profile name includes search input
-            if (profileName.includes(searchInput)) {
-
-                // display container if profile name includes search input
-                container.style.display = 'block';
+        const name = document.getElementById('searchProfile').value.toLowerCase();
+		if (name.trim() == ''){
+			this.fetchUserProfiles();
+			return;
+		}
+		
+		fetch('AdminLanding.php?action=searchProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data['success']) {
+                displayProfile (data['profiles'])
+				
+            } else {
+                console.error('Error fetching user profiles:', data['errorMessage']);
             }
-            else {
-                // hide container if profile name does not include search input
-                container.style.display = 'none';
-            }
-        });
+			
+        })
+        .catch(error => console.error('Error fetching user profiles:', error));
     }
 
     searchEngineAccount= () => {
         // Get value entered in search input field and convert it to lowercase
-        const searchInput = document.getElementById('searchAccount').value.toLowerCase();
-
-        // Select all profile containers
-        const accountContainers = document.querySelectorAll('#accountList > div');
-
-        // Iterate over each profile container
-        accountContainers.forEach(container => {
-            // Get text content of profile name within container and convert it to lowercase
-            const accountName = container.querySelector('span').textContent.toLowerCase();
-
-            // Check if profile name includes search input
-            if (accountName.includes(searchInput)) {
-
-                // display container if profile name includes search input
-                container.style.display = 'block';
+        const username = document.getElementById('searchAccount').value.toLowerCase();
+		if (username.trim() == ''){
+			this.fetchUserAccounts();
+			return;
+		}
+		
+		fetch('AdminLanding.php?action=searchAccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data['success']) {
+                const accountList = document.getElementById('accountList');
+				accountList.innerHTML = ''; // Clear previous content
+				
+				let arr = displayAccount(data['accounts']);
+				arr.forEach(dom =>{
+					accountList.appendChild(dom);
+				});
+				
+            } else {
+                console.error('Error fetching user account:', data['errorMessage']);
             }
-            else {
-                // hide container if profile name does not include search input
-                container.style.display = 'none';
-            }
-        });
+			
+        })
+        .catch(error => console.error('Error fetching user accounts:', error));
     }
 };
 
 window.onload = function() {
     loadContent('AdminUP.php');
 };
+
+function displayProfile (profiles) {
+	const profileList = document.getElementById('profileList');
+	profileList.innerHTML = ''; // Clear previous content
+	profiles.forEach(profile => {
+		// Create container for profile information
+		const profileContainer = document.createElement('div');
+		
+		// Display profile name
+		const profileName = document.createElement('span');
+		profileName.textContent = profile.name + ' ';
+		profileContainer.appendChild(profileName);
+
+		//Display profile status 
+		const profileStatus =  document.createElement('span');
+		profileStatus.textContent = profile.activeStatus == 1 ? 'Active' : 'Inactive';
+		profileContainer.appendChild(profileStatus);
+
+		//Create view button
+		const viewButton = document.createElement('button')
+		viewButton.textContent = 'View'
+		viewButton.addEventListener('click', () => {
+			viewProfile(profile.id, profile.name, profile.activeStatus, profile.description);
+		});
+		profileContainer.appendChild(viewButton)
+
+		// Create edit button
+		const editButton = document.createElement('button');
+		editButton.textContent = 'Edit';
+		editButton.addEventListener('click', () => {
+			// Call displayUpdate function to display the form for updating profile
+			displayUpdateUP(profile.id, profile.name, profile.activeStatus, profile.description);
+		});
+		profileContainer.appendChild(editButton);
+
+		// Create suspend button
+		const suspendButton = document.createElement('button');
+		if (profile.activeStatus != true) {
+			//suspendButton.classList.add("disable-btn");
+			suspendButton.disabled = true;  // Disables the button, preventing user interaction  
+		}
+		suspendButton.textContent = 'Suspend';
+		suspendButton.addEventListener('click', () => {
+			// Handle suspend functionality here
+			if (confirm(`Are you sure you want to suspend Profile ${profile.name}?`)) {
+				admin.suspendProfileApiCall(profile.id, profile.name);
+			}
+		});
+		profileContainer.appendChild(suspendButton);
+	
+		// Append profile container to profile list
+		profileList.appendChild(profileContainer);
+	});
+}
+
+function displayAccount(accounts) {
+	let arr = [];
+	accounts.forEach(account => {
+		// Create container for account information
+		const accountContainer = document.createElement('div');
+		
+		// Display account name
+		const accountName = document.createElement('span');
+		accountName.textContent = account.username + ' ';
+		accountContainer.appendChild(accountName);
+
+		// Display account email
+		const accountEmail = document.createElement('span');
+		accountEmail.textContent = account.email + ' ';
+		accountContainer.appendChild(accountEmail);
+
+		//Display account status 
+		const accountStatus =  document.createElement('span');
+		accountStatus.textContent = account.activeStatus == 1 ? 'Active' : 'Inactive';
+		accountContainer.appendChild(accountStatus);
+
+		//Create view button
+		const viewButton = document.createElement('button');
+		viewButton.textContent = 'View';
+		viewButton.addEventListener('click', () => {
+			viewAccount(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+		});
+		accountContainer.appendChild(viewButton);
+
+		// Create edit button
+		const editButton = document.createElement('button');
+		editButton.textContent = 'Edit';
+		editButton.addEventListener('click', () => {
+			// Call displayUpdate function to display the form for updating profile
+			displayUpdateUA(account.username, account.email, account.password, account.activeStatus, account.profile_id);
+		});
+		accountContainer.appendChild(editButton);
+
+		// Create suspend button
+		const suspendButton = document.createElement('button');
+		if (account.activeStatus != true) {
+			suspendButton.disabled = true; // Disables the button, preventing user interaction  
+		}
+		suspendButton.textContent = 'Suspend';
+		suspendButton.addEventListener('click', () => {
+			// Handle suspend functionality here
+			if (confirm(`Are you sure you want to suspend Account ${account.username}?`)) {
+				admin.suspendAccountApiCall(account.username);
+			}
+		});
+		accountContainer.appendChild(suspendButton);
+	
+		// Append account container to profile list
+		arr.push(accountContainer);
+	});
+	return arr;
+}
 
 function displayCreateUP() {
     const Form = document.getElementById('modal-content');

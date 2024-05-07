@@ -1,9 +1,9 @@
 <?php
 require_once 'Konohadb.php';
 
-class UserProfile {
+class UserProfile implements JsonSerializable{
     private $db, $conn;
-	public $id, $name, $activeStatus, $description;
+	private $id, $name, $activeStatus, $description;
 	
 	public function __construct($id = null, $name = null, $activeStatus = null, $description = null) {
         if ($id !== null && $name !== null && $activeStatus !== null && $description !== null){
@@ -12,6 +12,22 @@ class UserProfile {
 			$this->activeStatus = $activeStatus;
 			$this->description = $description;
 		}
+    }
+	
+	public function getId () {
+        return $this->id;
+    }
+
+    public function getName () {
+        return $this->name;
+    }
+
+    public function isActive(){
+        return $this->activeStatus;
+    }
+
+    public function getDescription () {
+        return $this->description;
     }
 	
 	public function startConnection(){
@@ -144,7 +160,7 @@ class UserProfile {
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
-
+	
     public function suspendUserProfile($profileId) {
         $this->startConnection();
 		$sql = "UPDATE user_profiles SET activeStatus = 0 WHERE id = ?";
@@ -160,8 +176,46 @@ class UserProfile {
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
+	
+	public function searchUserProfile($name){
+		$this->startConnection();
+		$sql = "SELECT * FROM user_profiles WHERE name LIKE CONCAT('%', ?, '%')";
+		$stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $name);
+		
+		$profiles = array(); 
     
-
+        if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			
+			while ($row = $result->fetch_assoc()) {
+                $profile = new UserProfile(
+                    $row['id'],
+                    $row['name'],
+                    $row['activeStatus'],
+                    $row['description']
+                );
+                // Add the UserProfile object to the array
+                $profiles[] = $profile;
+            }
+			
+			$this->closeConnection();
+            return ['success' => true, 'profiles' => $profiles];
+        } else {
+			$errorMessage = $this->conn->error;
+			$this->closeConnection();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
+	}
+	
+	public function jsonSerialize() {
+		return array(
+			'id' => $this->getId(),
+			'name' => $this->getName(),
+			'activeStatus' => $this->isActive(),
+			'description' => $this->getDescription()
+		);
+	}
 }
 
 ?>

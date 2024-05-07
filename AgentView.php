@@ -1,50 +1,20 @@
 <?php
     session_start();
-    require_once 'AgentCreatePropController.php';
     require_once 'AgentViewPropController.php';
     require_once 'AgentUpdatePropController.php';
-
-    //CREATE//
-    $agentCreatePropController = new AgentCreatePropController();
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProperty') {
-        $requestData = json_decode(file_get_contents('php://input'), true);
-        $Name = $requestData['name'];
-        $Type = $requestData['type'];
-        $Size = $requestData['size'];
-        $Rooms = $requestData['rooms'];
-        $Price = $requestData['price'];
-        $Location = $requestData['location'];
-        $Status = $requestData['status'];
-        $Image = $requestData['image'];
-        $Views = $requestData['views'];
-        $Seller_id = $requestData['seller_id'];
-        $Agent_id = $requestData['agent_id'];
-        
-        $response = $agentCreatePropController->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
-
-        // Send JSON response
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit();
-    } 
+	require_once 'AgentDeletePropController.php';
+	require_once 'AgentSearchPropController.php';
 
     //VIEW//
     $agentViewPropController = new AgentViewPropController();
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentProperties') {
 
-        $properties = $agentViewPropController->getAgentProperties($_GET['agentId']);
+        $properties = $agentViewPropController->getPropertiesByAgent($_GET['agentId']);
         //$properties = $agentViewPropController->getAgentProperties('agent_1');
         header('Content-Type: application/json');
 
         echo json_encode($properties);
-        exit();
-    } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProperty') {
-        $property = $agentViewPropController->getProperty($_GET['propertyId']);
-        header('Content-Type: application/json');
-
-        echo json_encode($property);
         exit();
     }
 
@@ -75,23 +45,42 @@
     }
     
     //DELETE//
+	$agentDeletePropController = new AgentDeletePropController();
+	
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'deleteProperty') {
         // Get the body of the POST request
-        $json = file_get_contents('php://input');
-        $data = json_decode($json, true); // Convert JSON string into a PHP array
+        $requestData = json_decode(file_get_contents('php://input'), true);
     
-        if (isset($data['propertyId'])) {
-            $propertyId = $data['propertyId'];
-            $result = $agentViewPropController->deleteProperty($propertyId);
+        if (isset($requestData['propertyId'])) {
+            $propertyId = $requestData['propertyId'];
+            $result = $agentDeletePropController->deleteProperty($propertyId);
             header('Content-Type: application/json');
-            echo json_encode(['success' => $result]);
+            echo json_encode($result);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Property ID is missing']);
+			header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'errorMessage' => 'Property ID is missing']);
         }
         exit();
     }
     
+    //SEARCH//
+	$agentSearchPropController = new AgentSearchPropController();
+	
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchProperty') {
+        $requestData = json_decode(file_get_contents('php://input'), true);
     
+        if (isset($requestData['searchInput']) && isset($requestData['agent_id'])) {
+            $name = $requestData['searchInput']; 
+			$agent = $requestData['agent_id']; 
+            $result = $agentSearchPropController->searchProperty($name, $agent);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+        } else {
+			header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'errorMessage' => 'Search input is missing']);
+        }
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>

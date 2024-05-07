@@ -10,9 +10,9 @@ class AdminViewUAController {
         $this->entityP = new UserProfile();
     }
 
-    public function getUserAccounts() {
+    public function getUserAccounts($page=0) {
         // Retrieve user profiles from the database
-        $accounts = $this->entity->getUserAccounts();
+        $accounts = $this->entity->getUserAccounts($page);
 
         return $accounts;
     }
