@@ -8,22 +8,10 @@ class AgentViewPropController {
         $this->entity = new PropertyEntity();
     }
 
-    public function getAgentProperties($agent) {
-        // Retrieve user profiles from the database
-        $properties = $this->entity->getAgentProperties($agent);
+    public function getPropertiesByAgent($agent) {
+        $properties = $this->entity->getPropertiesByAgent($agent);
 
         return $properties;
-    }
-
-    public function deleteProperty($propertyId){
-        return $this->entity->deleteProperty($propertyId);
-    }
-
-    public function getProperty($id) {
-        // Retrieve user profiles from the database
-        $property = $this->entity->getPropertyById($id);
-
-        return $property;
     }
 }
 

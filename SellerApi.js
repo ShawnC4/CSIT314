@@ -115,6 +115,88 @@ class SellerApi {
                 console.error('Error fetching property details:', error);
             });
     }
+
+    displayRating(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`SellerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="rating-form">
+                        <h2>Rate the Agent</h2>
+                        <form id="ratingForm">
+                            <div>
+                                <label for="propertyID">Property ID:</label>
+                                <span id="propertyID">${propertyDetails.property.id}</span>
+                            </div>
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.property.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.property.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="customerID">Customer:</label>
+                                <span id="customerID">${userID}</span>
+                            </div>
+                            <div>
+                                <label for="agentRating">Rating (1-5):</label>
+                                <input type="number" id="agentRating" name="agentRating" min="1" max="5" required>
+                            </div>
+                            <button type="submit">Submit Rating</button>
+                        </form>
+                    </div>
+                `;
+
+                // Add event listener to form submission
+                const ratingForm = document.getElementById('ratingForm');
+                ratingForm.addEventListener('submit', this.createRating);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+
+    createRating = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentRating = document.getElementById('agentRating').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
+    
+        fetch('SellerLanding.php?action=createRating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentRating, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Rating for agent ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error rating agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error rating agent:', error));
+    }
+    
 }
 
 function modalFeatures () {
