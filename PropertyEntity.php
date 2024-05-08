@@ -22,7 +22,58 @@ class PropertyEntity implements JsonSerializable{
         }
         
     }
-    
+
+    public function getBuyerProperties ($page) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $properties = array(); 
+
+        $sql = "SELECT * FROM property LIMIT 9 OFFSET " . ($page - 1) * 9;
+
+        $result = $this->conn->query($sql);
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $property = new PropertyEntity(
+                    $row['id'],
+                    $row['name'],
+                    $row['type'],
+                    $row['size'],
+                    $row['rooms'],
+                    $row['price'],
+                    $row['location'],
+                    $row['status'],
+                    $row['image'],
+                    $row['views'],
+                    $row['seller_id'],
+                    $row['agent_id']
+                );
+ 
+                $properties[] = $property;
+            }
+        }
+
+        $this->db->closeConn();
+
+        return $properties;
+    }
+
+    public function getNumberOfProperties () {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $sql = "SELECT COUNT(*) FROM property";
+        $result = $this->conn->query($sql);
+
+        $row = $result->fetch_row();
+        $count = $row[0];
+
+        $this->db->closeConn();
+
+        return $count;
+    }
+
     public function getPropertyById($id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
