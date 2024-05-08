@@ -1,3 +1,7 @@
+<?php
+session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +10,7 @@
     <title>Buyer Page</title>
 </head>
 <body>
-    <h1>Welcome, <?php echo $_SESSION['username']; ?></h1>
+    <h1>Welcome, <?php echo $_SESSION['userID']; ?></h1>
     <br>
     <a href="logout.php">Logout</a>
 </body>
