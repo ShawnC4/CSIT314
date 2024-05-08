@@ -2,6 +2,7 @@
 session_start();
 require_once 'SellerViewPropertyController.php';
 require_once 'SellerCreateRatingController.php';
+require_once 'SellerCreateReviewController.php';
 
 // Check if the seller's user ID is set in the session
 if(isset($_SESSION['userID'])) {
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     }
 }
 
-//CREATE//
+//CREATE RATING//
 $SellerCreateRatingController = new SellerCreateRatingController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
@@ -45,6 +46,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     echo json_encode($response);
     exit();
 }
+
+//CREATE REVIEW//
+$SellerCreateReviewController = new SellerCreateReviewController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $review = $requestData['agentReview'];
+    $customer_id = $requestData['customerID'];
+    $agent_id = $requestData['agentID'];
+    
+    $response = $SellerCreateReviewController->createReview($review, $customer_id, $agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>

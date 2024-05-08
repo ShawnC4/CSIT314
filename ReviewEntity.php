@@ -42,5 +42,27 @@ class ReviewEntity {
         return $reviews;
     }
 
+    // Create review
+    public function createSaleReview($review, $customer_id, $agent_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("INSERT INTO reviews (review, customer_id, agent_id) VALUES (?, ?, ?)");
+    
+        // Bind parameters
+        $stmt->bind_param("sss", $review, $customer_id, $agent_id);
+    
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Rating creation successful
+            return true;
+        } else {
+            // Rating creation failed
+            return false;
+    }
+    // Close statement
+    $stmt->close();
+}
+
 }
 ?>
