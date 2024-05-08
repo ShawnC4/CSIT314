@@ -45,18 +45,32 @@ class SellerApi {
 
                     propertyDetailsDiv.appendChild(viewButton);
 
+<<<<<<< HEAD
                     // Create button for Give Rating
                     var ratingButton = document.createElement('button');
                     ratingButton.textContent = 'Give Rating';
                     ratingButton.addEventListener('click', () => {
                         this.displayRating(property.id);
                     });
+=======
+>>>>>>> 6e45f7aa5b4b52f34d761b4a72b856466cde8080
                     // Create button for Give Review
                     var reviewButton = document.createElement('button');
                     reviewButton.textContent = 'Give Review';
                     reviewButton.addEventListener('click', () => {
                         this.displayReview(property.id);
                     });
+<<<<<<< HEAD
+=======
+
+                    // Create button for Give Rating
+                    var ratingButton = document.createElement('button');
+                    ratingButton.textContent = 'Give Rating';
+                    ratingButton.addEventListener('click', () => {
+                        this.displayRating(property.id);
+                    });
+
+>>>>>>> 6e45f7aa5b4b52f34d761b4a72b856466cde8080
                     // Append Give Rating and Give Review buttons to container
                     propertyDetailsDiv.appendChild(ratingButton);
                     propertyDetailsDiv.appendChild(reviewButton);

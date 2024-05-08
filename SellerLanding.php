@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+<<<<<<< HEAD
 if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
     header("Location: index.php");
 } else if ($_SESSION['profile'] != "Seller") {
@@ -13,6 +14,11 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
     } else {
         header("Location: index.php");
     }
+=======
+if(!isset($_SESSION['logged']) || $_SESSION['logged'] !== true) {
+    header('Location: index.php');
+    exit();
+>>>>>>> 6e45f7aa5b4b52f34d761b4a72b856466cde8080
 }
 
 require_once 'SellerViewPropertyController.php';
