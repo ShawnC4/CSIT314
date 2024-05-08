@@ -89,7 +89,7 @@ class BuyerApi {
 
 const BuyerApiInstance = new BuyerApi();
 
-function initialize () {
+function initializeView () {
     BuyerApiInstance.getDashboard(1);
     BuyerApiInstance.getNumberOfPages();
 
@@ -99,4 +99,27 @@ function initialize () {
     });
 }
 
-window.onload = initialize();
+window.onload = () => {
+    loadContent('BuyerView.php');
+}
+
+function loadContent(page) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            // Attempt to set the innerHTML property of an element
+            var element = document.querySelector("#body"); // Change to the appropriate selector
+            if (element !== null) {
+                element.innerHTML = this.responseText;
+                
+                if (page === 'BuyerView.php') {
+                    initializeView();
+                }
+            } else {
+                console.error("Element not found.");
+            }
+        }
+    };
+    xhttp.open("GET", page, true);
+    xhttp.send();
+}

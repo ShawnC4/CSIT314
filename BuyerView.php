@@ -85,22 +85,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buyer Page</title>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header">
-        <a href="AgentLanding.php" class="logo">Buyer Hub</a>
-        <nav>
-            <ul>
-                <li><a href="#" onclick="loadContent('BuyerView.php')">View </button></li>
-                <li><a href="logout.php"> Logout</a></li>
-            </ul>
-        </nav>
-    </div>
-    <div id="body">
-        <!-- Content of the body goes here -->
-        <h1 class="welcome-message">Welcome to the Buyer Page!</h1>
+    <div class="body">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search properties...">
+
+            <select id="filterSelect">
+                <option value="all">All</option>
+                <option value="available">Available</option>
+                <option value="sold">Sold</option>
+            </select>
+        </div>
+        <div class="page-selection">
+            <label for="pageSelect">Select Page:</label>
+            <select id="pageSelect">
+                <!-- Options will be added here by JavaScript -->
+            </select>
+        </div>
+        <!-- Property Listings -->
+        <div class="property-listings">
+            <!-- Property 1 -->
+            <div class="property">
+                <img src="images/Prop-1.jpg" alt="Property 1">
+                <div class="property-details">
+                    <!-- Add more details as needed -->
+                    <h2>Property Name 2</h2>
+                    <div class="buttons">
+                        <button onclick="loadContent('SellerView.php')">View</button>
+                        <button>Add To Shortlist</button>
+                        <button onclick="giveRating(1)" class="hidden">Give Rating</button>
+                        <button onclick="giveReview(1)" class="hidden">Give Review</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property">
+            <img src="images/Prop-2.jpg" alt="Property 2">
+                <div class="property-details">
+                    <h2>Property Name 2</h2>
+                    <div class="buttons">
+                        <button onclick="viewDetails(2)">View</button>
+                        <button>Add To Shortlist</button>
+                        <button onclick="giveRating(2)">Give Rating</button>
+                        <button onclick="giveReview(2)">Give Review</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more property listings as needed -->
+        </div>
     </div>
 </body>
-<script src="BuyerApi.js"></script>
 </html>
