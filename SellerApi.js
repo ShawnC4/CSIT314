@@ -45,21 +45,25 @@ class SellerApi {
 
                     propertyDetailsDiv.appendChild(viewButton);
 
-                    // Create button for Give Rating
-                    var ratingButton = document.createElement('button');
-                    ratingButton.textContent = 'Give Rating';
-                    ratingButton.addEventListener('click', () => {
-                        this.displayRating(property.id);
-                    });
-                    // Create button for Give Review
-                    var reviewButton = document.createElement('button');
-                    reviewButton.textContent = 'Give Review';
-                    reviewButton.addEventListener('click', () => {
-                        this.displayReview(property.id);
-                    });
-                    // Append Give Rating and Give Review buttons to container
-                    propertyDetailsDiv.appendChild(ratingButton);
-                    propertyDetailsDiv.appendChild(reviewButton);
+                    if (property.status === 'sold') {
+                        // Create button for Give Rating
+                        var ratingButton = document.createElement('button');
+                        ratingButton.textContent = 'Give Rating';
+                        ratingButton.addEventListener('click', () => {
+                            this.displayRating(property.id);
+                        });
+
+                        // Create button for Give Review
+                        var reviewButton = document.createElement('button');
+                        reviewButton.textContent = 'Give Review';
+                        reviewButton.addEventListener('click', () => {
+                            this.displayReview(property.id);
+                        });
+
+                        // Append Give Rating and Give Review buttons to container
+                        propertyDetailsDiv.appendChild(ratingButton);
+                        propertyDetailsDiv.appendChild(reviewButton);
+                    }
 
                     propertyDiv.appendChild(propertyDetailsDiv);
                     
@@ -227,7 +231,7 @@ class SellerApi {
                             </div>
                             <div>
                                 <label for="agentReview">Review:</label>
-                                <textarea id="agentReview" name="agentReview" rows="4" resize="none" cols="50" required placeholder="Type your review here..."></textarea>
+                                <textarea id="agentReview" name="agentReview" rows="4" cols="50" required placeholder="Type your review here..."></textarea>
                             </div>
                             <button type="submit">Submit Review</button>
                         </form>
