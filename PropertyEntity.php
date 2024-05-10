@@ -315,57 +315,6 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
 		}
 	}
-
-    public function searchBuyerProperty($status, $name, $page) {
-        $this->db = new DBconn(); 
-        $this->conn = $this->db->getConn();
-        
-        $properties = array(); 
-        $sql = "SELECT * FROM property WHERE status = ? AND name LIKE CONCAT('%', ?, '%') ORDER BY id ASC LIMIT 9 OFFSET ?";
-        $stmt = $this->conn->prepare($sql);
-        if ($stmt === false) {
-            $errorMessage = $this->conn->error;
-            $this->db->closeConn();
-            return ['success' => false, 'errorMessage' => $errorMessage];
-        }
-    
-        // Calculate the offset based on the page number
-        $offset = ($page - 1) * 9;
-    
-        $stmt->bind_param("ssi", $status, $name, $offset);
-    
-        if ($stmt->execute()) {
-            // Property search successful           
-            $result = $stmt->get_result();
-            
-            while ($row = $result->fetch_assoc()) {
-                $property = new PropertyEntity(
-                    $row['id'],
-                    $row['name'],
-                    $row['type'],
-                    $row['size'],
-                    $row['rooms'],
-                    $row['price'],
-                    $row['location'],
-                    $row['status'],
-                    $row['image'],
-                    $row['views'],
-                    $row['seller_id'],
-                    $row['agent_id']
-                );
-    
-                $properties[] = $property;
-            }
-            
-            $this->db->closeConn();
-            return ['success' => true, 'properties' => $properties];
-        } else {
-            // Property search failed
-            $errorMessage = $this->conn->error;
-            $this->db->closeConn();
-            return ['success' => false, 'errorMessage' => $errorMessage];
-        }
-    }
 	
     public function jsonSerialize() {
 		return array(

@@ -56,13 +56,18 @@ class BuyerApi {
                 propertyDetailsDiv.appendChild(viewButton);
 
                 // ShortList button
-                var shortListButton = document.createElement('button');
-                shortListButton.textContent = 'Add To ShortList';
-                shortListButton.addEventListener('click', () => {
-                    this.shortListProperty(property.id);
+                this.shortListExists(property.id).then(exists => {
+                    if (!exists) {
+                        var shortListButton = document.createElement('button');
+                        shortListButton.textContent = 'Add To ShortList';
+                        shortListButton.addEventListener('click', () => {
+                            this.shortListProperty(property.id);
+                        });
+                
+                        propertyDetailsDiv.appendChild(shortListButton);
+                    }
                 });
 
-                propertyDetailsDiv.appendChild(shortListButton);
                 // Create button for Give Rating
                 var ratingButton = document.createElement('button');
                 ratingButton.textContent = 'Give Rating';
@@ -146,37 +151,21 @@ class BuyerApi {
             });
     }
 
-    searchBuyerProperty = () => {        
-        // Get value entered in search input field and convert it to lowercase
-        const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        const status = document.getElementById('filterSelect').value; // Get the selected status
-        const page = document.getElementById('pageSelect').value; // Get the selected page
-    
-        if (searchInput.trim() == ''){
-            // Handle empty search input
-            // For example, you might want to display all properties
-            return;
-        }
-        
-        fetch('BuyerView.php?action=searchBuyerProperty', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ searchInput, status, page })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            
-            if (!data['success'])
-                throw new Error(data['errorMessage']);
-            
-            this.displayProperty(data['properties']);
-        })
-        .catch(error => console.error('Error fetching properties:', error));
+    async shortListExists (propertyId) {
+        const response = await fetch(`BuyerLanding.php?action=shortListExists&propertyId=${propertyId}&buyerId=${window.userID}`);
+        const exist = await response.json();
+        return exist;
     }
-    
+
+    shortListProperty (propertyId) {
+        fetch(`BuyerLanding.php?action=shortListProperty&propertyId=${propertyId}&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(response => {
+            alert(response.message);
+            location.reload();
+        });
+    }
+
 }
 
 function calculateMortgage() {
@@ -204,7 +193,6 @@ function modalFeatures () {
     span.onclick = function() {
     modal.style.display = "none";
     }
-    
 }
 
 const BuyerApiInstance = new BuyerApi();
