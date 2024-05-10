@@ -21,7 +21,7 @@ require_once 'BuyerShortListPropertyController.php';
 $BuyerShortlistController = new BuyerShortlistController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortlistedProperties') {
-    $id = $_SESSION['id'];
+    $propertyId = $_SESSION['id'];
     $shortlistedProperties = $BuyerShortlistController->getShortlistedProperties($id);
     header('Content-Type: application/json');
     echo json_encode($shortlistedProperties);
