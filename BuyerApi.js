@@ -56,13 +56,18 @@ class BuyerApi {
                 propertyDetailsDiv.appendChild(viewButton);
 
                 // ShortList button
-                var shortListButton = document.createElement('button');
-                shortListButton.textContent = 'Add To ShortList';
-                shortListButton.addEventListener('click', () => {
-                    this.shortListProperty(property.id);
+                this.shortListExists(property.id).then(exists => {
+                    if (!exists) {
+                        var shortListButton = document.createElement('button');
+                        shortListButton.textContent = 'Add To ShortList';
+                        shortListButton.addEventListener('click', () => {
+                            this.shortListProperty(property.id);
+                        });
+                
+                        propertyDetailsDiv.appendChild(shortListButton);
+                    }
                 });
 
-                propertyDetailsDiv.appendChild(shortListButton);
                 // Create button for Give Rating
                 var ratingButton = document.createElement('button');
                 ratingButton.textContent = 'Give Rating';
@@ -131,6 +136,21 @@ class BuyerApi {
             });
     }
 
+    async shortListExists (propertyId) {
+        const response = await fetch(`BuyerLanding.php?action=shortListExists&propertyId=${propertyId}&buyerId=${window.userID}`);
+        const exist = await response.json();
+        return exist;
+    }
+
+    shortListProperty (propertyId) {
+        fetch(`BuyerLanding.php?action=shortListProperty&propertyId=${propertyId}&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(response => {
+            alert(response.message);
+            location.reload();
+        });
+    }
+
 }
 
 function modalFeatures () {
@@ -146,7 +166,6 @@ function modalFeatures () {
     span.onclick = function() {
     modal.style.display = "none";
     }
-    
 }
 
 const BuyerApiInstance = new BuyerApi();
