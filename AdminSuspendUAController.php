@@ -1,16 +1,16 @@
 <?php
 // AdminSuspendUAController.php
-require_once 'UserAccEntity.php';
+require_once 'UserAccount.php';
 
 class AdminSuspendUAController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new UserAccEntity();
+        $this->entity = new UserAccount();
     }
 
-    public function suspendAccount($accountId) {
-        return $this->entity->suspendUserAccount($accountId);
+    public function suspendAccount($username) {
+        return $this->entity->suspendUserAccount($username);
     }
 }
 

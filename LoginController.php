@@ -1,18 +1,15 @@
 <?php
-session_start();
 // Controller class to process login requests
-require_once 'UserAccEntity.php';
-require_once 'UserAccClass.php';
-require_once 'UserProfileEntity.php';
-require_once 'UserProfileClass.php';
+require_once 'UserAccount.php';
+require_once 'UserProfile.php';
 
 class LoginController {
     private $entity, $entityP;
 
     public function __construct() {
         // Initialize Entity object
-        $this->entity = new UserAccEntity();
-        $this->entityP = new UserProfileEntity();
+        $this->entity = new UserAccount();
+        $this->entityP = new UserProfile();
     }
 
     public function auth($username, $password, $profile) {
@@ -23,7 +20,9 @@ class LoginController {
             if ($userA->isActive()) {
                 $userP = $this->entityP->findProfileById($userA->getProfileId());
                 if ($userP && $userP->isActive()) {
-                    $_SESSION['userID'] = $userA->getId();
+                    $_SESSION['userID'] = $userA->getUsername();
+                    $_SESSION['profile'] = $userP->getName();
+                    $_SESSION['logged'] = true;
                     return ["success" => true];
                 } else {
                     return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];

@@ -1,3 +1,7 @@
+<?php
+session_start(); // Start the session
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +55,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <br>
     <button id="createAccount">Create User Account</button>
     <br>
-    <input type="text" id="searchInput" placeholder="Search accounts">
+    <input type="text" id="searchAccount" placeholder="Search accounts">
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">

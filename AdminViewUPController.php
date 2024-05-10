@@ -1,13 +1,13 @@
 <?php
 // Controller class to process login requests
-require_once 'UserProfileEntity.php';
+require_once 'UserProfile.php';
 
 class AdminViewUPController {
     private $entity;
 
     public function __construct() {
         // Initialize Entity object
-        $this->entity = new UserProfileEntity();
+        $this->entity = new UserProfile();
     }
 
     public function getUserProfiles() {

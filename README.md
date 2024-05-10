@@ -24,8 +24,7 @@ VALUES
 
 
 CREATE TABLE user_accounts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    username VARCHAR(50) PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     activeStatus BOOLEAN NOT NULL,
@@ -39,7 +38,7 @@ SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buy
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 5
 ) t;
 
 -- Populate user accounts for Seller profile with password 'seller_password'
@@ -48,7 +47,7 @@ SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('s
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 5
 ) t;
 
 -- Populate user accounts for Agent profile with password 'agent_password'
@@ -57,7 +56,7 @@ SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('age
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 5
 ) t;
 
 -- Populate user accounts for Admin profile with password 'admin_password'
@@ -73,69 +72,69 @@ FROM (
 CREATE TABLE ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     rating INT NOT NULL,
-    seller_id INT NOT NULL,
-    agent_id INT NOT NULL,
-    FOREIGN KEY (seller_id) REFERENCES user_accounts(id),
-    FOREIGN KEY (agent_id) REFERENCES user_accounts(id)
+    customer_id VARCHAR(50) NOT NULL,
+    agent_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES user_accounts(username),
+    FOREIGN KEY (agent_id) REFERENCES user_accounts(username)
 );
 
 -- Create the reviews table
 CREATE TABLE reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     review TEXT NOT NULL,
-    seller_id INT NOT NULL,
-    agent_id INT NOT NULL,
-    FOREIGN KEY (seller_id) REFERENCES user_accounts(id),
-    FOREIGN KEY (agent_id) REFERENCES user_accounts(id)
+    customer_id VARCHAR(50) NOT NULL,
+    agent_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES user_accounts(username),
+    FOREIGN KEY (agent_id) REFERENCES user_accounts(username)
 );
 
 -- Insert 10 rows into the ratings table
-INSERT INTO ratings (rating, seller_id, agent_id)
+INSERT INTO ratings (rating, customer_id, agent_id)
 VALUES
-    (5, 19, 31), 
-    (4, 22, 40), 
-    (5, 23, 36),
-    (3, 16, 38),
-    (4, 17, 39),
-    (1, 17, 40),
-    (4, 20, 34),
-    (3, 25, 32),
-    (5, 18, 35),
-    (4, 21, 33),
-    (4, 24, 31), 
-    (5, 25, 40), 
-    (3, 16, 36),
-    (4, 17, 38),
-    (5, 18, 39),
-    (2, 19, 40),
-    (3, 20, 34),
-    (4, 21, 32),
-    (5, 22, 35),
-    (3, 23, 33);
+    (5, 'seller_2', 'agent_1'), 
+    (4, 'seller_1', 'agent_1'), 
+    (5, 'buyer_5', 'agent_1'),
+    (3, 'buyer_4', 'agent_1'),
+    (4, 'seller_3', 'agent_2'),
+    (1, 'seller_2', 'agent_2'),
+    (4, 'buyer_4', 'agent_2'),
+    (3, 'buyer_5', 'agent_2'),
+    (5, 'seller_4', 'agent_3'),
+    (4, 'seller_5', 'agent_3'),
+    (4, 'buyer_1', 'agent_3'), 
+    (5, 'buyer_3', 'agent_3'), 
+    (3, 'seller_5', 'agent_4'),
+    (4, 'seller_1', 'agent_4'),
+    (5, 'buyer_3', 'agent_4'),
+    (2, 'buyer_2', 'agent_4'),
+    (3, 'seller_2', 'agent_5'),
+    (4, 'seller_4', 'agent_5'),
+    (5, 'buyer_5', 'agent_5'),
+    (3, 'buyer_1', 'agent_5');
 
 -- Insert 10 rows into the reviews table
-INSERT INTO reviews (review, seller_id, agent_id)
+INSERT INTO reviews (review, customer_id, agent_id)
 VALUES
-    ('Great experience, highly recommended!', 19, 31), 
-    ('Good service overall, could improve communication.', 22, 40), 
-    ('Excellent professionalism and timely delivery.', 23, 36),
-    ('Average service, needs improvement in quality.', 16, 38),
-    ('Satisfactory performance, would use again.', 17, 39),
-    ('Terrible experience, very poor communication.', 17, 40),
-    ('Impressed with the quality of work.', 20, 34),
-    ('Fair service, met expectations.', 25, 32),
-    ('Outstanding service, exceeded expectations!', 18, 35),
-    ('Good job, but room for improvement.', 21, 33),
-    ('Excellent service, highly recommended!', 24, 31), 
-    ('Good experience overall, satisfied.', 25, 40), 
-    ('Could improve communication, but good otherwise.', 16, 36),
-    ('Satisfactory performance, met expectations.', 17, 38),
-    ('Outstanding service, exceeded expectations!', 18, 39),
-    ('Poor experience, needs improvement.', 19, 40),
-    ('Impressed with the quality of work.', 20, 34),
-    ('Fair service, could improve.', 21, 32),
-    ('Exceptional service, highly recommended!', 22, 35),
-    ('Average service, nothing special.', 23, 33);
+    ('Great experience, highly recommended!', 'buyer_4', 'agent_1'), 
+    ('Good service overall, could improve communication.', 'seller_1', 'agent_1'), 
+    ('Excellent professionalism and timely delivery.', 'buyer_2', 'agent_1'),
+    ('Average service, needs improvement in quality.', 'seller_3', 'agent_1'),
+    ('Satisfactory performance, would use again.', 'buyer_5', 'agent_2'),
+    ('Terrible experience, very poor communication.', 'seller_1', 'agent_2'),
+    ('Impressed with the quality of work.', 'buyer_3', 'agent_2'),
+    ('Fair service, met expectations.', 'seller_2', 'agent_2'),
+    ('Outstanding service, exceeded expectations!', 'buyer_2', 'agent_3'),
+    ('Good job, but room for improvement.', 'seller_4', 'agent_3'),
+    ('Excellent service, highly recommended!', 'buyer_5', 'agent_3'), 
+    ('Good experience overall, satisfied.', 'seller_1', 'agent_3'), 
+    ('Could improve communication, but good otherwise.', 'buyer_4', 'agent_4'),
+    ('Satisfactory performance, met expectations.', 'seller_5', 'agent_4'),
+    ('Outstanding service, exceeded expectations!', 'buyer_1', 'agent_4'),
+    ('Poor experience, needs improvement.', 'seller_3', 'agent_4'),
+    ('Impressed with the quality of work.', 'buyer_3', 'agent_5'),
+    ('Fair service, could improve.', 'seller_2', 'agent_5'),
+    ('Exceptional service, highly recommended!', 'buyer_4', 'agent_5'),
+    ('Average service, nothing special.', 'seller_5', 'agent_5');
 
 CREATE TABLE property (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -146,67 +145,86 @@ CREATE TABLE property (
     price DECIMAL(10, 2) NOT NULL,
     location VARCHAR(100) NOT NULL,
     status ENUM('sold', 'available') NOT NULL,
-    seller_id INT,
-    agent_id INT,
-    FOREIGN KEY (seller_id) REFERENCES user_accounts(id),
-    FOREIGN KEY (agent_id) REFERENCES user_accounts(id)
+    image VARCHAR(255) NOT NULL,
+    views INT NOT NULL,
+    seller_id VARCHAR(50),
+    agent_id VARCHAR(50),
+    FOREIGN KEY (seller_id) REFERENCES user_accounts(username),
+    FOREIGN KEY (agent_id) REFERENCES user_accounts(username)
 );
 
--- Insert properties for Agent 31
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert properties for Agent 1
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 19, 31),
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 16, 32),
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 25, 32);
+    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_1'),
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_1'),
+    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1'),
+    ('Property 2', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_1'),
+    ('Property 4', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1');
 
--- Insert properties for Agent 32
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert properties for Agent 2
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 16, 32),
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 25, 32);
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_2'),
+    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_2'),
+    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_2');
 
--- Insert properties for Agent 33
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert properties for Agent 3
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 18, 33);
+    ('Property 1', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3'),
+    ('Property 2', 'GCB', 150, 2, 50000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_3');
 
--- Insert properties for Agent 34
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert properties for Agent 4
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 17, 34),
-    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 22, 34),
-    ('Property 3', 'HDB', 150, 2, 180000.00, 'Location C', 'sold', 25, 34);
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4'),
+    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4'),
+    ('Property 3', 'HDB', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_4');
 
--- Insert properties for Agent 35
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert properties for Agent 5
+INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 23, 35);
+    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_5'),    
+    ('Property 2', 'HDB', 300, 5, 550000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_5'),
+    ('Property 3', 'HDB', 100, 3, 200000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5'),
+    ('Property 4', 'Condo', 200, 4, 250000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_5'),
+    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5');
+    
+CREATE TABLE shortlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    buyer_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (property_id) REFERENCES property(id),
+    FOREIGN KEY (buyer_id) REFERENCES user_accounts(username),
+    UNIQUE KEY(property_id, buyer_id) -- Ensures each property is shortlisted only once by each buyer
+);
 
--- Insert properties for Agent 36
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
+-- Insert into shortlist table
+INSERT INTO shortlist (property_id, buyer_id)
 VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 23, 36);
-
-
--- Insert properties for Agent 37
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
-VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 16, 37),
-    ('Property 2', 'Condo', 200, 4, 250000.00, 'Location B', 'available', 20, 37),
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 24, 37);
-
--- Insert properties for Agent 38
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
-VALUES
-    ('Property 3', 'GCB', 150, 2, 50000000.00, 'Location C', 'sold', 16, 38);
-
--- Insert properties for Agent 39
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
-VALUES
-    ('Property 2', 'HDB', 200, 4, 250000.00, 'Location B', 'available', 18, 39);
-
--- Insert properties for Agent 40
-INSERT INTO property (name, type, size, rooms, price, location, status, seller_id, agent_id) 
-VALUES
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 22, 40),
-    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 23, 40);
+    (1, 'buyer_1'),
+    (1, 'buyer_4'),
+    (2, 'buyer_2'),
+    (2, 'buyer_4'),
+    (3, 'buyer_5'),
+    (3, 'buyer_1'),
+    (4, 'buyer_3'),
+    (4, 'buyer_2'),
+    (5, 'buyer_3'),
+    (5, 'buyer_5'),
+    (6, 'buyer_1'),
+    (6, 'buyer_4'),
+    (7, 'buyer_2'),
+    (7, 'buyer_4'),
+    (8, 'buyer_5'),
+    (8, 'buyer_1'),
+    (9, 'buyer_3'),
+    (9, 'buyer_2'),
+    (10, 'buyer_3'),
+    (10, 'buyer_5'),
+    (12, 'buyer_4'),
+    (18, 'buyer_1'),
+    (16, 'buyer_3'),
+    (13, 'buyer_2'),
+    (14, 'buyer_5');

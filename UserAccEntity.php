@@ -9,6 +9,31 @@ class UserAccEntity {
         $this->conn = $this->db->getConn();
     }
 
+    public function findAccById($username) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        
+        $stmt->execute();
+        
+        // Get result
+        $result = $stmt->get_result();
+
+        // Fetch user data
+        $fetchuser = $result->fetch_assoc();
+        
+        // Close statement
+        $stmt->close();
+        
+        if ($fetchuser) {
+            $user = new UserAcc($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
+        } else {
+            $user = null;
+        }
+
+        return $user; // Return user data
+    }
+
     public function findAccByUsername($username, $profile) {
         // Prepare SQL statement
         
@@ -27,7 +52,7 @@ class UserAccEntity {
         $stmt->close();
         
         if ($fetchuser) {
-            $user = new UserAcc($fetchuser['id'], $fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
+            $user = new UserAcc($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
         } else {
             $user = null;
         }
@@ -49,7 +74,6 @@ class UserAccEntity {
 
             while ($row = $result->fetch_assoc()) {
                 $account = new UserAcc(
-                    $row['id'],
                     $row['username'],
                     $row['password'],
                     $row['email'],
@@ -88,11 +112,32 @@ class UserAccEntity {
         $stmt->close();
     }
 
+    // Update user account
+    public function updateUserAccount($username, $email, $password, $activeStatus, $profile_id) {
+        // Prepare SQL statement
+        $stmt = $this->conn->prepare("UPDATE user_accounts SET email = ?, password = ?, activeStatus = ?, profile_id = ? WHERE username = ?");
+        
+        // Bind parameters
+        $stmt->bind_param("ssiis", $email, $password, $activeStatus, $profile_id, $username);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Account update successful
+            return true;
+        } else {
+            // Account update failed
+            return false;
+        }
+        
+        // Close statement
+        $stmt->close();
+    }
+
     //Suspend user for userAccount
-    public function suspendUserAccount($accountId) {
-        $sql = "UPDATE user_accounts SET activeStatus = 0 WHERE id = ?";
+    public function suspendUserAccount($username) {
+        $sql = "UPDATE user_accounts SET activeStatus = 0 WHERE username = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $accountId);
+        $stmt->bind_param("s", $username);
     
         if ($stmt->execute()) {
             $stmt->close();

@@ -1,18 +1,18 @@
 <?php
-require_once 'UserAccEntity.php';
-require_once 'UserProfileEntity.php';
+require_once 'UserAccount.php';
+require_once 'UserProfile.php';
 
 class AdminViewUAController {
     private $entity, $entityP;
 
     public function __construct() {
-        $this->entity = new UserAccEntity();
-        $this->entityP = new UserProfileEntity();
+        $this->entity = new UserAccount();
+        $this->entityP = new UserProfile();
     }
 
-    public function getUserAccounts() {
+    public function getUserAccounts($page=0) {
         // Retrieve user profiles from the database
-        $accounts = $this->entity->getUserAccounts();
+        $accounts = $this->entity->getUserAccounts($page);
 
         return $accounts;
     }
