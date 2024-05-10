@@ -231,7 +231,7 @@ class SellerApi {
                             </div>
                             <div>
                                 <label for="agentReview">Review:</label>
-                                <textarea id="agentReview" name="agentReview" rows="4" resize="none" cols="50" required placeholder="Type your review here..."></textarea>
+                                <textarea id="agentReview" name="agentReview" rows="4" cols="50" required placeholder="Type your review here..."></textarea>
                             </div>
                             <button type="submit">Submit Review</button>
                         </form>

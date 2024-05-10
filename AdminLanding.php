@@ -1,5 +1,20 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
+    header("Location: index.php");
+} else if ($_SESSION['profile'] != "Admin") {
+    if ($_SESSION['profile'] == "Buyer") {
+        header("Location: BuyerLanding.php");
+    } else if ($_SESSION['profile'] == "Seller") {
+        header("Location: SellerLanding.php");
+    } else if ($_SESSION['profile'] == "Agent") {
+        header("Location: AgentLanding.php");
+    } else {
+        header("Location: index.php");
+    }
+}
+
 require_once 'AdminCreateUPController.php';
 require_once 'AdminViewUPController.php';
 require_once 'AdminUpdateUPController.php';
@@ -245,7 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     
     <div id="flex">
         <div>
-            <h1>Welcome</h1>
+            <h1>Welcome, <?php echo $_SESSION['userID'] ?></h1>
         </div>
         <div class="button-container">
             <button onclick="loadContent('AdminUP.php')">User Profile</button>

@@ -1,5 +1,20 @@
 <?php
  session_start();
+
+if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
+    header("Location: index.php");
+} else if ($_SESSION['profile'] != "Agent") {
+    if ($_SESSION['profile'] == "Buyer") {
+        header("Location: BuyerLanding.php");
+    } else if ($_SESSION['profile'] == "Seller") {
+        header("Location: SellerLanding.php");
+    } else if ($_SESSION['profile'] == "Admin") {
+        header("Location: AdminLanding.php");
+    } else {
+        header("Location: index.php");
+    }
+}
+
 ?>
 
 <!DOCTYPE html>

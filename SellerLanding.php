@@ -1,13 +1,23 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
+    header("Location: index.php");
+} else if ($_SESSION['profile'] != "Seller") {
+    if ($_SESSION['profile'] == "Buyer") {
+        header("Location: BuyerLanding.php");
+    } else if ($_SESSION['profile'] == "Agent") {
+        header("Location: AgentLanding.php");
+    } else if ($_SESSION['profile'] == "Admin") {
+        header("Location: AdminLanding.php");
+    } else {
+        header("Location: index.php");
+    }
+}
+
 require_once 'SellerViewPropertyController.php';
 require_once 'SellerCreateRatingController.php';
 require_once 'SellerCreateReviewController.php';
-
-// Check if the seller's user ID is set in the session
-if(isset($_SESSION['userID'])) {
-    $sellerUserID = $_SESSION['userID'];
-}
 
 //VIEW//
 $SellerViewPropertyController = new SellerViewPropertyController();
@@ -126,11 +136,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     <!-- Header Section -->
     <div class="header">
         <div class="logo">Seller Hub</div>
+        <div class="logo"><a href="logout.php" style="text-decoration: none; color: inherit;"> Logout</a></div>
     </div>
 
     <!-- Body Section -->
     <div class="body">
-        <h1>Welcome to Seller Hub</h1>
+        <h1>Welcome to Seller Hub, <?php echo $_SESSION['userID'] ?></h1>
 
         <!-- Property Listings -->
         <div class="property-listings">
