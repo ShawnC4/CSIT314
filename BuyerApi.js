@@ -124,6 +124,21 @@ class BuyerApi {
                 propertyImage.style.height = 'auto';
                 document.getElementById('details').appendChild(propertyImage);
 
+                // Add mortgage calculator
+                var mortgageCalculator = document.createElement('div');
+                mortgageCalculator.innerHTML = `
+                    <h3>Mortgage Calculator</h3>
+                    <label for="loanAmount">Loan Amount:</label>
+                    <input type="number" id="loanAmount" value=""><br>
+                    <label for="interestRate">Interest Rate (%):</label>
+                    <input type="number" id="interestRate" value=""><br>
+                    <label for="loanTerm">Loan Term (years):</label>
+                    <input type="number" id="loanTerm" value=""><br>
+                    <button onclick="calculateMortgage()">Calculate</button>
+                    <p id="monthlyPayment"></p>
+                `;
+                document.getElementById('details').appendChild(mortgageCalculator);
+
                 modalFeatures();
             })
             .catch(error => {
@@ -131,6 +146,49 @@ class BuyerApi {
             });
     }
 
+    searchBuyerProperty = () => {        
+        // Get value entered in search input field and convert it to lowercase
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const status = document.getElementById('filterSelect').value; // Get the selected status
+        const page = document.getElementById('pageSelect').value; // Get the selected page
+    
+        if (searchInput.trim() == ''){
+            // Handle empty search input
+            // For example, you might want to display all properties
+            return;
+        }
+        
+        fetch('BuyerView.php?action=searchBuyerProperty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ searchInput, status, page })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
+            if (!data['success'])
+                throw new Error(data['errorMessage']);
+            
+            this.displayProperty(data['properties']);
+        })
+        .catch(error => console.error('Error fetching properties:', error));
+    }
+    
+}
+
+function calculateMortgage() {
+    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    var interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+    var loanTerm = parseFloat(document.getElementById('loanTerm').value);
+    
+    var monthlyInterestRate = interestRate / 12;
+    var numberOfPayments = loanTerm * 12;
+    var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+    
+    document.getElementById('monthlyPayment').textContent = 'Monthly Payment: $' + monthlyPayment.toFixed(2);
 }
 
 function modalFeatures () {

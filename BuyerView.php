@@ -15,6 +15,7 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 }
 
 require_once 'BuyerViewPropertyController.php';
+require_once 'BuyerSearchPropertyController.php';
 
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
@@ -30,6 +31,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     echo json_encode($properties);
     exit();
 }
+
+$BuyerSearchPropertyController = new BuyerSearchPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchBuyerProperty') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($requestData['searchInput'])) {
+        $name = $requestData['searchInput'];
+        $status = isset($requestData['status']) ? $requestData['status'] : 'all'; // Default to 'all' if status is not provided
+        $page = isset($requestData['page']) ? intval($requestData['page']) : 1; // Default to page 1 if page is not provided
+
+        $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name, $page);
+        header('Content-Type: application/json');
+        echo json_encode($result);
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'errorMessage' => 'Search input is missing']);
+    }
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
