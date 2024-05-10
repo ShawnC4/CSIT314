@@ -29,6 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     header('Content-Type: application/json');
     echo json_encode($properties);
     exit();
+
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
+    if(isset($_GET['propertyId'])) {
+        $propertyDetails = $BuyerViewPropertyController->getPropertyByID($_GET['propertyId']);
+        header('Content-Type: application/json');
+        echo json_encode($propertyDetails);
+        exit();
+    }
 }
 ?>
 
@@ -96,6 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
                 <li><a href="logout.php"> Logout</a></li>
             </ul>
         </nav>
+    </div>
+    <div id="myModal" class="propertyModal">
+        <!-- Modal content -->
+        <div class="modal-content" id="modal-content">
+            
+        </div>
     </div>
     <div id="body">
         <!-- Content of the body goes here -->

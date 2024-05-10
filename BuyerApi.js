@@ -85,6 +85,68 @@ class BuyerApi {
             });
         });
     }
+
+    displayProperty(id) {
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${id}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                console.log(propertyDetails);
+                // Assuming you have a modal for property details
+                document.getElementById('modal-content').innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="details">
+                        <div>
+                            <p>Property ID: ${id}</p>
+                            <p>Name: ${propertyDetails.name}</p>
+                            <p>Type: ${propertyDetails.type}</p>
+                            <p>Size: ${propertyDetails.size}</p>
+                            <p>Rooms: ${propertyDetails.rooms}</p>
+                            <p>Price: ${propertyDetails.price}</p>
+                            <p>Location: ${propertyDetails.location}</p>
+                            <p>Status: ${propertyDetails.status}</p>
+                            <p>Seller: ${propertyDetails.seller_id}</p>
+                            <p>Number of Views: ${propertyDetails.views}</p>
+                        </div>
+                `;
+                //create a property image div to append to modal content
+                var propertyImage = document.createElement('div');
+                propertyImage.classList.add('property-image');
+                // Create img element for property image
+                var img = document.createElement('img');
+                img.src = propertyDetails.image; // Assuming propertyDetails.image is the image URL
+                // Set style for property image
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                // Append img element to propertyImage div
+                propertyImage.appendChild(img);
+
+                propertyImage.style.maxWidth = '50%';
+                propertyImage.style.height = 'auto';
+                document.getElementById('details').appendChild(propertyImage);
+
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+
+}
+
+function modalFeatures () {
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    modal.style.display = "block";
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+    
 }
 
 const BuyerApiInstance = new BuyerApi();

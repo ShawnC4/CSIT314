@@ -19,5 +19,10 @@ class BuyerViewPropertyController {
         $pages = ceil($properties / 9);
         return $pages;
     }
+
+    public function getPropertyByID($id) {
+        $property = $this->entity->getPropertyById($id);
+        return $property;
+    }
 }
 ?>
