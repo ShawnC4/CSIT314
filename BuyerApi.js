@@ -10,10 +10,10 @@ class BuyerApi {
             const pageSelect = document.getElementById('pageSelect');
             pageSelect.innerHTML = '';
 
-            for (let i = 0; i < numberOfPages; i++) {
+            for (let i = 1; i <= numberOfPages; i++) {
                 const option = document.createElement('option');
                 option.value = i;
-                option.textContent = i + 1;
+                option.textContent = i;
                 pageSelect.appendChild(option);
             }
         });
@@ -124,20 +124,6 @@ class BuyerApi {
                 propertyImage.style.height = 'auto';
                 document.getElementById('details').appendChild(propertyImage);
 
-                // Add mortgage calculator
-                var mortgageCalculator = document.createElement('div');
-                mortgageCalculator.innerHTML = `
-                    <h3>Mortgage Calculator</h3>
-                    <label for="loanAmount">Loan Amount:</label>
-                    <input type="number" id="loanAmount" value=""><br>
-                    <label for="interestRate">Interest Rate (%):</label>
-                    <input type="number" id="interestRate" value=""><br>
-                    <label for="loanTerm">Loan Term (years):</label>
-                    <input type="number" id="loanTerm" value=""><br>
-                    <button onclick="calculateMortgage()">Calculate</button>
-                    <p id="monthlyPayment"></p>
-                `;
-                document.getElementById('details').appendChild(mortgageCalculator);
                 modalFeatures();
             })
             .catch(error => {
@@ -145,18 +131,6 @@ class BuyerApi {
             });
     }
 
-}
-
-function calculateMortgage() {
-    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    var interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
-    var loanTerm = parseFloat(document.getElementById('loanTerm').value);
-    
-    var monthlyInterestRate = interestRate / 12;
-    var numberOfPayments = loanTerm * 12;
-    var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
-    
-    document.getElementById('monthlyPayment').textContent = 'Monthly Payment: $' + monthlyPayment.toFixed(2);
 }
 
 function modalFeatures () {
@@ -211,23 +185,3 @@ function loadContent(page) {
     xhttp.open("GET", page, true);
     xhttp.send();
 }
-
-/*
-loadContent, initialise view
-add in createEventlistener for pageNumber, searchBar, filter
-call checkSearch
-if searchBar.trim() = blank, then call getDashboard parse in pageNumber and filter
-else, call searchProperty parse in pageNumber, filter searchBar
-
-searchBar will fetch pageNumber, searchBar, filter
-SQL for search 
-$page *= 25;
-        // Prepare SQL statement to select profiles
-        $sql = "SELECT * FROM property WHERE status = ? AND name LIKE CONCAT('%', ?, '%') ORDER BY id ASC LIMIT 9 OFFSET ?";
-        
-		$stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("si", $page);
-
-
-        SELECT * FROM property WHERE status = "available" AND name LIKE CONCAT('%', "2", '%') ORDER BY id ASC LIMIT 9 OFFSET 0;
-*/
