@@ -1,0 +1,16 @@
+<?php
+require_once 'PropertyEntity.php';
+
+class BuyerSearchPropController {
+    private $entity;
+
+    public function __construct() {
+        $this->entity = new PropertyEntity();
+    }
+
+    public function searchBuyerProperty($status, $name, $page){
+        return $this->entity->searchBuyerProperty($status, $name, $page);
+    }
+}
+
+?>
