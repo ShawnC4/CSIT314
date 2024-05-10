@@ -151,6 +151,35 @@ class BuyerApi {
             });
     }
 
+    //SEARCH//
+    searchBuyerProperty = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const propertyName = document.getElementById('searchInput').value.toLowerCase();
+		const propertyStatus = document.getElementById('filterSelect').value;
+	    if (propertyName.trim() == ''){
+			this.getDashboard(1);
+			return;
+		}
+		
+		fetch('BuyerLanding.php?action=searchBuyerProperty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ $status: propertyStatus, $name: propertyName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+			
+			if (!data['success'])
+				throw new Error(data['errorMessage']);
+			
+			this.displayProperty(data['properties']);
+        })
+        .catch(error => console.error('Error fetching properties:', error));
+    }
+
     async shortListExists (propertyId) {
         const response = await fetch(`BuyerLanding.php?action=shortListExists&propertyId=${propertyId}&buyerId=${window.userID}`);
         const exist = await response.json();
@@ -205,6 +234,10 @@ function initializeView () {
         const pageNumber = this.value;
         BuyerApiInstance.getDashboard(pageNumber);
     });
+
+    document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
+    document.getElementById('filterSelect').addEventListener('change', BuyerApiInstance.searchBuyerProperty);
+    
 }
 
 window.onload = () => {

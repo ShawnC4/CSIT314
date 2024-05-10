@@ -283,7 +283,7 @@ class PropertyEntity implements JsonSerializable{
 
         $stmt->bind_param("ss", $name, $agent);
 
-        if ($stmt->execute()) {
+        if ($stmt->execute()) { 
 			// Property search successful			
 			$result = $stmt->get_result();
 			
@@ -315,6 +315,55 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
 		}
 	}
+
+    public function searchBuyerProperty($status, $name) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+        
+        $properties = array(); 
+        $sql = "SELECT * FROM property WHERE status = ? AND name LIKE CONCAT('%', ?, '%')";
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            $errorMessage = $this->conn->error;
+            $this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
+    
+        $stmt->bind_param("ss", $status, $name);
+    
+        if ($stmt->execute()) {
+            // Property search successful            
+            $result = $stmt->get_result();
+            
+            while ($row = $result->fetch_assoc()) {
+               $property = new PropertyEntity(
+                    $row['id'],
+                    $row['name'],
+                    $row['type'],
+                    $row['size'],
+                    $row['rooms'],
+                    $row['price'],
+                    $row['location'],
+                    $row['status'],
+                    $row['image'],
+                    $row['views'],
+                    $row['seller_id'],
+                    $row['agent_id']
+                );
+    
+                $properties[] = $property;
+            }
+            
+            $this->db->closeConn();
+            return ['success' => true, 'properties' => $properties];
+        } else {
+            // Property search failed
+            $errorMessage = $this->conn->error;
+            $this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
+    }
+    
 	
     public function jsonSerialize() {
 		return array(
