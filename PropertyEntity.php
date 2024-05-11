@@ -345,7 +345,7 @@ class PropertyEntity implements JsonSerializable{
     
         // Bind parameters
         if (!empty($params)) {
-            $types = str_repeat('s', count($params)); // Assuming all parameters are strings
+            $types = str_repeat('s', count($params));
             $stmt->bind_param($types, ...$params);
         }
     
@@ -382,7 +382,6 @@ class PropertyEntity implements JsonSerializable{
         }
     }
     
-
     public function getBuyerShortlistProperties($page, $buyer_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();

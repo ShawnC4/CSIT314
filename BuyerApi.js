@@ -330,6 +330,7 @@ class BuyerApi {
         })
         .catch(error => console.error('Error reviewing agent:', error));
     }
+
     // Create Rating 
     displayRating(propertyId) {
         // Fetch property details to get necessary information
@@ -409,8 +410,11 @@ class BuyerApi {
         // Get value entered in search input field and convert it to lowercase
         const propertyName = document.getElementById('searchInput').value.toLowerCase();
         const propertyStatus = document.getElementById('filterSelect').value;
+        console.log("Search Input:", propertyName); // Log the search input
+        console.log("Filter Select:", propertyStatus); // Log the selected filter value
+        
         if (propertyName.trim() == '') {
-            this.getDashboard(1);
+            this.getViewDashboard(1);
             return;
         }
         
@@ -428,10 +432,83 @@ class BuyerApi {
             if (!data.success) // Access 'success' directly instead of using brackets
                 throw new Error(data.errorMessage);
             
-            this.displayProperty(data.properties);
+            this.displaySearchResults(data.properties);
         })
-        .catch(error => console.error('Error fetching properties:', error));
+        .catch(error => console.error('Error searching properties:', error));
     }
+
+    displaySearchResults = (properties) => {
+        const propertyList = document.querySelector('.property-listings');
+        propertyList.innerHTML = '';
+    
+        properties.forEach(property => {
+            // Create div for property image, name, and status
+            var propertyDiv = document.createElement('div');
+            propertyDiv.classList.add('property');
+            
+            // Create image element
+            var img = document.createElement('img');
+            img.src = property.image; // Assuming property.image is the image URL
+            img.alt = property.id;
+            
+            // Append elements to container
+            propertyDiv.appendChild(img);
+            
+            var propertyDetailsDiv = document.createElement('div');
+            propertyDetailsDiv.classList.add('property-details');
+            
+            // Create h2 element for property name
+            var propertyName = document.createElement('h2');
+            propertyName.textContent = property.name;
+            
+            // Append elements to propertyDiv
+            propertyDetailsDiv.appendChild(propertyName);
+            
+            // View button
+            var viewButton = document.createElement('button');
+            viewButton.textContent = 'View';
+            viewButton.addEventListener('click', () => {
+                this.displayProperty(property.id);
+            });
+            
+            propertyDetailsDiv.appendChild(viewButton);
+
+            // ShortList button
+            this.shortListExists(property.id).then(exists => {
+                if (!exists) {
+                    var shortListButton = document.createElement('button');
+                    shortListButton.textContent = 'Add To ShortList';
+                    shortListButton.addEventListener('click', () => {
+                        this.shortListProperty(property.id);
+                    });
+            
+                    propertyDetailsDiv.appendChild(shortListButton);
+                }
+            });
+
+            // Create button for Give Rating
+            var ratingButton = document.createElement('button');
+            ratingButton.textContent = 'Give Rating';
+            ratingButton.addEventListener('click', () => {
+                this.displayRating(property.id);
+            });
+            // Create button for Give Review
+            var reviewButton = document.createElement('button');
+            reviewButton.textContent = 'Give Review';
+            reviewButton.addEventListener('click', () => {
+                this.displayReview(property.id);
+            });
+            // Append Give Rating and Give Review buttons to container
+            propertyDetailsDiv.appendChild(ratingButton);
+            propertyDetailsDiv.appendChild(reviewButton);
+            
+            // Append propertyDetailsDiv to propertyDiv
+            propertyDiv.appendChild(propertyDetailsDiv);
+            
+            // Append property container to listings
+            propertyList.appendChild(propertyDiv);
+        });
+    }    
 
 }
 
@@ -452,13 +529,23 @@ function modalFeatures () {
 
 const BuyerApiInstance = new BuyerApi();
 
-function initializeView () {
+function initializeView() {
     BuyerApiInstance.getViewDashboard(1);
     BuyerApiInstance.getViewNumberOfPages();
 
-    document.getElementById('pageSelect').addEventListener('change', function() {
+    // Event listener for page selection
+    document.getElementById('pageSelect').addEventListener('change', function () {
         const pageNumber = this.value;
         BuyerApiInstance.getViewDashboard(pageNumber);
+    });
+
+    // Event listener for search input
+    document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
+
+    // Event listener for dropdown filter
+    document.getElementById('filterSelect').addEventListener('change', function () {
+        const pageNumber = document.getElementById('pageSelect').value; // Get current page number
+        BuyerApiInstance.getViewDashboard(pageNumber); // Refresh dashboard based on current page number
     });
 }
 
@@ -470,11 +557,7 @@ function initializeShortlist () {
         const pageNumber = this.value;
         BuyerApiInstance.getShortlistDashboard(pageNumber);
     });
-    document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
-    document.getElementById('filterSelect').addEventListener('change', BuyerApiInstance.searchBuyerProperty);
 }
-
-
 
 window.onload = () => {
     loadContent('BuyerView.php');
