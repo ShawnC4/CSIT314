@@ -316,7 +316,7 @@ class PropertyEntity implements JsonSerializable{
 		}
 	}
 
-    public function searchBuyerProperty($status, $name) {
+    public function searchBuyerProperty($status, $name, $pageNum) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
         
@@ -335,6 +335,11 @@ class PropertyEntity implements JsonSerializable{
             $sql .= " AND name LIKE ?";
             $params[] = "%$name%";
         }
+    
+        // Calculate OFFSET for pagination
+        $offset = ($pageNum - 1) * 9;
+        $sql .= " ORDER BY id ASC LIMIT 9 OFFSET ?";
+        $params[] = $offset;
     
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) {
@@ -381,6 +386,7 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
+    
     
     public function getBuyerShortlistProperties($page, $buyer_id) {
         $this->db = new DBconn(); 

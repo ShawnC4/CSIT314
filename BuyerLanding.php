@@ -111,10 +111,11 @@ $BuyerSearchPropertyController = new BuyerSearchPropertyController();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchBuyerProperty') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    if (isset($requestData['status']) && isset($requestData['name'])) {
+    if (isset($requestData['status']) && isset($requestData['name']) && isset($requestData['pageNum'])) {
         $status = $requestData['status'];
         $name = $requestData['name']; 
-        $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name);
+        $pageNum = $requestData['pageNum']; // Get pageNum from request
+        $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name, $pageNum); // Pass pageNum to the controller method
         header('Content-Type: application/json');
         echo json_encode($result);
     } else {
@@ -123,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     }
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>

@@ -410,8 +410,10 @@ class BuyerApi {
         // Get value entered in search input field and convert it to lowercase
         const propertyName = document.getElementById('searchInput').value.toLowerCase();
         const propertyStatus = document.getElementById('filterSelect').value;
+        const pageNum = document.getElementById('pageSelect').value; // Get selected page number
         console.log("Search Input:", propertyName); // Log the search input
         console.log("Filter Select:", propertyStatus); // Log the selected filter value
+        console.log("Page Number:", pageNum); // Log the selected page number
         
         if (propertyName.trim() == '') {
             this.getViewDashboard(1);
@@ -423,7 +425,7 @@ class BuyerApi {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: propertyStatus, name: propertyName }) // Corrected JSON object
+            body: JSON.stringify({ status: propertyStatus, name: propertyName, pageNum: pageNum }) // Include pageNum in the JSON object
         })
         .then(response => response.json())
         .then(data => {
@@ -432,10 +434,18 @@ class BuyerApi {
             if (!data.success) // Access 'success' directly instead of using brackets
                 throw new Error(data.errorMessage);
             
-            this.displaySearchResults(data.properties);
+            // Check if fewer than 10 properties were returned
+            if (data.properties.length < 10 && pageNum > 1) {
+                // Adjust the page number to 1 if fewer than 10 properties were returned
+                this.getViewDashboard(1);
+            } else {
+                // Display search results
+                this.displaySearchResults(data.properties);
+            }
         })
         .catch(error => console.error('Error searching properties:', error));
     }
+
 
     displaySearchResults = (properties) => {
         const propertyList = document.querySelector('.property-listings');

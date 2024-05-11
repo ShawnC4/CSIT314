@@ -8,8 +8,8 @@ class BuyerSearchPropertyController {
         $this->entity = new PropertyEntity();
     }
 
-    public function searchBuyerProperty($status, $name){
-        return $this->entity->searchBuyerProperty($status, $name);
+    public function searchBuyerProperty($status, $name, $pageNum) {
+        return $this->entity->searchBuyerProperty($status, $name, $pageNum);
     }
 }
 
