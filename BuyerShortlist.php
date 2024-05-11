@@ -50,10 +50,12 @@
 </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buyer View</title>
+    <title>Buyer Shortlist</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="body">
+        <h1>Shortlisted Properties</h1>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search properties...">
 
@@ -70,7 +72,7 @@
             </select>
         </div>
         <!-- Property Listings -->
-        <div class="property-listings">
+        <div class="shortlist-listing">
             <!-- Property 1 -->
             <div class="property">
                 <img src="images/Prop-1.jpg" alt="Property 1">

@@ -283,7 +283,7 @@ class PropertyEntity implements JsonSerializable{
 
         $stmt->bind_param("ss", $name, $agent);
 
-        if ($stmt->execute()) { 
+        if ($stmt->execute()) {
 			// Property search successful			
 			$result = $stmt->get_result();
 			
@@ -321,7 +321,21 @@ class PropertyEntity implements JsonSerializable{
         $this->conn = $this->db->getConn();
         
         $properties = array(); 
-        $sql = "SELECT * FROM property WHERE status = ? AND name LIKE CONCAT('%', ?, '%')";
+        $sql = "SELECT * FROM property WHERE 1=1";
+        $params = array();
+        
+        // Adjust SQL query based on status filter
+        if ($status !== 'all') {
+            $sql .= " AND status = ?";
+            $params[] = $status;
+        }
+        
+        // Adjust SQL query based on name filter
+        if (!empty($name)) {
+            $sql .= " AND name LIKE ?";
+            $params[] = "%$name%";
+        }
+    
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) {
             $errorMessage = $this->conn->error;
@@ -329,7 +343,11 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     
-        $stmt->bind_param("ss", $status, $name);
+        // Bind parameters
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params)); // Assuming all parameters are strings
+            $stmt->bind_param($types, ...$params);
+        }
     
         if ($stmt->execute()) {
             // Property search successful            
@@ -364,6 +382,50 @@ class PropertyEntity implements JsonSerializable{
         }
     }
     
+
+    public function getBuyerShortlistProperties($page, $buyer_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $properties = array(); 
+
+        $sql = "SELECT p.id, p.name, p.type, p.size, p.rooms, p.price, p.location, p.status, p.image, p.views, p.seller_id, p.agent_id
+                FROM property AS p
+                JOIN shortlist AS s ON p.id = s.property_id
+                WHERE s.buyer_id = ? LIMIT 9 OFFSET " . ($page - 1) * 9;
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $buyer_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $property = new PropertyEntity(
+                $row['id'],
+                $row['name'],
+                $row['type'],
+                $row['size'],
+                $row['rooms'],
+                $row['price'],
+                $row['location'],
+                $row['status'],
+                $row['image'],
+                $row['views'],
+                $row['seller_id'],
+                $row['agent_id']
+            );
+
+            $properties[] = $property;
+        }
+    }
+
+    $this->db->closeConn();
+
+    return $properties;
+
+    }
 	
     public function jsonSerialize() {
 		return array(

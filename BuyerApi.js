@@ -3,8 +3,8 @@ class BuyerApi {
 
     }
 
-    getNumberOfPages () {
-        fetch('BuyerLanding.php?action=getNumberOfPages')
+    getViewNumberOfPages () {
+        fetch('BuyerLanding.php?action=getViewNumberOfPages')
         .then(response => response.json())
         .then(numberOfPages => {
             const pageSelect = document.getElementById('pageSelect');
@@ -19,8 +19,24 @@ class BuyerApi {
         });
     }
 
-    getDashboard (pageNumber) {
-        fetch(`BuyerLanding.php?action=getDashboard&page=${pageNumber}`)
+    getShortlistNumberOfPages () {
+        fetch(`BuyerLanding.php?action=getShortlistNumberOfPages&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(numberOfPages => {
+            const pageSelect = document.getElementById('pageSelect');
+            pageSelect.innerHTML = '';
+
+            for (let i = 1; i <= numberOfPages; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                pageSelect.appendChild(option);
+            }
+        });
+    }
+
+    getViewDashboard (pageNumber) {
+        fetch(`BuyerLanding.php?action=getViewDashboard&page=${pageNumber}`)
         .then(response => response.json())
         .then(propertyObjects => {
             console.log(propertyObjects);
@@ -91,6 +107,88 @@ class BuyerApi {
         });
     }
 
+    getShortlistDashboard(pageNumber) {
+        // Fetch shortlisted properties for the logged-in user
+        fetch(`BuyerLanding.php?action=getShortlistDashboard&buyerId=${window.userID}&page=${pageNumber}`)
+        .then(response => response.json())
+        .then(shortlistedProperties => {
+            console.log(shortlistedProperties);
+
+            const shortlistListing = document.querySelector('.shortlist-listing');
+            shortlistListing.innerHTML = '';
+            
+            if (shortlistedProperties.length === 0) {
+                var message = document.createElement('h1');
+                message.innerHTML = 'No properties shortlisted';
+                shortlistListing.appendChild(message);
+            } else {
+                shortlistedProperties.forEach(property => {
+                    // Create div for property image, name, and status
+                    var propertyDiv = document.createElement('div');
+                    propertyDiv.classList.add('property');
+        
+                    // Create image element
+                    var img = document.createElement('img');
+                    img.src = property.image; // Assuming property.image is the image URL
+                    img.alt = property.id;
+        
+                    // Append elements to container
+                    propertyDiv.appendChild(img);
+        
+                    var propertyDetailsDiv = document.createElement('div');
+                    propertyDetailsDiv.classList.add('property-details');
+        
+                    // Create h2 element for property name
+                    var propertyName = document.createElement('h2');
+                    propertyName.textContent = property.name;
+        
+                    // Append elements to propertyDiv
+                    propertyDetailsDiv.appendChild(propertyName);
+        
+                    // View button
+                    var viewButton = document.createElement('button');
+                    viewButton.textContent = 'View';
+                    viewButton.addEventListener('click', () => {
+                        this.displayProperty(property.id);
+                    });
+        
+                    propertyDetailsDiv.appendChild(viewButton);
+
+                    //Delete ShortList button
+                    var shortListButton = document.createElement('button');
+                    shortListButton.textContent = 'Delete ShortList';
+                    shortListButton.addEventListener('click', () => {
+                        this.deleteShortListProperty(property.id);
+                    });
+                
+                    propertyDetailsDiv.appendChild(shortListButton);
+
+                    // Create button for Give Rating
+                    var ratingButton = document.createElement('button');
+                    ratingButton.textContent = 'Give Rating';
+                    ratingButton.addEventListener('click', () => {
+                        this.displayRating(property.id);
+                    });
+                    // Create button for Give Review
+                    var reviewButton = document.createElement('button');
+                    reviewButton.textContent = 'Give Review';
+                    reviewButton.addEventListener('click', () => {
+                        this.displayReview(property.id);
+                    });
+                    // Append Give Rating and Give Review buttons to container
+                    propertyDetailsDiv.appendChild(ratingButton);
+                    propertyDetailsDiv.appendChild(reviewButton);
+        
+                    // Append propertyDetailsDiv to propertyDiv
+                    propertyDiv.appendChild(propertyDetailsDiv);
+        
+                    // Append property container to shortlist container
+                    shortlistListing.appendChild(propertyDiv);
+                });
+            }
+        });
+    }
+
     displayProperty(id) {
         fetch(`BuyerLanding.php?action=viewProperty&propertyId=${id}`)
             .then(response => response.json())
@@ -129,55 +227,11 @@ class BuyerApi {
                 propertyImage.style.height = 'auto';
                 document.getElementById('details').appendChild(propertyImage);
 
-                // Add mortgage calculator
-                var mortgageCalculator = document.createElement('div');
-                mortgageCalculator.innerHTML = `
-                    <h3>Mortgage Calculator</h3>
-                    <label for="loanAmount">Loan Amount:</label>
-                    <input type="number" id="loanAmount" value=""><br>
-                    <label for="interestRate">Interest Rate (%):</label>
-                    <input type="number" id="interestRate" value=""><br>
-                    <label for="loanTerm">Loan Term (years):</label>
-                    <input type="number" id="loanTerm" value=""><br>
-                    <button onclick="calculateMortgage()">Calculate</button>
-                    <p id="monthlyPayment"></p>
-                `;
-                document.getElementById('details').appendChild(mortgageCalculator);
-
                 modalFeatures();
             })
             .catch(error => {
                 console.error('Error fetching property details:', error);
             });
-    }
-
-    //SEARCH//
-    searchBuyerProperty = () => {
-        // Get value entered in search input field and convert it to lowercase
-        const propertyName = document.getElementById('searchInput').value.toLowerCase();
-		const propertyStatus = document.getElementById('filterSelect').value;
-	    if (propertyName.trim() == ''){
-			this.getDashboard(1);
-			return;
-		}
-		
-		fetch('BuyerLanding.php?action=searchBuyerProperty', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ $status: propertyStatus, $name: propertyName })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-			
-			if (!data['success'])
-				throw new Error(data['errorMessage']);
-			
-			this.displayProperty(data['properties']);
-        })
-        .catch(error => console.error('Error fetching properties:', error));
     }
 
     async shortListExists (propertyId) {
@@ -191,22 +245,194 @@ class BuyerApi {
         .then(response => response.json())
         .then(response => {
             alert(response.message);
-            location.reload();
+            this.getViewDashboard(1);
         });
     }
 
-}
+    deleteShortListProperty (propertyId) {
+        fetch(`BuyerLanding.php?action=deleteShortlistProperty&propertyId=${propertyId}&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(response => {
+            alert(response.message);
+            this.getShortlistDashboard(1);
+        });
+    }
 
-function calculateMortgage() {
-    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    var interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
-    var loanTerm = parseFloat(document.getElementById('loanTerm').value);
+    //Create Review 
+    displayReview(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="review-form">
+                        <h2>Review the Agent</h2>
+                        <form id="reviewForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentReview">Review:</label>
+                                <textarea id="agentReview" name="agentReview" rows="4" cols="50" required placeholder="Type your review here..."></textarea>
+                            </div>
+                            <button type="submit">Submit Review</button>
+                        </form>
+                    </div>
+                `;
+                // Add event listener to form submission
+                const reviewForm = document.getElementById('reviewForm');
+                reviewForm.addEventListener('submit', this.createReview);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
     
-    var monthlyInterestRate = interestRate / 12;
-    var numberOfPayments = loanTerm * 12;
-    var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+    createReview = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentReview = document.getElementById('agentReview').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
+        
+        fetch('BuyerLanding.php?action=createReview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentReview, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Review for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error reviewing agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error reviewing agent:', error));
+    }
+    // Create Rating 
+    displayRating(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="rating-form">
+                        <h2>Rate the Agent</h2>
+                        <form id="ratingForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentRating">Rating (1-5):</label>
+                                <input type="number" id="agentRating" name="agentRating" min="1" max="5" required>
+                            </div>
+                            <button type="submit">Submit Rating</button>
+                        </form>
+                    </div>
+                `;
+
+                // Add event listener to form submission
+                const ratingForm = document.getElementById('ratingForm');
+                ratingForm.addEventListener('submit', this.createRating);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+
+    createRating = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentRating = document.getElementById('agentRating').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
     
-    document.getElementById('monthlyPayment').textContent = 'Monthly Payment: $' + monthlyPayment.toFixed(2);
+        fetch('BuyerLanding.php?action=createRating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentRating, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Rating for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error rating agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error rating agent:', error));
+    }
+
+    //SEARCH//
+    searchBuyerProperty = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const propertyName = document.getElementById('searchInput').value.toLowerCase();
+        const propertyStatus = document.getElementById('filterSelect').value;
+        if (propertyName.trim() == '') {
+            this.getDashboard(1);
+            return;
+        }
+        
+        fetch('BuyerLanding.php?action=searchBuyerProperty', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: propertyStatus, name: propertyName }) // Corrected JSON object
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
+            if (!data.success) // Access 'success' directly instead of using brackets
+                throw new Error(data.errorMessage);
+            
+            this.displayProperty(data.properties);
+        })
+        .catch(error => console.error('Error fetching properties:', error));
+    }
+
 }
 
 function modalFeatures () {
@@ -227,18 +453,28 @@ function modalFeatures () {
 const BuyerApiInstance = new BuyerApi();
 
 function initializeView () {
-    BuyerApiInstance.getDashboard(1);
-    BuyerApiInstance.getNumberOfPages();
+    BuyerApiInstance.getViewDashboard(1);
+    BuyerApiInstance.getViewNumberOfPages();
 
     document.getElementById('pageSelect').addEventListener('change', function() {
         const pageNumber = this.value;
-        BuyerApiInstance.getDashboard(pageNumber);
+        BuyerApiInstance.getViewDashboard(pageNumber);
     });
+}
 
+function initializeShortlist () {
+    BuyerApiInstance.getShortlistDashboard(1);
+    BuyerApiInstance.getShortlistNumberOfPages();
+
+    document.getElementById('pageSelect').addEventListener('change', function() {
+        const pageNumber = this.value;
+        BuyerApiInstance.getShortlistDashboard(pageNumber);
+    });
     document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
     document.getElementById('filterSelect').addEventListener('change', BuyerApiInstance.searchBuyerProperty);
-    
 }
+
+
 
 window.onload = () => {
     loadContent('BuyerView.php');
@@ -255,6 +491,8 @@ function loadContent(page) {
                 
                 if (page === 'BuyerView.php') {
                     initializeView();
+                } else if (page === 'BuyerShortlist.php') {
+                    initializeShortlist();
                 }
             } else {
                 console.error("Element not found.");

@@ -16,18 +16,22 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
+require_once 'BuyerShortlistViewController.php';
+require_once 'BuyerDeleteShortlistPropertyController.php';
 require_once 'BuyerSearchPropertyController.php';
+require_once 'SellerCreateReviewController.php';
+require_once 'SellerCreateRatingController.php';
 
-//VIEw
+//VIEW
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewNumberOfPages') {
     $pages = $BuyerViewPropertyController->getNumberOfPages();
     header('Content-Type: application/json');
     echo json_encode($pages);
     exit();
 
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewDashboard') {
     $properties = $BuyerViewPropertyController->getBuyerProperties($_GET['page']);
     header('Content-Type: application/json');
     echo json_encode($properties);
@@ -57,15 +61,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     exit();
 }
 
-//SEARCH//
+//CREATE REVIEW//
+$SellerCreateReviewController = new SellerCreateReviewController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $review = $requestData['agentReview'];
+    $customer_id = $requestData['customerID'];
+    $agent_id = $requestData['agentID'];
+    
+    $response = $SellerCreateReviewController->createReview($review, $customer_id, $agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+//CREATE RATING//
+$SellerCreateRatingController = new SellerCreateRatingController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $rating = $requestData['agentRating'];
+    $customer_id = $requestData['customerID'];
+    $agent_id = $requestData['agentID'];
+    
+    $response = $SellerCreateRatingController->createRating($rating, $customer_id, $agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+//DELETE SHORTLIST
+$BuyerDeleteShortlistPropertyController = new BuyerDeleteShortlistPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'deleteShortlistProperty') {
+    $result = $BuyerDeleteShortlistPropertyController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
+}
+
+//SEARCH PROPERTY//
 $BuyerSearchPropertyController = new BuyerSearchPropertyController();
 	
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchBuyerProperty') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
-    if (isset($requestData['status']) && isset($requestData['searchInput'])) {
+    if (isset($requestData['status']) && isset($requestData['name'])) {
         $status = $requestData['status'];
-        $name = $requestData['searchInput']; 
+        $name = $requestData['name']; 
         $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name);
         header('Content-Type: application/json');
         echo json_encode($result);
@@ -75,9 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     }
     exit();
 }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -141,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         <nav>
             <ul>
                 <li><a href="#" onclick="loadContent('BuyerView.php')">View </button></li>
+                <li><a href="#" onclick="loadContent('BuyerShortlist.php')">Shortlist </button></li>
                 <li><a href="logout.php"> Logout</a></li>
             </ul>
         </nav>
