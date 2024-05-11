@@ -16,17 +16,18 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
+require_once 'BuyerShortlistViewController.php';
 
 //VIEw
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewNumberOfPages') {
     $pages = $BuyerViewPropertyController->getNumberOfPages();
     header('Content-Type: application/json');
     echo json_encode($pages);
     exit();
 
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewDashboard') {
     $properties = $BuyerViewPropertyController->getBuyerProperties($_GET['page']);
     header('Content-Type: application/json');
     echo json_encode($properties);
@@ -54,6 +55,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     header('Content-Type: application/json');
     echo json_encode($result);
     exit();
+}
+
+//SHORTLIST VIEW
+$BuyerShortlistViewController = new BuyerShortlistViewController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortlistNumberOfPages') {
+    $pages = $BuyerShortlistViewController->getNumberOfPages($_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($pages);
+    exit();
+
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortlistDashboard') {
+    $properties = $BuyerShortlistViewController->getBuyerShortlistProperties($_GET['page'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($properties);
+    exit();
+
 }
 
 ?>
@@ -119,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         <nav>
             <ul>
                 <li><a href="#" onclick="loadContent('BuyerView.php')">View </button></li>
+                <li><a href="#" onclick="loadContent('BuyerShortlist.php')">Shortlist </button></li>
                 <li><a href="logout.php"> Logout</a></li>
             </ul>
         </nav>

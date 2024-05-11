@@ -253,7 +253,7 @@ h1 {
 }
 
 
-.property-listings {
+.property-listings, .shortlist-listing {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

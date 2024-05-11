@@ -70,5 +70,23 @@ class ShortlistEntity {
 
         return $result->num_rows > 0;
     }
+
+    public function getNumberOfProperties($buyer_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $sql = "SELECT COUNT(*) AS count FROM shortlist WHERE buyer_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $buyer_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $count = $row['count'];
+        $stmt->close();
+
+        $this->db->closeConn();
+
+        return $count;
+    }
 }
 ?>
