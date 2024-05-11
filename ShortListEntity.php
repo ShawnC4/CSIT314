@@ -42,7 +42,7 @@ class ShortlistEntity {
 
         $sql = "INSERT INTO shortlist (property_id, buyer_id) VALUES (?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ss", $property_id, $buyer_id);
+        $stmt->bind_param("is", $property_id, $buyer_id);
 
         if ($stmt->execute()) {
             $stmt->close();
@@ -52,6 +52,25 @@ class ShortlistEntity {
             $stmt->close();
             $this->db->closeConn();
             return ['success' => false, 'message' => 'Error Shortlisting!'];
+        }
+    }
+
+    public function deleteShortlistProperty ($property_id, $buyer_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $sql = "DELETE FROM shortlist WHERE property_id = ? AND buyer_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("is", $property_id, $buyer_id);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            $this->db->closeConn();
+            return ['success' => true, 'message' => 'Property Deleted!'];
+        } else {
+            $stmt->close();
+            $this->db->closeConn();
+            return ['success' => false, 'message' => 'Error Deleting!'];
         }
     }
 

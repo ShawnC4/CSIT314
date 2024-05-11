@@ -322,10 +322,10 @@ class PropertyEntity implements JsonSerializable{
 
         $properties = array(); 
 
-        $sql = "SELECT * FROM property
-                JOIN shortlist 
-                ON property.id = shortlist.property_id
-                WHERE shortlist.buyer_id = ? LIMIT 9 OFFSET " . ($page - 1) * 9;
+        $sql = "SELECT p.id, p.name, p.type, p.size, p.rooms, p.price, p.location, p.status, p.image, p.views, p.seller_id, p.agent_id
+                FROM property AS p
+                JOIN shortlist AS s ON p.id = s.property_id
+                WHERE s.buyer_id = ? LIMIT 9 OFFSET " . ($page - 1) * 9;
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $buyer_id);

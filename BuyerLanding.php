@@ -19,6 +19,7 @@ require_once 'BuyerShortlistPropertyController.php';
 require_once 'BuyerShortlistViewController.php';
 require_once 'SellerCreateReviewController.php';
 require_once 'SellerCreateRatingController.php';
+require_once 'BuyerDeleteShortlistPropertyController.php';
 
 //VIEW
 $BuyerViewPropertyController = new BuyerViewPropertyController();
@@ -90,6 +91,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
+    exit();
+}
+
+//DELETE SHORTLIST
+$BuyerDeleteShortlistPropertyController = new BuyerDeleteShortlistPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'deleteShortlistProperty') {
+    $result = $BuyerDeleteShortlistPropertyController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
     exit();
 }
 
