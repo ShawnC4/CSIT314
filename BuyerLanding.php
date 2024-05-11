@@ -17,6 +17,7 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
 require_once 'BuyerShortlistViewController.php';
+require_once 'BuyerDeleteShortlistPropertyController.php';
 
 //VIEw
 $BuyerViewPropertyController = new BuyerViewPropertyController();
@@ -72,6 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     echo json_encode($properties);
     exit();
 
+}
+
+//DELETE SHORTLIST
+$BuyerDeleteShortlistPropertyController = new BuyerDeleteShortlistPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'deleteShortlistProperty') {
+    $result = $BuyerDeleteShortlistPropertyController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
 }
 
 ?>
