@@ -70,6 +70,7 @@ class ShortlistEntity {
 
         return $result->num_rows > 0;
     }
+<<<<<<< HEAD
 
     public function getNumberOfProperties($buyer_id) {
         $this->db = new DBconn(); 
@@ -88,5 +89,7 @@ class ShortlistEntity {
 
         return $count;
     }
+=======
+>>>>>>> efe3ee433c6828f1457cc6e949c5b23f8be83011
 }
 ?>
