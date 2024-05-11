@@ -13,23 +13,6 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
         header("Location: index.php");
     }
 }
-
-require_once 'BuyerViewPropertyController.php';
-
-$BuyerViewPropertyController = new BuyerViewPropertyController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
-    $pages = $BuyerViewPropertyController->getNumberOfPages();
-    header('Content-Type: application/json');
-    echo json_encode($pages);
-    exit();
-
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
-    $properties = $BuyerViewPropertyController->getBuyerProperties($_GET['page']);
-    header('Content-Type: application/json');
-    echo json_encode($properties);
-    exit();
-}
 ?>
 
 <!DOCTYPE html>

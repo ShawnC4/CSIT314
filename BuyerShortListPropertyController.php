@@ -1,15 +1,22 @@
 <?php
-require_once 'ShortlistEntity.php';
+require_once 'ShortListEntity.php';
 
-class BuyerShortlistController {
-    private $shortlistEntity;
+class BuyerShortListPropertyController {
+    private $entity;
 
-    public function __construct() {
-        $this->shortlistEntity = new ShortlistEntity();
+    public function __construct () {
+        $this->entity = new ShortlistEntity();
     }
 
-    public function getShortlistedProperties($id) {
-        return $this->shortlistEntity->getShortlistedProperties($id);
+    public function shortListProperty ($property_id, $buyer_id) {
+        $result = $this->entity->shortListProperty($property_id, $buyer_id);
+        return $result;
+    }
+
+    public function getShortListProperties($buyer_id) {
+        $properties = $this->entity->getShortListProperties($buyer_id);
+        return $properties;
     }
 }
+
 ?>

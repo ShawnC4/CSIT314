@@ -1,136 +1,233 @@
 class BuyerApi {
-    constructor() {
+    constructor () {
 
     }
 
-    getNumberOfPages() {
+    getNumberOfPages () {
         fetch('BuyerLanding.php?action=getNumberOfPages')
-            .then(response => response.json())
-            .then(numberOfPages => {
-                const pageSelect = document.getElementById('pageSelect');
-                pageSelect.innerHTML = '';
+        .then(response => response.json())
+        .then(numberOfPages => {
+            const pageSelect = document.getElementById('pageSelect');
+            pageSelect.innerHTML = '';
 
-                for (let i = 1; i <= numberOfPages; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = i;
-                    pageSelect.appendChild(option);
-                }
-            });
-    }
-
-    getDashboard(pageNumber) {
-        fetch(`BuyerLanding.php?action=getDashboard&page=${pageNumber}`)
-            .then(response => response.json())
-            .then(propertyObjects => {
-                console.log(propertyObjects);
-                const propertyList = document.querySelector('.property-listings');
-                propertyList.innerHTML = '';
-
-                propertyObjects.forEach(property => {
-                    // Create div for property image, name and status
-                    var propertyDiv = document.createElement('div');
-                    propertyDiv.classList.add('property');
-                    // Create image element
-                    var img = document.createElement('img');
-                    img.src = property.image; // Assuming property.image is the image URL
-                    img.alt = property.id;
-                    // Append elements to container
-                    propertyDiv.appendChild(img);
-                    var propertyDetailsDiv = document.createElement('div');
-                    propertyDetailsDiv.classList.add('property-details');
-                    // Create h2 element for property name
-                    var propertyName = document.createElement('h2');
-                    propertyName.textContent = property.name;
-
-                    // Append elements to propertyDiv
-                    propertyDetailsDiv.appendChild(propertyName);
-
-                    // View button
-                    var viewButton = document.createElement('button');
-                    viewButton.textContent = 'View';
-                    viewButton.addEventListener('click', () => {
-                        this.displayProperty(property.id);
-                    });
-
-                    propertyDetailsDiv.appendChild(viewButton);
-
-                    // ShortList button
-                    var shortListButton = document.createElement('button');
-                    shortListButton.textContent = 'Add To ShortList';
-                    shortListButton.addEventListener('click', () => {
-                        this.shortListProperty(property.id);
-                    });
-
-                    propertyDetailsDiv.appendChild(shortListButton);
-                    // Create button for Give Rating
-                    var ratingButton = document.createElement('button');
-                    ratingButton.textContent = 'Give Rating';
-                    ratingButton.addEventListener('click', () => {
-                        this.displayRating(property.id);
-                    });
-                    // Create button for Give Review
-                    var reviewButton = document.createElement('button');
-                    reviewButton.textContent = 'Give Review';
-                    reviewButton.addEventListener('click', () => {
-                        this.displayReview(property.id);
-                    });
-                    // Append Give Rating and Give Review buttons to container
-                    propertyDetailsDiv.appendChild(ratingButton);
-                    propertyDetailsDiv.appendChild(reviewButton);
-                    propertyDiv.appendChild(propertyDetailsDiv);
-                
-                    // Append property container to listings
-                    propertyList.appendChild(propertyDiv);
-                });
-            });
-    }
-    initializeShortlist() {
-        // Fetch shortlisted properties when the page loads
-        this.getShortlistedProperties();
-    }
-
-    displayShortlist(shortlistedProperties) {
-        // Display the shortlisted properties in the UI
-        const shortlistDiv = document.getElementById('shortlist-properties');
-        shortlistDiv.innerHTML = '';
-
-        // Iterate through the shortlisted properties and create HTML elements for each property
-        shortlistedProperties.forEach(property => {
-            const propertyDiv = document.createElement('div');
-            propertyDiv.classList.add('property');
-            
-            const propertyName = document.createElement('h2');
-            propertyName.textContent = property.name;
-
-            // Append property name to property div
-            propertyDiv.appendChild(propertyName);
-
-            // Append property div to the shortlist container
-            shortlistDiv.appendChild(propertyDiv);
+            for (let i = 1; i <= numberOfPages; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                pageSelect.appendChild(option);
+            }
         });
     }
 
-    getShortlistedProperties() {
-        // Fetch shortlisted properties from the server
-        fetch(`BuyerShortList.php?action=getShortlistedProperties`)
+    getDashboard (pageNumber) {
+        fetch(`BuyerLanding.php?action=getDashboard&page=${pageNumber}`)
+        .then(response => response.json())
+        .then(propertyObjects => {
+            console.log(propertyObjects);
+            const propertyList = document.querySelector('.property-listings');
+            propertyList.innerHTML = '';
+
+            propertyObjects.forEach(property => {
+                // Create div for property image, name and status
+                var propertyDiv = document.createElement('div');
+                propertyDiv.classList.add('property');
+                // Create image element
+                var img = document.createElement('img');
+                img.src = property.image; // Assuming property.image is the image URL
+                img.alt = property.id;
+                // Append elements to container
+                propertyDiv.appendChild(img);
+                var propertyDetailsDiv = document.createElement('div');
+                propertyDetailsDiv.classList.add('property-details');
+                // Create h2 element for property name
+                var propertyName = document.createElement('h2');
+                propertyName.textContent = property.name;
+
+                // Append elements to propertyDiv
+                propertyDetailsDiv.appendChild(propertyName);
+
+                // View button
+                var viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    this.displayProperty(property.id);
+                });
+
+                propertyDetailsDiv.appendChild(viewButton);
+
+                // ShortList button
+                this.shortListExists(property.id).then(exists => {
+                    if (!exists) {
+                        var shortListButton = document.createElement('button');
+                        shortListButton.textContent = 'Add To ShortList';
+                        shortListButton.addEventListener('click', () => {
+                            this.shortListProperty(property.id);
+                        });
+                
+                        propertyDetailsDiv.appendChild(shortListButton);
+                    }
+                });
+
+                // Create button for Give Rating
+                var ratingButton = document.createElement('button');
+                ratingButton.textContent = 'Give Rating';
+                ratingButton.addEventListener('click', () => {
+                    this.displayRating(property.id);
+                });
+                // Create button for Give Review
+                var reviewButton = document.createElement('button');
+                reviewButton.textContent = 'Give Review';
+                reviewButton.addEventListener('click', () => {
+                    this.displayReview(property.id);
+                });
+                // Append Give Rating and Give Review buttons to container
+                propertyDetailsDiv.appendChild(ratingButton);
+                propertyDetailsDiv.appendChild(reviewButton);
+                propertyDiv.appendChild(propertyDetailsDiv);
+                
+                // Append property container to listings
+                propertyList.appendChild(propertyDiv);
+            });
+        });
+    }
+
+    displayProperty(id) {
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${id}`)
             .then(response => response.json())
-            .then(shortlistedProperties => {
-                // Display the shortlisted properties
-                this.displayShortlist(shortlistedProperties);
+            .then(propertyDetails => {
+                console.log(propertyDetails);
+                // Assuming you have a modal for property details
+                document.getElementById('modal-content').innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="details">
+                        <div>
+                            <p>Property ID: ${id}</p>
+                            <p>Name: ${propertyDetails.name}</p>
+                            <p>Type: ${propertyDetails.type}</p>
+                            <p>Size: ${propertyDetails.size}</p>
+                            <p>Rooms: ${propertyDetails.rooms}</p>
+                            <p>Price: ${propertyDetails.price}</p>
+                            <p>Location: ${propertyDetails.location}</p>
+                            <p>Status: ${propertyDetails.status}</p>
+                            <p>Seller: ${propertyDetails.seller_id}</p>
+                            <p>Number of Views: ${propertyDetails.views}</p>
+                        </div>
+                `;
+                //create a property image div to append to modal content
+                var propertyImage = document.createElement('div');
+                propertyImage.classList.add('property-image');
+                // Create img element for property image
+                var img = document.createElement('img');
+                img.src = propertyDetails.image; // Assuming propertyDetails.image is the image URL
+                // Set style for property image
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                // Append img element to propertyImage div
+                propertyImage.appendChild(img);
+
+                propertyImage.style.maxWidth = '50%';
+                propertyImage.style.height = 'auto';
+                document.getElementById('details').appendChild(propertyImage);
+
+                modalFeatures();
             })
             .catch(error => {
-                console.error('Error fetching shortlisted properties:', error);
+                console.error('Error fetching property details:', error);
             });
     }
+
+    async shortListExists (propertyId) {
+        const response = await fetch(`BuyerLanding.php?action=shortListExists&propertyId=${propertyId}&buyerId=${window.userID}`);
+        const exist = await response.json();
+        return exist;
+    }
+
+    shortListProperty (propertyId) {
+        fetch(`BuyerLanding.php?action=shortListProperty&propertyId=${propertyId}&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(response => {
+            alert(response.message);
+            location.reload();
+        });
+    }
+
+
+    initializeShortlist() {
+        // Fetch shortlisted properties for the logged-in user
+        fetch('BuyerLanding.php?action=getShortListProperties')
+        .then(response => response.json())
+        .then(shortlistedProperties => {
+            const shortlistContainer = document.getElementById('shortlist-container');
+            shortlistContainer.innerHTML = '';
     
+            shortlistedProperties.forEach(property => {
+                // Create div for property image, name, and status
+                var propertyDiv = document.createElement('div');
+                propertyDiv.classList.add('property');
     
+                // Create image element
+                var img = document.createElement('img');
+                img.src = property.image; // Assuming property.image is the image URL
+                img.alt = property.id;
+    
+                // Append elements to container
+                propertyDiv.appendChild(img);
+    
+                var propertyDetailsDiv = document.createElement('div');
+                propertyDetailsDiv.classList.add('property-details');
+    
+                // Create h2 element for property name
+                var propertyName = document.createElement('h2');
+                propertyName.textContent = property.name;
+    
+                // Append elements to propertyDiv
+                propertyDetailsDiv.appendChild(propertyName);
+    
+                // View button
+                var viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    this.displayProperty(property.id);
+                });
+    
+                propertyDetailsDiv.appendChild(viewButton);
+    
+                // Append propertyDetailsDiv to propertyDiv
+                propertyDiv.appendChild(propertyDetailsDiv);
+    
+                // Append property container to shortlist container
+                shortlistContainer.appendChild(propertyDiv);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching shortlisted properties:', error);
+        });
+    }
+    
+
 }
+
+function modalFeatures () {
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    modal.style.display = "block";
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+}
+
 const BuyerApiInstance = new BuyerApi();
 
 function initializeView () {
     BuyerApiInstance.getDashboard(1);
     BuyerApiInstance.getNumberOfPages();
+    BuyerApiInstance.getShortListProperties();
 
     document.getElementById('pageSelect').addEventListener('change', function() {
         const pageNumber = this.value;
@@ -140,10 +237,7 @@ function initializeView () {
 
 window.onload = () => {
     loadContent('BuyerView.php');
-}
-
-window.onload = () => {
-    BuyerApiInstance.initializeShortlist();
+    initializeShortlist();
 }
 
 function loadContent(page) {

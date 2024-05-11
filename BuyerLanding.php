@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
     header("Location: index.php");
 } else if ($_SESSION['profile'] != "Buyer") {
@@ -16,7 +15,9 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 }
 
 require_once 'BuyerViewPropertyController.php';
+require_once 'BuyerShortlistPropertyController.php';
 
+//VIEw
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
@@ -30,7 +31,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     header('Content-Type: application/json');
     echo json_encode($properties);
     exit();
+
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
+    if(isset($_GET['propertyId'])) {
+        $propertyDetails = $BuyerViewPropertyController->getPropertyByID($_GET['propertyId']);
+        header('Content-Type: application/json');
+        echo json_encode($propertyDetails);
+        exit();
+    }
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'shortListExists') {
+    $exists = $BuyerViewPropertyController->shortListExists($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($exists);
+    exit();
+} else if  ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortListProperties') {
+    $properties = $BuyerShortlistPropertyController->getShortListProperties($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
 }
+
+//ADD SHORTLIST
+$BuyerShortlistPropertyController = new BuyerShortlistPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'shortListProperty') {
+    $result = $BuyerShortlistPropertyController->shortListProperty($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
+} else if  ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortListProperties') {
+    $properties = $BuyerShortlistPropertyController->getShortListProperties($_GET['propertyId'], $_GET['buyerId']);
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -52,10 +87,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             </ul>
         </nav>
     </div>
+    <div id="myModal" class="propertyModal">
+        <!-- Modal content -->
+        <div class="modal-content" id="modal-content">
+            
+        </div>
+    </div>
     <div id="body">
         <!-- Content of the body goes here -->
         <h1 class="welcome-message">Welcome to the Buyer Page!</h1>
     </div>
 </body>
+<script>
+    if (<?php echo isset($_SESSION['userID']) ? 'true' : 'false'; ?>) {
+        window.userID = "<?php echo $_SESSION['userID']; ?>";
+    }
+</script>
 <script src="BuyerApi.js"></script>
 </html>
