@@ -315,6 +315,50 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
 		}
 	}
+
+    public function getBuyerShortlistProperties($page, $buyer_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $properties = array(); 
+
+        $sql = "SELECT * FROM property
+                JOIN shortlist 
+                ON property.id = shortlist.property_id
+                WHERE shortlist.buyer_id = ? LIMIT 9 OFFSET " . ($page - 1) * 9;
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $buyer_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $property = new PropertyEntity(
+                $row['id'],
+                $row['name'],
+                $row['type'],
+                $row['size'],
+                $row['rooms'],
+                $row['price'],
+                $row['location'],
+                $row['status'],
+                $row['image'],
+                $row['views'],
+                $row['seller_id'],
+                $row['agent_id']
+            );
+
+            $properties[] = $property;
+        }
+    }
+
+    $this->db->closeConn();
+
+    return $properties;
+
+    }
 	
     public function jsonSerialize() {
 		return array(

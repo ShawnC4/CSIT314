@@ -16,19 +16,20 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
+require_once 'BuyerShortlistViewController.php';
 require_once 'SellerCreateReviewController.php';
 require_once 'SellerCreateRatingController.php';
 
 //VIEW
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewNumberOfPages') {
     $pages = $BuyerViewPropertyController->getNumberOfPages();
     header('Content-Type: application/json');
     echo json_encode($pages);
     exit();
 
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewDashboard') {
     $properties = $BuyerViewPropertyController->getBuyerProperties($_GET['page']);
     header('Content-Type: application/json');
     echo json_encode($properties);
@@ -155,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         <nav>
             <ul>
                 <li><a href="#" onclick="loadContent('BuyerView.php')">View </button></li>
+                <li><a href="#" onclick="loadContent('BuyerShortlist.php')">Shortlist </button></li>
                 <li><a href="logout.php"> Logout</a></li>
             </ul>
         </nav>

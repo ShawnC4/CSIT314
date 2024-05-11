@@ -3,8 +3,8 @@ class BuyerApi {
 
     }
 
-    getNumberOfPages () {
-        fetch('BuyerLanding.php?action=getNumberOfPages')
+    getViewNumberOfPages () {
+        fetch('BuyerLanding.php?action=getViewNumberOfPages')
         .then(response => response.json())
         .then(numberOfPages => {
             const pageSelect = document.getElementById('pageSelect');
@@ -19,8 +19,24 @@ class BuyerApi {
         });
     }
 
-    getDashboard (pageNumber) {
-        fetch(`BuyerLanding.php?action=getDashboard&page=${pageNumber}`)
+    getShortlistNumberOfPages () {
+        fetch(`BuyerLanding.php?action=getShortlistNumberOfPages&buyerId=${window.userID}`)
+        .then(response => response.json())
+        .then(numberOfPages => {
+            const pageSelect = document.getElementById('pageSelect');
+            pageSelect.innerHTML = '';
+
+            for (let i = 1; i <= numberOfPages; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                pageSelect.appendChild(option);
+            }
+        });
+    }
+
+    getViewDashboard (pageNumber) {
+        fetch(`BuyerLanding.php?action=getViewDashboard&page=${pageNumber}`)
         .then(response => response.json())
         .then(propertyObjects => {
             console.log(propertyObjects);
@@ -87,6 +103,81 @@ class BuyerApi {
                 
                 // Append property container to listings
                 propertyList.appendChild(propertyDiv);
+            });
+        });
+    }
+
+    getShortlistDashboard(pageNumber) {
+        // Fetch shortlisted properties for the logged-in user
+        fetch(`BuyerLanding.php?action=getShortlistDashboard&buyerId=${window.userID}&page=${pageNumber}`)
+        .then(response => response.json())
+        .then(shortlistedProperties => {
+            console.log(shortlistedProperties);
+            const shortlistListing = document.querySelector('.shortlist-listing');
+            shortlistListing.innerHTML = '';
+    
+            shortlistedProperties.forEach(property => {
+                // Create div for property image, name, and status
+                var propertyDiv = document.createElement('div');
+                propertyDiv.classList.add('property');
+    
+                // Create image element
+                var img = document.createElement('img');
+                img.src = property.image; // Assuming property.image is the image URL
+                img.alt = property.id;
+    
+                // Append elements to container
+                propertyDiv.appendChild(img);
+    
+                var propertyDetailsDiv = document.createElement('div');
+                propertyDetailsDiv.classList.add('property-details');
+    
+                // Create h2 element for property name
+                var propertyName = document.createElement('h2');
+                propertyName.textContent = property.name;
+    
+                // Append elements to propertyDiv
+                propertyDetailsDiv.appendChild(propertyName);
+    
+                // View button
+                var viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    this.displayProperty(property.id);
+                });
+    
+                propertyDetailsDiv.appendChild(viewButton);
+
+                //Delete ShortList button
+                var shortListButton = document.createElement('button');
+                shortListButton.textContent = 'Delete ShortList';
+                shortListButton.addEventListener('click', () => {
+                    this.DeleteShortListProperty(property.id);
+                });
+            
+                propertyDetailsDiv.appendChild(shortListButton);
+
+                // Create button for Give Rating
+                var ratingButton = document.createElement('button');
+                ratingButton.textContent = 'Give Rating';
+                ratingButton.addEventListener('click', () => {
+                    this.displayRating(property.id);
+                });
+                // Create button for Give Review
+                var reviewButton = document.createElement('button');
+                reviewButton.textContent = 'Give Review';
+                reviewButton.addEventListener('click', () => {
+                    this.displayReview(property.id);
+                });
+                // Append Give Rating and Give Review buttons to container
+                propertyDetailsDiv.appendChild(ratingButton);
+                propertyDetailsDiv.appendChild(reviewButton);
+    
+                // Append propertyDetailsDiv to propertyDiv
+                propertyDiv.appendChild(propertyDetailsDiv);
+    
+                // Append property container to shortlist container
+                shortlistListing.appendChild(propertyDiv);
             });
         });
     }
@@ -317,12 +408,22 @@ function modalFeatures () {
 const BuyerApiInstance = new BuyerApi();
 
 function initializeView () {
-    BuyerApiInstance.getDashboard(1);
-    BuyerApiInstance.getNumberOfPages();
+    BuyerApiInstance.getViewDashboard(1);
+    BuyerApiInstance.getViewNumberOfPages();
 
     document.getElementById('pageSelect').addEventListener('change', function() {
         const pageNumber = this.value;
-        BuyerApiInstance.getDashboard(pageNumber);
+        BuyerApiInstance.getViewDashboard(pageNumber);
+    });
+}
+
+function initializeShortlist () {
+    BuyerApiInstance.getShortlistDashboard(1);
+    BuyerApiInstance.getShortlistNumberOfPages();
+
+    document.getElementById('pageSelect').addEventListener('change', function() {
+        const pageNumber = this.value;
+        BuyerApiInstance.getShortlistDashboard(pageNumber);
     });
 }
 
@@ -343,6 +444,8 @@ function loadContent(page) {
                 
                 if (page === 'BuyerView.php') {
                     initializeView();
+                } else if (page === 'BuyerShortlist.php') {
+                    initializeShortlist();
                 }
             } else {
                 console.error("Element not found.");
