@@ -16,8 +16,10 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
+require_once 'SellerCreateReviewController.php';
+require_once 'SellerCreateRatingController.php';
 
-//VIEw
+//VIEW
 $BuyerViewPropertyController = new BuyerViewPropertyController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getNumberOfPages') {
@@ -53,6 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     $result = $BuyerShortlistPropertyController->shortListProperty($_GET['propertyId'], $_GET['buyerId']);
     header('Content-Type: application/json');
     echo json_encode($result);
+    exit();
+}
+
+//CREATE REVIEW//
+$SellerCreateReviewController = new SellerCreateReviewController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $review = $requestData['agentReview'];
+    $customer_id = $requestData['customerID'];
+    $agent_id = $requestData['agentID'];
+    
+    $response = $SellerCreateReviewController->createReview($review, $customer_id, $agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+//CREATE RATING//
+$SellerCreateRatingController = new SellerCreateRatingController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+    $rating = $requestData['agentRating'];
+    $customer_id = $requestData['customerID'];
+    $agent_id = $requestData['agentID'];
+    
+    $response = $SellerCreateRatingController->createRating($rating, $customer_id, $agent_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
     exit();
 }
 
