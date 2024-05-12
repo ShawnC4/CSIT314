@@ -336,11 +336,6 @@ class PropertyEntity implements JsonSerializable{
             $params[] = "%$name%";
         }
     
-        // Calculate OFFSET for pagination
-        $offset = ($pageNum - 1) * 9;
-        $sql .= " ORDER BY id ASC LIMIT 9 OFFSET ?";
-        $params[] = $offset;
-    
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) {
             $errorMessage = $this->conn->error;
@@ -359,7 +354,7 @@ class PropertyEntity implements JsonSerializable{
             $result = $stmt->get_result();
             
             while ($row = $result->fetch_assoc()) {
-               $property = new PropertyEntity(
+                $property = new PropertyEntity(
                     $row['id'],
                     $row['name'],
                     $row['type'],
@@ -377,8 +372,18 @@ class PropertyEntity implements JsonSerializable{
                 $properties[] = $property;
             }
             
+            // Calculate total number of properties
+            $totalProperties = count($properties);
+    
+            // Calculate start and end indexes for pagination
+            $startIndex = ($pageNum - 1) * 9;
+            $endIndex = min($startIndex + 9, $totalProperties);
+    
+            // Slice the properties array to get properties for the current page
+            $pagedProperties = array_slice($properties, $startIndex, $endIndex - $startIndex);
+    
             $this->db->closeConn();
-            return ['success' => true, 'properties' => $properties];
+            return ['success' => true, 'properties' => $pagedProperties];
         } else {
             // Property search failed
             $errorMessage = $this->conn->error;
@@ -386,8 +391,7 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
-    
-    
+         
     public function getBuyerShortlistProperties($page, $buyer_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -424,11 +428,11 @@ class PropertyEntity implements JsonSerializable{
 
             $properties[] = $property;
         }
-    }
+        }
 
-    $this->db->closeConn();
+        $this->db->closeConn();
 
-    return $properties;
+        return $properties;
 
     }
 	

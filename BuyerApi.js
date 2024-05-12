@@ -411,9 +411,6 @@ class BuyerApi {
         const propertyName = document.getElementById('searchInput').value.toLowerCase();
         const propertyStatus = document.getElementById('filterSelect').value;
         const pageNum = document.getElementById('pageSelect').value; // Get selected page number
-        console.log("Search Input:", propertyName); // Log the search input
-        console.log("Filter Select:", propertyStatus); // Log the selected filter value
-        console.log("Page Number:", pageNum); // Log the selected page number
         
         if (propertyName.trim() == '') {
             this.getViewDashboard(1);
@@ -432,18 +429,10 @@ class BuyerApi {
             console.log(data);
             
             if (!data.success) // Access 'success' directly instead of using brackets
-                throw new Error(data.errorMessage);
-            
-            // Check if fewer than 10 properties were returned
-            if (data.properties.length < 10 && pageNum > 1) {
-                // Adjust the page number to 1 if fewer than 10 properties were returned
-                this.getViewDashboard(1);
-                this.getViewNumberOfPages();
-            } else {
-                // Display search results
-                this.displaySearchResults(data.properties);
-                this.getViewNumberOfPages();
-            }
+            throw new Error(data.errorMessage);
+
+            // Display search results
+            this.displaySearchResults(data.properties);
         })
         .catch(error => console.error('Error searching properties:', error));
     }
@@ -522,7 +511,9 @@ class BuyerApi {
             });
 
             // Calculate total pages and update dropdown
-            const totalPages = Math.ceil(properties.length / 9); // Assuming 9 properties per page
+            console.log("properties.length is", properties.length);
+            const totalPages = Math.ceil(properties.length / 9);
+            console.log("totalPages is", totalPages);
             this.updatePageSelectionDropdown(totalPages);
 
         } else {
