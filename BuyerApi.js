@@ -420,7 +420,7 @@ class BuyerApi {
             return;
         }
         
-        fetch('BuyerLanding.php?action=searchBuyerProperty', {
+        fetch(`BuyerLanding.php?action=searchBuyerProperty&pageNum=${pageNum}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -438,87 +438,113 @@ class BuyerApi {
             if (data.properties.length < 10 && pageNum > 1) {
                 // Adjust the page number to 1 if fewer than 10 properties were returned
                 this.getViewDashboard(1);
+                this.getViewNumberOfPages();
             } else {
                 // Display search results
                 this.displaySearchResults(data.properties);
+                this.getViewNumberOfPages();
             }
         })
         .catch(error => console.error('Error searching properties:', error));
     }
 
-
     displaySearchResults = (properties) => {
         const propertyList = document.querySelector('.property-listings');
         propertyList.innerHTML = '';
+
+        if (properties && properties.length > 0) {
+            properties.forEach(property => {
+                // Create div for property image, name, and status
+                var propertyDiv = document.createElement('div');
+                propertyDiv.classList.add('property');
+        
+                // Create image element
+                var img = document.createElement('img');
+                img.src = property.image; // Assuming property.image is the image URL
+                img.alt = property.id;
+        
+                // Append elements to container
+                propertyDiv.appendChild(img);
+        
+                var propertyDetailsDiv = document.createElement('div');
+                propertyDetailsDiv.classList.add('property-details');
+        
+                // Create h2 element for property name
+                var propertyName = document.createElement('h2');
+                propertyName.textContent = property.name;
+        
+                // Append elements to propertyDiv
+                propertyDetailsDiv.appendChild(propertyName);
+        
+                // View button
+                var viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    this.displayProperty(property.id);
+                });
+        
+                propertyDetailsDiv.appendChild(viewButton);
+        
+                // ShortList button
+                this.shortListExists(property.id).then(exists => {
+                    if (!exists) {
+                        var shortListButton = document.createElement('button');
+                        shortListButton.textContent = 'Add To ShortList';
+                        shortListButton.addEventListener('click', () => {
+                            this.shortListProperty(property.id);
+                        });
+        
+                        propertyDetailsDiv.appendChild(shortListButton);
+                    }
+                });
+        
+                // Create button for Give Rating
+                var ratingButton = document.createElement('button');
+                ratingButton.textContent = 'Give Rating';
+                ratingButton.addEventListener('click', () => {
+                    this.displayRating(property.id);
+                });
+                // Create button for Give Review
+                var reviewButton = document.createElement('button');
+                reviewButton.textContent = 'Give Review';
+                reviewButton.addEventListener('click', () => {
+                    this.displayReview(property.id);
+                });
+                // Append Give Rating and Give Review buttons to container
+                propertyDetailsDiv.appendChild(ratingButton);
+                propertyDetailsDiv.appendChild(reviewButton);
+        
+                // Append propertyDetailsDiv to propertyDiv
+                propertyDiv.appendChild(propertyDetailsDiv);
+        
+                // Append property container to listings
+                propertyList.appendChild(propertyDiv);
+            });
+
+            // Calculate total pages and update dropdown
+            const totalPages = Math.ceil(properties.length / 9); // Assuming 9 properties per page
+            this.updatePageSelectionDropdown(totalPages);
+
+        } else {
+            // Display message when there are no search results
+            const noResultsMessage = document.createElement('div');
+            noResultsMessage.textContent = 'No search results found.';
+            propertyList.appendChild(noResultsMessage);
+        }
+
+    }
     
-        properties.forEach(property => {
-            // Create div for property image, name, and status
-            var propertyDiv = document.createElement('div');
-            propertyDiv.classList.add('property');
-            
-            // Create image element
-            var img = document.createElement('img');
-            img.src = property.image; // Assuming property.image is the image URL
-            img.alt = property.id;
-            
-            // Append elements to container
-            propertyDiv.appendChild(img);
-            
-            var propertyDetailsDiv = document.createElement('div');
-            propertyDetailsDiv.classList.add('property-details');
-            
-            // Create h2 element for property name
-            var propertyName = document.createElement('h2');
-            propertyName.textContent = property.name;
-            
-            // Append elements to propertyDiv
-            propertyDetailsDiv.appendChild(propertyName);
-            
-            // View button
-            var viewButton = document.createElement('button');
-            viewButton.textContent = 'View';
-            viewButton.addEventListener('click', () => {
-                this.displayProperty(property.id);
-            });
-            
-            propertyDetailsDiv.appendChild(viewButton);
-
-            // ShortList button
-            this.shortListExists(property.id).then(exists => {
-                if (!exists) {
-                    var shortListButton = document.createElement('button');
-                    shortListButton.textContent = 'Add To ShortList';
-                    shortListButton.addEventListener('click', () => {
-                        this.shortListProperty(property.id);
-                    });
-            
-                    propertyDetailsDiv.appendChild(shortListButton);
-                }
-            });
-
-            // Create button for Give Rating
-            var ratingButton = document.createElement('button');
-            ratingButton.textContent = 'Give Rating';
-            ratingButton.addEventListener('click', () => {
-                this.displayRating(property.id);
-            });
-            // Create button for Give Review
-            var reviewButton = document.createElement('button');
-            reviewButton.textContent = 'Give Review';
-            reviewButton.addEventListener('click', () => {
-                this.displayReview(property.id);
-            });
-            // Append Give Rating and Give Review buttons to container
-            propertyDetailsDiv.appendChild(ratingButton);
-            propertyDetailsDiv.appendChild(reviewButton);
-            
-            // Append propertyDetailsDiv to propertyDiv
-            propertyDiv.appendChild(propertyDetailsDiv);
-            
-            // Append property container to listings
-            propertyList.appendChild(propertyDiv);
-        });
-    }    
+    // Function to update page selection dropdown based on total number of pages
+    updatePageSelectionDropdown = (totalPages) => {
+        const pageSelect = document.getElementById('pageSelect');
+        pageSelect.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            pageSelect.appendChild(option);
+        }
+    }
 
 }
 
