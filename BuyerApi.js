@@ -257,8 +257,7 @@ class BuyerApi {
             this.getShortlistDashboard(1);
         });
     }
-
-    //Create Review 
+ //Create Review 
     displayReview(propertyId) {
         // Fetch property details to get necessary information
         fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
@@ -403,137 +402,150 @@ class BuyerApi {
         })
         .catch(error => console.error('Error rating agent:', error));
     }
-
-    //SEARCH//
-    searchBuyerProperty = () => {
-        // Get value entered in search input field and convert it to lowercase
-        const propertyName = document.getElementById('searchInput').value.toLowerCase();
-        const propertyStatus = document.getElementById('filterSelect').value;
-        const pageNum = document.getElementById('pageSelect').value; // Get selected page number
+     //Create Review 
+     displayReview(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="review-form">
+                        <h2>Review the Agent</h2>
+                        <form id="reviewForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentReview">Review:</label>
+                                <textarea id="agentReview" name="agentReview" rows="4" cols="50" required placeholder="Type your review here..."></textarea>
+                            </div>
+                            <button type="submit">Submit Review</button>
+                        </form>
+                    </div>
+                `;
+                // Add event listener to form submission
+                const reviewForm = document.getElementById('reviewForm');
+                reviewForm.addEventListener('submit', this.createReview);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+    
+    createReview = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentReview = document.getElementById('agentReview').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
         
-        if (propertyName.trim() == '') {
-            this.getViewDashboard(1);
-            return;
-        }
-        
-        fetch(`BuyerLanding.php?action=searchBuyerProperty&pageNum=${pageNum}`, {
+        fetch('BuyerLanding.php?action=createReview', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: propertyStatus, name: propertyName, pageNum: pageNum }) // Include pageNum in the JSON object
+            body: JSON.stringify({ agentReview, customerID, agentID })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
         .then(data => {
             console.log(data);
-            
-            if (!data.success) // Access 'success' directly instead of using brackets
-            throw new Error(data.errorMessage);
-
-            // Display search results
-            this.displaySearchResults(data.properties);
+            if (data === true){
+                alert(`Review for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error reviewing agent:', data['errorMessage']);
+            }
         })
-        .catch(error => console.error('Error searching properties:', error));
+        .catch(error => console.error('Error reviewing agent:', error));
     }
+    // Create Rating 
+    displayRating(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="rating-form">
+                        <h2>Rate the Agent</h2>
+                        <form id="ratingForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentRating">Rating (1-5):</label>
+                                <input type="number" id="agentRating" name="agentRating" min="1" max="5" required>
+                            </div>
+                            <button type="submit">Submit Rating</button>
+                        </form>
+                    </div>
+                `;
 
-    displaySearchResults = (properties) => {
-        const propertyList = document.querySelector('.property-listings');
-        propertyList.innerHTML = '';
-
-        if (properties && properties.length > 0) {
-            properties.forEach(property => {
-                // Create div for property image, name, and status
-                var propertyDiv = document.createElement('div');
-                propertyDiv.classList.add('property');
-        
-                // Create image element
-                var img = document.createElement('img');
-                img.src = property.image; // Assuming property.image is the image URL
-                img.alt = property.id;
-        
-                // Append elements to container
-                propertyDiv.appendChild(img);
-        
-                var propertyDetailsDiv = document.createElement('div');
-                propertyDetailsDiv.classList.add('property-details');
-        
-                // Create h2 element for property name
-                var propertyName = document.createElement('h2');
-                propertyName.textContent = property.name;
-        
-                // Append elements to propertyDiv
-                propertyDetailsDiv.appendChild(propertyName);
-        
-                // View button
-                var viewButton = document.createElement('button');
-                viewButton.textContent = 'View';
-                viewButton.addEventListener('click', () => {
-                    this.displayProperty(property.id);
-                });
-        
-                propertyDetailsDiv.appendChild(viewButton);
-        
-                // ShortList button
-                this.shortListExists(property.id).then(exists => {
-                    if (!exists) {
-                        var shortListButton = document.createElement('button');
-                        shortListButton.textContent = 'Add To ShortList';
-                        shortListButton.addEventListener('click', () => {
-                            this.shortListProperty(property.id);
-                        });
-        
-                        propertyDetailsDiv.appendChild(shortListButton);
-                    }
-                });
-        
-                // Create button for Give Rating
-                var ratingButton = document.createElement('button');
-                ratingButton.textContent = 'Give Rating';
-                ratingButton.addEventListener('click', () => {
-                    this.displayRating(property.id);
-                });
-                // Create button for Give Review
-                var reviewButton = document.createElement('button');
-                reviewButton.textContent = 'Give Review';
-                reviewButton.addEventListener('click', () => {
-                    this.displayReview(property.id);
-                });
-                // Append Give Rating and Give Review buttons to container
-                propertyDetailsDiv.appendChild(ratingButton);
-                propertyDetailsDiv.appendChild(reviewButton);
-        
-                // Append propertyDetailsDiv to propertyDiv
-                propertyDiv.appendChild(propertyDetailsDiv);
-        
-                // Append property container to listings
-                propertyList.appendChild(propertyDiv);
+                // Add event listener to form submission
+                const ratingForm = document.getElementById('ratingForm');
+                ratingForm.addEventListener('submit', this.createRating);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
             });
-
-            // Calculate total pages and update dropdown
-            console.log("properties.length is", properties.length);
-            const totalPages = Math.ceil(properties.length / 9);
-            console.log("totalPages is", totalPages);
-            this.updatePageSelectionDropdown(totalPages);
-
-        } else {
-            // Display message when there are no search results
-            const noResultsMessage = document.createElement('div');
-            noResultsMessage.textContent = 'No search results found.';
-            propertyList.appendChild(noResultsMessage);
-        }
-
     }
+
+    createRating = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentRating = document.getElementById('agentRating').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
     
-    // Function to update page selection dropdown based on total number of pages
-    updatePageSelectionDropdown = (totalPages) => {
-        const pageSelect = document.getElementById('pageSelect');
-        pageSelect.innerHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
-            pageSelect.appendChild(option);
-        }
+        fetch('BuyerLanding.php?action=createRating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentRating, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Rating for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error rating agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error rating agent:', error));
     }
 
 }
@@ -563,14 +575,6 @@ function initializeView () {
         const pageNumber = this.value;
         BuyerApiInstance.getViewDashboard(pageNumber);
     });
-    // Event listener for search input
-    document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
-
-    // Event listener for dropdown filter
-    document.getElementById('filterSelect').addEventListener('change', function () {
-        const pageNumber = document.getElementById('pageSelect').value; // Get current page number
-        BuyerApiInstance.getViewDashboard(pageNumber); // Refresh dashboard based on current page number
-    });
 }
 
 function initializeShortlist () {
@@ -582,8 +586,6 @@ function initializeShortlist () {
         BuyerApiInstance.getShortlistDashboard(pageNumber);
     });
 }
-
-
 
 window.onload = () => {
     loadContent('BuyerView.php');
