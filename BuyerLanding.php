@@ -17,10 +17,9 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
 require_once 'BuyerViewPropertyController.php';
 require_once 'BuyerShortlistPropertyController.php';
 require_once 'BuyerShortlistViewController.php';
-require_once 'BuyerDeleteShortlistPropertyController.php';
-require_once 'BuyerSearchPropertyController.php';
 require_once 'SellerCreateReviewController.php';
 require_once 'SellerCreateRatingController.php';
+require_once 'BuyerDeleteShortlistPropertyController.php';
 
 //VIEW
 $BuyerViewPropertyController = new BuyerViewPropertyController();
@@ -102,26 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     $result = $BuyerDeleteShortlistPropertyController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
     header('Content-Type: application/json');
     echo json_encode($result);
-    exit();
-}
-
-//SEARCH PROPERTY//
-$BuyerSearchPropertyController = new BuyerSearchPropertyController();
-	
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchBuyerProperty') {
-    $requestData = json_decode(file_get_contents('php://input'), true);
-
-    if (isset($requestData['status']) && isset($requestData['name']) && isset($requestData['pageNum'])) {
-        $status = $requestData['status'];
-        $name = $requestData['name']; 
-        $pageNum = $requestData['pageNum']; // Get pageNum from request
-        $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name, $pageNum); // Pass pageNum to the controller method
-        header('Content-Type: application/json');
-        echo json_encode($result);
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'errorMessage' => 'Search input is missing']);
-    }
     exit();
 }
 
