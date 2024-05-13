@@ -227,6 +227,21 @@ class BuyerApi {
                 propertyImage.style.height = 'auto';
                 document.getElementById('details').appendChild(propertyImage);
 
+                // Add mortgage calculator
+                var mortgageCalculator = document.createElement('div');
+                mortgageCalculator.innerHTML = `
+                    <h3>Mortgage Calculator</h3>
+                    <label for="loanAmount">Loan Amount:</label>
+                    <input type="number" id="loanAmount" value=""><br>
+                    <label for="interestRate">Interest Rate (%):</label>
+                    <input type="number" id="interestRate" value=""><br>
+                    <label for="loanTerm">Loan Term (years):</label>
+                    <input type="number" id="loanTerm" value=""><br>
+                    <button onclick="calculateMortgage()">Calculate</button>
+                    <p id="monthlyPayment"></p>
+                `;
+                document.getElementById('details').appendChild(mortgageCalculator);
+
                 modalFeatures();
             })
             .catch(error => {
@@ -257,7 +272,8 @@ class BuyerApi {
             this.getShortlistDashboard(1);
         });
     }
- //Create Review 
+
+    //Create Review 
     displayReview(propertyId) {
         // Fetch property details to get necessary information
         fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
@@ -329,6 +345,7 @@ class BuyerApi {
         })
         .catch(error => console.error('Error reviewing agent:', error));
     }
+
     // Create Rating 
     displayRating(propertyId) {
         // Fetch property details to get necessary information
@@ -402,8 +419,9 @@ class BuyerApi {
         })
         .catch(error => console.error('Error rating agent:', error));
     }
-     //Create Review 
-     displayReview(propertyId) {
+
+    // Create Review 
+    displayReview(propertyId) {
         // Fetch property details to get necessary information
         fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
             .then(response => response.json())
@@ -474,6 +492,7 @@ class BuyerApi {
         })
         .catch(error => console.error('Error reviewing agent:', error));
     }
+
     // Create Rating 
     displayRating(propertyId) {
         // Fetch property details to get necessary information
@@ -548,6 +567,149 @@ class BuyerApi {
         .catch(error => console.error('Error rating agent:', error));
     }
 
+    //SEARCH//
+    searchBuyerProperty = () => {
+        // Get value entered in search input field and convert it to lowercase
+        const propertyName = document.getElementById('searchInput').value.toLowerCase();
+        const propertyStatus = document.getElementById('filterSelect').value;
+        const pageNum = document.getElementById('pageSelect').value; // Get selected page number
+        
+        if (propertyName.trim() == '') {
+            this.getViewDashboard(1);
+            return;
+        }
+        
+        fetch(`BuyerLanding.php?action=searchBuyerProperty&pageNum=${pageNum}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: propertyStatus, name: propertyName, pageNum: pageNum }) // Include pageNum in the JSON object
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
+            if (!data.success) // Access 'success' directly instead of using brackets
+            throw new Error(data.errorMessage);
+
+            // Display search results
+            this.displaySearchResults(data.properties);
+        })
+        .catch(error => console.error('Error searching properties:', error));
+    }
+
+    displaySearchResults = (properties) => {
+        const propertyList = document.querySelector('.property-listings');
+        propertyList.innerHTML = '';
+
+        if (properties && properties.length > 0) {
+            properties.forEach(property => {
+                // Create div for property image, name, and status
+                var propertyDiv = document.createElement('div');
+                propertyDiv.classList.add('property');
+        
+                // Create image element
+                var img = document.createElement('img');
+                img.src = property.image; // Assuming property.image is the image URL
+                img.alt = property.id;
+        
+                // Append elements to container
+                propertyDiv.appendChild(img);
+        
+                var propertyDetailsDiv = document.createElement('div');
+                propertyDetailsDiv.classList.add('property-details');
+        
+                // Create h2 element for property name
+                var propertyName = document.createElement('h2');
+                propertyName.textContent = property.name;
+        
+                // Append elements to propertyDiv
+                propertyDetailsDiv.appendChild(propertyName);
+        
+                // View button
+                var viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.addEventListener('click', () => {
+                    this.displayProperty(property.id);
+                });
+        
+                propertyDetailsDiv.appendChild(viewButton);
+        
+                // ShortList button
+                this.shortListExists(property.id).then(exists => {
+                    if (!exists) {
+                        var shortListButton = document.createElement('button');
+                        shortListButton.textContent = 'Add To ShortList';
+                        shortListButton.addEventListener('click', () => {
+                            this.shortListProperty(property.id);
+                        });
+        
+                        propertyDetailsDiv.appendChild(shortListButton);
+                    }
+                });
+        
+                // Create button for Give Rating
+                var ratingButton = document.createElement('button');
+                ratingButton.textContent = 'Give Rating';
+                ratingButton.addEventListener('click', () => {
+                    this.displayRating(property.id);
+                });
+                // Create button for Give Review
+                var reviewButton = document.createElement('button');
+                reviewButton.textContent = 'Give Review';
+                reviewButton.addEventListener('click', () => {
+                    this.displayReview(property.id);
+                });
+                // Append Give Rating and Give Review buttons to container
+                propertyDetailsDiv.appendChild(ratingButton);
+                propertyDetailsDiv.appendChild(reviewButton);
+        
+                // Append propertyDetailsDiv to propertyDiv
+                propertyDiv.appendChild(propertyDetailsDiv);
+        
+                // Append property container to listings
+                propertyList.appendChild(propertyDiv);
+            });
+
+            // Calculate total pages and update dropdown
+            console.log("properties.length is", properties.length);
+            const totalPages = Math.ceil(properties.length / 9);
+            console.log("totalPages is", totalPages);
+            this.updatePageSelectionDropdown(totalPages);
+
+        } else {
+            // Display message when there are no search results
+            const noResultsMessage = document.createElement('div');
+            noResultsMessage.textContent = 'No search results found.';
+            propertyList.appendChild(noResultsMessage);
+        }
+
+    }
+    
+    // Function to update page selection dropdown based on total number of pages
+    updatePageSelectionDropdown = (totalPages) => {
+        const pageSelect = document.getElementById('pageSelect');
+        pageSelect.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            pageSelect.appendChild(option);
+        }
+    }
+}
+
+function calculateMortgage() {
+    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    var interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+    var loanTerm = parseFloat(document.getElementById('loanTerm').value);
+    
+    var monthlyInterestRate = interestRate / 12;
+    var numberOfPayments = loanTerm * 12;
+    var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+    
+    document.getElementById('monthlyPayment').textContent = 'Monthly Payment: $' + monthlyPayment.toFixed(2);
 }
 
 function modalFeatures () {
@@ -571,9 +733,19 @@ function initializeView () {
     BuyerApiInstance.getViewDashboard(1);
     BuyerApiInstance.getViewNumberOfPages();
 
-    document.getElementById('pageSelect').addEventListener('change', function() {
+    // Event listener for page selection
+    document.getElementById('pageSelect').addEventListener('change', function () {
         const pageNumber = this.value;
         BuyerApiInstance.getViewDashboard(pageNumber);
+    });
+
+    // Event listener for search input
+    document.getElementById('searchInput').addEventListener('input', BuyerApiInstance.searchBuyerProperty);
+
+    // Event listener for dropdown filter
+    document.getElementById('filterSelect').addEventListener('change', function () {
+        const pageNumber = document.getElementById('pageSelect').value; // Get current page number
+        BuyerApiInstance.getViewDashboard(pageNumber); // Refresh dashboard based on current page number
     });
 }
 
