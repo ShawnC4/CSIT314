@@ -391,7 +391,7 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
-         
+
     public function getBuyerShortlistProperties($page, $buyer_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -428,11 +428,11 @@ class PropertyEntity implements JsonSerializable{
 
             $properties[] = $property;
         }
-        }
+    }
 
-        $this->db->closeConn();
+    $this->db->closeConn();
 
-        return $properties;
+    return $properties;
 
     }
 	

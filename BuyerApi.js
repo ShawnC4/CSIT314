@@ -227,6 +227,21 @@ class BuyerApi {
                 propertyImage.style.height = 'auto';
                 document.getElementById('details').appendChild(propertyImage);
 
+                // Add mortgage calculator
+                var mortgageCalculator = document.createElement('div');
+                mortgageCalculator.innerHTML = `
+                    <h3>Mortgage Calculator</h3>
+                    <label for="loanAmount">Loan Amount:</label>
+                    <input type="number" id="loanAmount" value=""><br>
+                    <label for="interestRate">Interest Rate (%):</label>
+                    <input type="number" id="interestRate" value=""><br>
+                    <label for="loanTerm">Loan Term (years):</label>
+                    <input type="number" id="loanTerm" value=""><br>
+                    <button onclick="calculateMortgage()">Calculate</button>
+                    <p id="monthlyPayment"></p>
+                `;
+                document.getElementById('details').appendChild(mortgageCalculator);
+
                 modalFeatures();
             })
             .catch(error => {
@@ -259,6 +274,153 @@ class BuyerApi {
     }
 
     //Create Review 
+    displayReview(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="review-form">
+                        <h2>Review the Agent</h2>
+                        <form id="reviewForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentReview">Review:</label>
+                                <textarea id="agentReview" name="agentReview" rows="4" cols="50" required placeholder="Type your review here..."></textarea>
+                            </div>
+                            <button type="submit">Submit Review</button>
+                        </form>
+                    </div>
+                `;
+                // Add event listener to form submission
+                const reviewForm = document.getElementById('reviewForm');
+                reviewForm.addEventListener('submit', this.createReview);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+    
+    createReview = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentReview = document.getElementById('agentReview').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
+        
+        fetch('BuyerLanding.php?action=createReview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentReview, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Review for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error reviewing agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error reviewing agent:', error));
+    }
+
+    // Create Rating 
+    displayRating(propertyId) {
+        // Fetch property details to get necessary information
+        fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
+            .then(response => response.json())
+            .then(propertyDetails => {
+                // Create modal content
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = `
+                    <span class="close">&times;</span>
+                    <div id="rating-form">
+                        <h2>Rate the Agent</h2>
+                        <form id="ratingForm">
+                            <div>
+                                <label for="propertyName">Property Name:</label>
+                                <span id="propertyName">${propertyDetails.name}</span>
+                            </div>
+                            <div>
+                                <label for="agentID">Real Estate Agent:</label>
+                                <span id="agentID">${propertyDetails.agent_id}</span>
+                            </div>
+                            <div>
+                                <label for="agentRating">Rating (1-5):</label>
+                                <input type="number" id="agentRating" name="agentRating" min="1" max="5" required>
+                            </div>
+                            <button type="submit">Submit Rating</button>
+                        </form>
+                    </div>
+                `;
+
+                // Add event listener to form submission
+                const ratingForm = document.getElementById('ratingForm');
+                ratingForm.addEventListener('submit', this.createRating);
+                
+                // Display the modal
+                modalFeatures();
+            })
+            .catch(error => {
+                console.error('Error fetching property details:', error);
+            });
+    }
+
+    createRating = (event) => {
+        event.preventDefault();
+        // Extract values from the form
+        const agentRating = document.getElementById('agentRating').value;
+        const customerID = userID; // Assuming userID is accessible here
+        const agentID = document.getElementById('agentID').textContent;
+    
+        fetch('BuyerLanding.php?action=createRating', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ agentRating, customerID, agentID })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error in the network!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data === true){
+                alert(`Rating for ${agentID} was created successfully!`);
+                document.getElementById("myModal").style.display = "none";
+            } else if(data['message'] == 'error'){
+                console.error('Error rating agent:', data['errorMessage']);
+            }
+        })
+        .catch(error => console.error('Error rating agent:', error));
+    }
+
+    // Create Review 
     displayReview(propertyId) {
         // Fetch property details to get necessary information
         fetch(`BuyerLanding.php?action=viewProperty&propertyId=${propertyId}`)
@@ -536,7 +698,18 @@ class BuyerApi {
             pageSelect.appendChild(option);
         }
     }
+}
 
+function calculateMortgage() {
+    var loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    var interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+    var loanTerm = parseFloat(document.getElementById('loanTerm').value);
+    
+    var monthlyInterestRate = interestRate / 12;
+    var numberOfPayments = loanTerm * 12;
+    var monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+    
+    document.getElementById('monthlyPayment').textContent = 'Monthly Payment: $' + monthlyPayment.toFixed(2);
 }
 
 function modalFeatures () {
@@ -556,7 +729,7 @@ function modalFeatures () {
 
 const BuyerApiInstance = new BuyerApi();
 
-function initializeView() {
+function initializeView () {
     BuyerApiInstance.getViewDashboard(1);
     BuyerApiInstance.getViewNumberOfPages();
 
