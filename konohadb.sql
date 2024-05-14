@@ -32,7 +32,7 @@ SELECT CONCAT('buyer_', t.n), CONCAT('buyer_', t.n, '@example.com'), CONCAT('buy
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 25
 ) t;
 
 -- Populate user accounts for Seller profile with password 'seller_password'
@@ -41,7 +41,7 @@ SELECT CONCAT('seller_', t.n), CONCAT('seller_', t.n, '@example.com'), CONCAT('s
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 25
 ) t;
 
 -- Populate user accounts for Agent profile with password 'agent_password'
@@ -50,7 +50,7 @@ SELECT CONCAT('agent_', t.n), CONCAT('agent_', t.n, '@example.com'), CONCAT('age
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 10
+    LIMIT 25
 ) t;
 
 -- Populate user accounts for Admin profile with password 'admin_password'
@@ -59,7 +59,7 @@ SELECT CONCAT('admin_', t.n), CONCAT('admin_', t.n, '@example.com'), CONCAT('adm
 FROM (
     SELECT ROW_NUMBER() OVER() AS n
     FROM INFORMATION_SCHEMA.TABLES
-    LIMIT 5
+    LIMIT 25
 ) t;
 
 -- Create ratings table
@@ -149,142 +149,142 @@ CREATE TABLE property (
 -- Populate property with properties managed by agent_1
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_1'),
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_1'),
+    ('Property 1', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_1'),
+    ('Property 2', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_1'),
+    ('Property 3', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1'),
+    ('Property 4', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_1'),
     ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1'),
-    ('Property 2', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_1'),
-    ('Property 4', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_1'),
-    ('Property 8', 'GCB', 150, 2, 12000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_1'),
-    ('Property 9', 'HDB', 100, 3, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_1'),
-    ('Property 7', 'Condo', 150, 2, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_1'),
-    ('Property 6', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_1'),
+    ('Property 6', 'GCB', 150, 2, 12000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_1'),
+    ('Property 7', 'HDB', 100, 3, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_1'),
+    ('Property 8', 'Condo', 150, 2, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_1'),
+    ('Property 9', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_1'),
     ('Property 10', 'Condo', 150, 2, 180000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_1');
 
 -- Populate property with properties managed by agent_2
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'Condo', 120, 4, 1000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_2'),
-    ('Property 1', 'HDB', 110, 3, 500000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_2'),
-    ('Property 5', 'GCB', 200, 5, 15000000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_2'),
-    ('Property 2', 'Condo', 130, 4, 1500000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_2'),
-    ('Property 4', 'HDB', 120, 3, 600000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_2'),
-    ('Property 8', 'Condo', 140, 4, 1800000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_2'),
-    ('Property 9', 'GCB', 180, 4, 12000000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_2'),
-    ('Property 7', 'HDB', 110, 3, 550000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_2'),
-    ('Property 6', 'Condo', 130, 4, 1600000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_2'),
-    ('Property 10', 'HDB', 120, 3, 620000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_2');
+    ('Property 11', 'Condo', 120, 4, 1000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_2'),
+    ('Property 12', 'HDB', 110, 3, 500000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_2'),
+    ('Property 13', 'GCB', 200, 5, 15000000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_2'),
+    ('Property 14', 'Condo', 130, 4, 1500000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_2'),
+    ('Property 15', 'HDB', 120, 3, 600000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_2'),
+    ('Property 16', 'Condo', 140, 4, 1800000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_2'),
+    ('Property 17', 'GCB', 180, 4, 12000000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_2'),
+    ('Property 18', 'HDB', 110, 3, 550000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_2'),
+    ('Property 19', 'Condo', 130, 4, 1600000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_2'),
+    ('Property 20', 'HDB', 120, 3, 620000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_2');
 
 -- Populate property with properties managed by agent_3
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_3'),
-    ('Property 1', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_3'),
-    ('Property 5', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_3'),
-    ('Property 2', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_3'),
-    ('Property 4', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_3'),
-    ('Property 8', 'GCB', 150, 2, 12000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3'),
-    ('Property 9', 'HDB', 100, 3, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_3'),
-    ('Property 7', 'Condo', 150, 2, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_3'),
-    ('Property 6', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_3'),
-    ('Property 10', 'Condo', 150, 2, 180000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3');
+    ('Property 21', 'GCB', 150, 2, 12000000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_3'),
+    ('Property 22', 'HDB', 100, 3, 150000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_3'),
+    ('Property 23', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_3'),
+    ('Property 24', 'HDB', 100, 3, 170000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_3'),
+    ('Property 25', 'Condo', 150, 2, 180000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_3'),
+    ('Property 26', 'GCB', 150, 2, 12000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3'),
+    ('Property 27', 'HDB', 100, 3, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_3'),
+    ('Property 28', 'Condo', 150, 2, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_3'),
+    ('Property 29', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_3'),
+    ('Property 30', 'Condo', 150, 2, 180000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_3');
 
 -- Populate property with properties managed by agent_4
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'GCB', 150, 3, 5000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_4'),
-    ('Property 2', 'HDB', 120, 4, 800000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_4'),
-    ('Property 3', 'Condo', 150, 5, 1200000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_4'),
-    ('Property 4', 'GCB', 180, 2, 10000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_4'),
-    ('Property 5', 'HDB', 100, 3, 600000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_4'),
-    ('Property 6', 'Condo', 130, 4, 1500000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_4'),
-    ('Property 7', 'GCB', 200, 5, 15000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_4'),
-    ('Property 8', 'HDB', 110, 2, 700000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_4'),
-    ('Property 9', 'Condo', 140, 3, 1700000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_4'),
-    ('Property 10', 'GCB', 220, 4, 18000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4');
+    ('Property 31', 'GCB', 150, 3, 5000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_4'),
+    ('Property 32', 'HDB', 120, 4, 800000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_4'),
+    ('Property 33', 'Condo', 150, 5, 1200000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_4'),
+    ('Property 34', 'GCB', 180, 2, 10000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_4'),
+    ('Property 35', 'HDB', 100, 3, 600000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_4'),
+    ('Property 36', 'Condo', 130, 4, 1500000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_4'),
+    ('Property 37', 'GCB', 200, 5, 15000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_4'),
+    ('Property 38', 'HDB', 110, 2, 700000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_4'),
+    ('Property 39', 'Condo', 140, 3, 1700000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_4'),
+    ('Property 40', 'GCB', 220, 4, 18000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_4');
 
 -- Populate property with properties managed by agent_5
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 1', 'Condo', 150, 3, 800000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_5'),
-    ('Property 4', 'GCB', 150, 4, 12000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_5'),
-    ('Property 2', 'HDB', 100, 5, 170000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_5'),
-    ('Property 3', 'Condo', 150, 3, 180000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_5'),
-    ('Property 5', 'HDB', 100, 4, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_5'),
-    ('Property 6', 'Condo', 150, 5, 180000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5'),
-    ('Property 7', 'GCB', 150, 4, 20000000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_5'),
-    ('Property 8', 'Condo', 150, 3, 900000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_5'),
-    ('Property 9', 'HDB', 100, 4, 160000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_5'),
-    ('Property 10', 'GCB', 150, 5, 15000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_5');
+    ('Property 41', 'Condo', 150, 3, 800000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_5'),
+    ('Property 42', 'GCB', 150, 4, 12000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_5'),
+    ('Property 43', 'HDB', 100, 5, 170000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_5'),
+    ('Property 44', 'Condo', 150, 3, 180000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_5'),
+    ('Property 45', 'HDB', 100, 4, 150000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_5'),
+    ('Property 46', 'Condo', 150, 5, 180000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_5'),
+    ('Property 47', 'GCB', 150, 4, 20000000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_5'),
+    ('Property 48', 'Condo', 150, 3, 900000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_5'),
+    ('Property 49', 'HDB', 100, 4, 160000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_5'),
+    ('Property 50', 'GCB', 150, 5, 15000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_5');
 
 -- Populate property with properties managed by agent_6
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 8', 'GCB', 150, 5, 16000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_6'),
-    ('Property 10', 'Condo', 200, 3, 1000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_6'),
-    ('Property 5', 'Condo', 180, 4, 7000000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_6'),
-    ('Property 1', 'HDB', 120, 2, 500000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_6'),
-    ('Property 4', 'Condo', 150, 3, 800000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_6'),
-    ('Property 2', 'HDB', 100, 5, 400000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_6'),
-    ('Property 9', 'GCB', 200, 4, 19000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_6'),
-    ('Property 6', 'HDB', 150, 3, 1200000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_6'),
-    ('Property 7', 'Condo', 180, 2, 9000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_6'),
-    ('Property 3', 'GCB', 250, 4, 15000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_6');
+    ('Property 51', 'GCB', 150, 5, 16000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_6'),
+    ('Property 52', 'Condo', 200, 3, 1000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_6'),
+    ('Property 53', 'Condo', 180, 4, 7000000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_6'),
+    ('Property 54', 'HDB', 120, 2, 500000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_6'),
+    ('Property 55', 'Condo', 150, 3, 800000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_6'),
+    ('Property 56', 'HDB', 100, 5, 400000.00, 'Location E', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_6'),
+    ('Property 57', 'GCB', 200, 4, 19000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_6'),
+    ('Property 58', 'HDB', 150, 3, 1200000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_6'),
+    ('Property 59', 'Condo', 180, 2, 9000000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_6'),
+    ('Property 60', 'GCB', 250, 4, 15000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_6');
 
 -- Populate property with properties managed by agent_7
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 8', 'GCB', 150, 3, 12000000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_7'),
-    ('Property 2', 'HDB', 100, 4, 150000.00, 'Location B', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_7'),
-    ('Property 6', 'Condo', 150, 5, 180000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_7'),
-    ('Property 1', 'HDB', 100, 2, 170000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_7'),
-    ('Property 7', 'GCB', 150, 3, 180000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_7'),
-    ('Property 4', 'Condo', 150, 4, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_7'),
-    ('Property 5', 'GCB', 150, 2, 12000000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_7'),
-    ('Property 10', 'HDB', 100, 5, 150000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_7'),
-    ('Property 9', 'Condo', 150, 3, 180000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_7'),
-    ('Property 3', 'HDB', 100, 4, 170000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_7');
+    ('Property 61', 'GCB', 150, 3, 12000000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_7'),
+    ('Property 62', 'HDB', 100, 4, 150000.00, 'Location B', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_7'),
+    ('Property 63', 'Condo', 150, 5, 180000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_7'),
+    ('Property 64', 'HDB', 100, 2, 170000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_7'),
+    ('Property 65', 'GCB', 150, 3, 180000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_7'),
+    ('Property 66', 'Condo', 150, 4, 180000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_7'),
+    ('Property 67', 'GCB', 150, 2, 12000000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_7'),
+    ('Property 68', 'HDB', 100, 5, 150000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_7'),
+    ('Property 69', 'Condo', 150, 3, 180000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_7'),
+    ('Property 70', 'HDB', 100, 4, 170000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_7');
 
 -- Populate property with properties managed by agent_8
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 3', 'HDB', 150, 4, 900000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_8'),
-    ('Property 1', 'Condo', 100, 5, 1500000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_8'),
-    ('Property 5', 'GCB', 200, 3, 1800000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_8'),
-    ('Property 2', 'HDB', 120, 2, 500000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_8'),
-    ('Property 4', 'Condo', 150, 4, 1200000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_8'),
-    ('Property 8', 'HDB', 100, 3, 600000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_8'),
-    ('Property 9', 'GCB', 250, 5, 20000000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_8'),
-    ('Property 7', 'Condo', 180, 3, 1400000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_8'),
-    ('Property 6', 'HDB', 130, 2, 450000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_8'),
-    ('Property 10', 'GCB', 220, 4, 15000000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_8');
+    ('Property 71', 'HDB', 150, 4, 900000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_8'),
+    ('Property 72', 'Condo', 100, 5, 1500000.00, 'Location G', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_8'),
+    ('Property 73', 'GCB', 200, 3, 1800000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_8'),
+    ('Property 74', 'HDB', 120, 2, 500000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_8'),
+    ('Property 75', 'Condo', 150, 4, 1200000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_8'),
+    ('Property 76', 'HDB', 100, 3, 600000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_8'),
+    ('Property 77', 'GCB', 250, 5, 20000000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_8'),
+    ('Property 78', 'Condo', 180, 3, 1400000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_8'),
+    ('Property 79', 'HDB', 130, 2, 450000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_8'),
+    ('Property 80', 'GCB', 220, 4, 15000000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_8');
 
 -- Populate property with properties managed by agent_9
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 4', 'Condo', 150, 3, 180000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_9'),
-    ('Property 10', 'HDB', 100, 5, 150000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_9'),
-    ('Property 9', 'GCB', 150, 4, 12000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_9'),
-    ('Property 2', 'Condo', 150, 2, 400000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_9'),
-    ('Property 1', 'HDB', 100, 3, 170000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_9'),
-    ('Property 3', 'GCB', 150, 5, 20000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_9'),
-    ('Property 7', 'HDB', 100, 4, 190000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_9'),
-    ('Property 6', 'Condo', 150, 2, 450000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_9'),
-    ('Property 5', 'GCB', 150, 3, 16000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_9'),
-    ('Property 8', 'HDB', 100, 2, 250000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_9');
+    ('Property 81', 'Condo', 150, 3, 180000.00, 'Location A', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_9'),
+    ('Property 82', 'HDB', 100, 5, 150000.00, 'Location C', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_9'),
+    ('Property 83', 'GCB', 150, 4, 12000000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_9'),
+    ('Property 84', 'Condo', 150, 2, 400000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_9'),
+    ('Property 85', 'HDB', 100, 3, 170000.00, 'Location D', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_9'),
+    ('Property 86', 'GCB', 150, 5, 20000000.00, 'Location F', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_9'),
+    ('Property 87', 'HDB', 100, 4, 190000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_9'),
+    ('Property 88', 'Condo', 150, 2, 450000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_9'),
+    ('Property 89', 'GCB', 150, 3, 16000000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_9'),
+    ('Property 90', 'HDB', 100, 2, 250000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_9');
 
 -- Populate property with properties managed by agent_10
 INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) 
 VALUES
-    ('Property 6', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_10'),
-    ('Property 9', 'HDB', 100, 4, 900000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_10'),
-    ('Property 2', 'Condo', 150, 5, 1500000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_10'),
-    ('Property 5', 'GCB', 200, 3, 1800000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_10'),
-    ('Property 1', 'Condo', 120, 2, 600000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_10'),
-    ('Property 7', 'GCB', 250, 4, 20000000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_10'),
-    ('Property 10', 'HDB', 110, 2, 450000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_10'),
-    ('Property 8', 'Condo', 180, 3, 1700000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_10'),
-    ('Property 4', 'HDB', 130, 5, 1200000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_10'),
-    ('Property 3', 'Condo', 160, 4, 800000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_10');
+    ('Property 91', 'HDB', 100, 3, 170000.00, 'Location C', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_8', 'agent_10'),
+    ('Property 92', 'HDB', 100, 4, 900000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_2', 'agent_10'),
+    ('Property 93', 'Condo', 150, 5, 1500000.00, 'Location F', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_5', 'agent_10'),
+    ('Property 94', 'GCB', 200, 3, 1800000.00, 'Location G', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_7', 'agent_10'),
+    ('Property 95', 'Condo', 120, 2, 600000.00, 'Location H', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_1', 'agent_10'),
+    ('Property 96', 'GCB', 250, 4, 20000000.00, 'Location E', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_10', 'agent_10'),
+    ('Property 97', 'HDB', 110, 2, 450000.00, 'Location B', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_3', 'agent_10'),
+    ('Property 98', 'Condo', 180, 3, 1700000.00, 'Location A', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_9', 'agent_10'),
+    ('Property 99', 'HDB', 130, 5, 1200000.00, 'Location H', 'available', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_6', 'agent_10'),
+    ('Property 100', 'Condo', 160, 4, 800000.00, 'Location D', 'sold', 'https://i.insider.com/655582f84ca513d8242a5725?width=700', 100, 'seller_4', 'agent_10');
 
 -- Create shortlist table
 CREATE TABLE shortlist (
@@ -298,14 +298,6 @@ CREATE TABLE shortlist (
 
 -- Populate shortlist with buyer shortlists
 INSERT INTO shortlist (property_id, buyer_id)
-VALUES
-    (1, 'buyer_1'), (55, 'buyer_4'), (4, 'buyer_2'), (77, 'buyer_4'), (3, 'buyer_5'), (66, 'buyer_1'), (4, 'buyer_3'), (88, 'buyer_2'), (5, 'buyer_3'), (99, 'buyer_5'),
-    (6, 'buyer_1'), (64, 'buyer_4'), (7, 'buyer_2'), (59, 'buyer_4'), (8, 'buyer_5'), (65, 'buyer_1'), (9, 'buyer_3'), (81, 'buyer_2'), (10, 'buyer_3'), (96, 'buyer_5'),
-    (12, 'buyer_4'), (18, 'buyer_1'), (16, 'buyer_3'), (13, 'buyer_2'), (14, 'buyer_5'), (19, 'buyer_9'), (23, 'buyer_6'), (34, 'buyer_9'), (18, 'buyer_7'), (44, 'buyer_9'),
-    (39, 'buyer_10'), (37, 'buyer_6'), (21, 'buyer_8'), (28, 'buyer_7'), (32, 'buyer_8'), (17, 'buyer_10'), (16, 'buyer_6'), (70, 'buyer_9'), (33, 'buyer_7'), (29, 'buyer_10'),
-    (24, 'buyer_6'), (41, 'buyer_8'), (36, 'buyer_7'), (87, 'buyer_8'), (22, 'buyer_10'), (49, 'buyer_9'), (98, 'buyer_6'), (17, 'buyer_8'), (65, 'buyer_7'),(43, 'buyer_10');
-
-INSERT INTO shortlist (property_id, buyer_id)
 SELECT p.id, u.username
 FROM (
     SELECT id, ROW_NUMBER() OVER() AS rn
@@ -314,9 +306,11 @@ FROM (
     LIMIT 50
 ) p
 JOIN (
-    SELECT username, ROW_NUMBER() OVER() AS rn
-    FROM user_accounts
-    WHERE profile_id= 1
-    ORDER BY RAND()
+    SELECT CONCAT('buyer_', t.n) AS username
+	FROM (
+    SELECT ROW_NUMBER() OVER() AS n
+    FROM INFORMATION_SCHEMA.TABLES
+    LIMIT 10
+	) t
 ) u 
-limit 100;
+LIMIT 100;
