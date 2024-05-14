@@ -10,9 +10,9 @@ class AdminSearchUAController {
 
     public function searchUserAccount($username) {
         // Retrieve user accounts from the database
-        $accounts = $this->entity->searchUserAccount($username);
+        $result = $this->entity->searchUserAccount($username);
 
-        return $accounts;
+        return $result;
     }
 }
 

@@ -70,11 +70,14 @@ class AgentApi {
     getAgentRatings() {
         fetch(`AgentRating.php?action=getAgentRatings&agentId=${window.userID}`)
         .then(response => response.json())
-        .then(ratings => {
-            console.log(ratings);
+        .then(data => {
+            console.log(data);
+			if (!data.success) // Access 'success' directly instead of using brackets
+				throw new Error(data.errorMessage);
+			
             const ratingList = document.getElementById('ratingList');
             ratingList.innerHTML = '';
-            ratings.forEach(rating => {
+            data.ratings.forEach(rating => {
                 const ratingDiv = document.createElement('div');
                 ratingDiv.classList.add('rating');
                 const userP = document.createElement('p');
@@ -89,8 +92,8 @@ class AgentApi {
             });
 
             // Calculate average rating
-            const totalRatings = ratings.length;
-            const totalScore = ratings.reduce((sum, rating) => sum + parseInt(rating.rating), 0);
+            const totalRatings = data.ratings.length;
+            const totalScore = data.ratings.reduce((sum, rating) => sum + parseInt(rating.rating), 0);
             const averageRating = totalScore / totalRatings;
             // Append average rating to element
             const avgRatingElement = document.getElementById('AvgRating');
@@ -103,11 +106,14 @@ class AgentApi {
     getAgentReviews() {
         fetch(`AgentReview.php?action=getAgentReviews&agentId=${window.userID}`)
         .then(response => response.json())
-        .then(reviews => {
-            console.log(reviews);
+        .then(data => {
+			console.log(data);
+			if (!data.success) // Access 'success' directly instead of using brackets
+				throw new Error(data.errorMessage);
+				
             const reviewList = document.getElementById('reviewList'); // Make sure 'reviewList' is the correct ID in your HTML
             reviewList.innerHTML = '';
-            reviews.forEach(review => {
+            data.reviews.forEach(review => {
                 const reviewDiv = document.createElement('div');
                // reviewDiv.classList.add('review'); // 
     

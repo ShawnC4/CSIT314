@@ -1,18 +1,20 @@
 <?php
-require_once 'ReviewEntity.php';
+require_once 'Review.php';
 
 
 class AgentReviewController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new ReviewEntity();
+        $this->entity = new Review();
     }
 
-    public function getAgentReviews($agent) {
+    public function getAgentReviews($agent_id) {
         // Retrieve user profiles from the database
-        $reviews = $this->entity->getAgentReviews($agent);
+        $result = $this->entity->getAgentReviews($agent_id);
 
-        return $reviews;
+        return $result;
     }
 }
+
+?>

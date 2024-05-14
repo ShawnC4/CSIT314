@@ -1,11 +1,11 @@
 <?php
-require_once 'ShortListEntity.php';
+require_once 'ShortList.php';
 
-class BuyerDeleteShortlistPropertyController {
+class BuyerShortlistDeleteController {
     private $entity;
 
     public function __construct () {
-        $this->entity = new ShortlistEntity();
+        $this->entity = new ShortList();
     }
 
     public function deleteShortListProperty ($property_id, $buyer_id) {

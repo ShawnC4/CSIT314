@@ -12,9 +12,9 @@ class AdminViewUPController {
 
     public function getUserProfiles() {
         // Retrieve user profiles from the database
-        $profiles = $this->entity->getUserProfiles();
+        $result = $this->entity->getUserProfiles();
 
-        return $profiles;
+        return $result;
     }
 }
 

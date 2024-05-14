@@ -1,11 +1,11 @@
 <?php
-require_once 'ReviewEntity.php';
+require_once 'Review.php';
 
-class SellerCreateReviewController {
+class CreateReviewController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new ReviewEntity();
+        $this->entity = new Review();
     }
 
     public function createReview($review, $customer_id, $agent_id) {

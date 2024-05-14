@@ -56,52 +56,8 @@
 <body>
     <div class="body">
         <h1>Shortlisted Properties</h1>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search properties...">
-
-            <select id="filterSelect">
-                <option value="all">All</option>
-                <option value="available">Available</option>
-                <option value="sold">Sold</option>
-            </select>
-        </div>
-        <div class="page-selection">
-            <label for="pageSelect">Select Page:</label>
-            <select id="pageSelect">
-                <!-- Options will be added here by JavaScript -->
-            </select>
-        </div>
         <!-- Property Listings -->
         <div class="shortlist-listing">
-            <!-- Property 1 -->
-            <div class="property">
-                <img src="images/Prop-1.jpg" alt="Property 1">
-                <div class="property-details">
-                    <!-- Add more details as needed -->
-                    <h2>Property Name 2</h2>
-                    <div class="buttons">
-                        <button onclick="loadContent('SellerView.php')">View</button>
-                        <button>Add To Shortlist</button>
-                        <button onclick="giveRating(1)" class="hidden">Give Rating</button>
-                        <button onclick="giveReview(1)" class="hidden">Give Review</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Property 2 -->
-            <div class="property">
-            <img src="images/Prop-2.jpg" alt="Property 2">
-                <div class="property-details">
-                    <h2>Property Name 2</h2>
-                    <div class="buttons">
-                        <button onclick="viewDetails(2)">View</button>
-                        <button>Add To Shortlist</button>
-                        <button onclick="giveRating(2)">Give Rating</button>
-                        <button onclick="giveReview(2)">Give Review</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Add more property listings as needed -->
         </div>
     </div>

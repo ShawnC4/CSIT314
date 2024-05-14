@@ -10,11 +10,11 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentProperties') {
 
-        $properties = $agentViewPropController->getPropertiesByAgent($_GET['agentId']);
+        $response = $agentViewPropController->getPropertiesByAgent($_GET['agentId']);
         //$properties = $agentViewPropController->getAgentProperties('agent_1');
         header('Content-Type: application/json');
 
-        echo json_encode($properties);
+        echo json_encode($response);
         exit();
     }
 

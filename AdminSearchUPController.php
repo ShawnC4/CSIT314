@@ -10,9 +10,9 @@ class AdminSearchUPController {
 
     public function searchUserProfile($name) {
         // Retrieve user profiles from the database
-        $profiles = $this->entity->searchUserProfile($name);
+        $result = $this->entity->searchUserProfile($name);
 
-        return $profiles;
+        return $result;
     }
 }
 

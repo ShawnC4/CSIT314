@@ -1,7 +1,7 @@
 <?php
 require_once 'Konohadb.php';
 
-class PropertyEntity implements JsonSerializable{
+class PropertyListing implements JsonSerializable{
     private $db, $conn;
     private $id, $name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id;
 
@@ -23,57 +23,6 @@ class PropertyEntity implements JsonSerializable{
         
     }
 
-    public function getBuyerProperties ($page) {
-        $this->db = new DBconn(); 
-        $this->conn = $this->db->getConn();
-
-        $properties = array(); 
-
-        $sql = "SELECT * FROM property LIMIT 9 OFFSET " . ($page - 1) * 9;
-
-        $result = $this->conn->query($sql);
-
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $property = new PropertyEntity(
-                    $row['id'],
-                    $row['name'],
-                    $row['type'],
-                    $row['size'],
-                    $row['rooms'],
-                    $row['price'],
-                    $row['location'],
-                    $row['status'],
-                    $row['image'],
-                    $row['views'],
-                    $row['seller_id'],
-                    $row['agent_id']
-                );
- 
-                $properties[] = $property;
-            }
-        }
-
-        $this->db->closeConn();
-
-        return $properties;
-    }
-
-    public function getNumberOfProperties () {
-        $this->db = new DBconn(); 
-        $this->conn = $this->db->getConn();
-
-        $sql = "SELECT COUNT(*) FROM property";
-        $result = $this->conn->query($sql);
-
-        $row = $result->fetch_row();
-        $count = $row[0];
-
-        $this->db->closeConn();
-
-        return $count;
-    }
-
     public function getPropertyById($id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -84,13 +33,13 @@ class PropertyEntity implements JsonSerializable{
         $stmt->execute();
         
         $result = $stmt->get_result();
-
-        $fetchProperty = $result->fetch_assoc();
+		
+		if ($result) {
+			$fetchProperty = $result->fetch_assoc();
         
-        $stmt->close();
-        
-        if ($fetchProperty) {
-            $property = new PropertyEntity(
+			$stmt->close();
+			
+			$property = new PropertyListing(
 				$fetchProperty['id'], 
 				$fetchProperty['name'], 
 				$fetchProperty['type'], 
@@ -104,28 +53,29 @@ class PropertyEntity implements JsonSerializable{
 				$fetchProperty['seller_id'], 
 				$fetchProperty['agent_id']
 			);
+		
+			$this->db->closeConn();
+            return ['success' => true, 'property' => $property];
         } else {
-            $property = null;
-        }
-
-        $this->db->closeConn();
-
-        return $property;
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
-    public function getPropertiesByAgent($agent) {
+    public function getPropertiesByAgent($agent_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $properties = array(); 
 
-        $sql = "SELECT * FROM property WHERE agent_id = '$agent'";
+        $sql = "SELECT * FROM property WHERE agent_id = '$agent_id'";
 
         $result = $this->conn->query($sql);
 
         if ($result) {
             while ($row = $result->fetch_assoc()) {
-                $property = new PropertyEntity(
+                $property = new PropertyListing(
                     $row['id'],
                     $row['name'],
                     $row['type'],
@@ -152,19 +102,19 @@ class PropertyEntity implements JsonSerializable{
 		}
     }
 
-    public function getSellerProperties($seller) {
+    public function getSellerProperties($seller_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $properties = array(); 
 
-        $sql = "SELECT * FROM property WHERE seller_id = '$seller'";
+        $sql = "SELECT * FROM property WHERE seller_id = '$seller_id'";
 
         $result = $this->conn->query($sql);
 
         if ($result) {
             while ($row = $result->fetch_assoc()) {
-                $property = new PropertyEntity(
+                $property = new PropertyListing(
                     $row['id'],
                     $row['name'],
                     $row['type'],
@@ -181,17 +131,89 @@ class PropertyEntity implements JsonSerializable{
  
                 $properties[] = $property;
             }
+		
+			$this->db->closeConn();
+            return ['success' => true, 'properties' => $properties];
         } else {
-            echo "Error fetching properties: " . $this->conn->error;
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
+    }
+	
+	public function getBuyerProperties ($status, $pageNum) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+
+        $properties = array(); 
+		
+        $sql = "SELECT * FROM property WHERE 1=1";
+        $params = array();
+        
+        // Adjust SQL query based on status filter
+        if ($status !== 'all') {
+            $sql .= " AND status = ?";
+            $params[] = $status;
         }
-
-        $this->db->closeConn();
-
-        return $properties;
+        
+        $stmt = $this->conn->prepare($sql);
+        if ($stmt === false) {
+            $errorMessage = $this->conn->error;
+            $this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
+    
+        // Bind parameters
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+        }
+    
+        if ($stmt->execute()) {
+            // Property search successful            
+            $result = $stmt->get_result();
+            
+            while ($row = $result->fetch_assoc()) {
+                $property = new PropertyListing(
+                    $row['id'],
+                    $row['name'],
+                    $row['type'],
+                    $row['size'],
+                    $row['rooms'],
+                    $row['price'],
+                    $row['location'],
+                    $row['status'],
+                    $row['image'],
+                    $row['views'],
+                    $row['seller_id'],
+                    $row['agent_id']
+                );
+    
+                $properties[] = $property;
+            }
+            
+            // Calculate total number of properties
+            $totalProperties = count($properties);
+			
+            // Calculate start and end indexes for pagination
+            $startIndex = ($pageNum - 1) * 9;
+            $endIndex = min($startIndex + 9, $totalProperties);
+    
+            // Slice the properties array to get properties for the current page
+            $pagedProperties = array_slice($properties, $startIndex, 9);
+    
+            $this->db->closeConn();
+            return ['success' => true, 'properties' => $pagedProperties, 'numOfProp'=> $totalProperties];
+        } else {
+            // Property search failed
+            $errorMessage = $this->conn->error;
+            $this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+        }
     }
 
     // Create Property
-    public function createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
+    public function createProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id) {
 
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
@@ -200,7 +222,7 @@ class PropertyEntity implements JsonSerializable{
         $stmt = $this->conn->prepare("INSERT INTO property (name, type, size, rooms, price, location, status, image, views, seller_id, agent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         // Bind parameters
-        $stmt->bind_param("ssiidsssiss", $Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
+        $stmt->bind_param("ssiidsssiss", $name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id);
         
 		mysqli_report(MYSQLI_REPORT_STRICT);
 		
@@ -242,7 +264,7 @@ class PropertyEntity implements JsonSerializable{
 		}
     }
 
-    public function deleteProperty($propertyId) {
+    public function deleteProperty($id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
@@ -254,7 +276,7 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
 
-        $stmt->bind_param("i", $propertyId);
+        $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
 			// Property delete successful
@@ -268,7 +290,7 @@ class PropertyEntity implements JsonSerializable{
 		}
     }
 	
-	public function searchProperty($name, $agent) {
+	public function searchProperty($name, $agent_id) {
 		$this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 		
@@ -281,14 +303,14 @@ class PropertyEntity implements JsonSerializable{
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
 
-        $stmt->bind_param("ss", $name, $agent);
+        $stmt->bind_param("ss", $name, $agent_id);
 
         if ($stmt->execute()) {
 			// Property search successful			
 			$result = $stmt->get_result();
 			
 			while ($row = $result->fetch_assoc()) {
-               $property = new PropertyEntity(
+               $property = new PropertyListing(
                     $row['id'],
                     $row['name'],
                     $row['type'],
@@ -354,7 +376,7 @@ class PropertyEntity implements JsonSerializable{
             $result = $stmt->get_result();
             
             while ($row = $result->fetch_assoc()) {
-                $property = new PropertyEntity(
+                $property = new PropertyListing(
                     $row['id'],
                     $row['name'],
                     $row['type'],
@@ -374,16 +396,16 @@ class PropertyEntity implements JsonSerializable{
             
             // Calculate total number of properties
             $totalProperties = count($properties);
-    
+			
             // Calculate start and end indexes for pagination
             $startIndex = ($pageNum - 1) * 9;
             $endIndex = min($startIndex + 9, $totalProperties);
     
             // Slice the properties array to get properties for the current page
-            $pagedProperties = array_slice($properties, $startIndex, $endIndex - $startIndex);
+            $pagedProperties = array_slice($properties, $startIndex, 9);
     
             $this->db->closeConn();
-            return ['success' => true, 'properties' => $pagedProperties];
+            return ['success' => true, 'properties' => $pagedProperties, 'numOfProp'=> $totalProperties];
         } else {
             // Property search failed
             $errorMessage = $this->conn->error;
@@ -392,48 +414,43 @@ class PropertyEntity implements JsonSerializable{
         }
     }
 
-    public function getBuyerShortlistProperties($page, $buyer_id) {
+    public function getBuyerShortlistProperties($shortlist) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $properties = array(); 
-
-        $sql = "SELECT p.id, p.name, p.type, p.size, p.rooms, p.price, p.location, p.status, p.image, p.views, p.seller_id, p.agent_id
-                FROM property AS p
-                JOIN shortlist AS s ON p.id = s.property_id
-                WHERE s.buyer_id = ? LIMIT 9 OFFSET " . ($page - 1) * 9;
-        
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("s", $buyer_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
+		
+		$idList = implode(',', $shortlist); // Convert array to comma-separated list
+		$sql = "SELECT * FROM property WHERE id IN ($idList)";
+		$result = $this->conn->query($sql);
 
         if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $property = new PropertyEntity(
-                $row['id'],
-                $row['name'],
-                $row['type'],
-                $row['size'],
-                $row['rooms'],
-                $row['price'],
-                $row['location'],
-                $row['status'],
-                $row['image'],
-                $row['views'],
-                $row['seller_id'],
-                $row['agent_id']
-            );
+			while ($row = $result->fetch_assoc()) {
+				$property = new PropertyListing(
+					$row['id'],
+					$row['name'],
+					$row['type'],
+					$row['size'],
+					$row['rooms'],
+					$row['price'],
+					$row['location'],
+					$row['status'],
+					$row['image'],
+					$row['views'],
+					$row['seller_id'],
+					$row['agent_id']
+				);
 
-            $properties[] = $property;
-        }
-    }
-
-    $this->db->closeConn();
-
-    return $properties;
-
+				$properties[] = $property;
+			}
+			
+			$this->db->closeConn();
+            return ['success' => true, 'properties' => $properties];
+        } else {
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 	
     public function jsonSerialize() {

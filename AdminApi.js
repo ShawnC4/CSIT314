@@ -157,14 +157,17 @@ class AdminApi {
     fetchUserProfiles() {
         fetch('AdminLanding.php?action=getProfiles')
         .then(response => response.json())
-        .then(profiles => {
-            console.log(profiles);
-			displayProfile(profiles);
+        .then(data => {
+            console.log(data);
+			if (!data.success)
+				throw new Error(data.errorMessage);
+			
+			displayProfile(data.profiles);
         })
         .catch(error => console.error('Error fetching user profiles:', error));
     }
 
-    fetchUserAccounts(page = 0) {
+    fetchUserAccounts(page = 1) {
 		fetch('AdminLanding.php?action=getAccounts', {
             method: 'POST',
             headers: {
@@ -176,34 +179,8 @@ class AdminApi {
         .then(data => {
             console.log(data);
             if(data['success']) {
-                const accountList = document.getElementById('accountList');
-				accountList.innerHTML = ''; // Clear previous content
-				
-				const pageSelect = document.createElement('select');
-				pageSelect.id = 'pageNum';
-				pageSelect.name = 'pageNum';
-		
-				// Iterate over fetched profiles and create options
-				for (let i = 0; i < data['count']; i++) {
-					const option = document.createElement('option');
-					option.value = i;
-					option.textContent = `Page ${i+1}`;
-					if (i == page)
-						option.selected = true;
-					pageSelect.appendChild(option);
-				}
-				
-				pageSelect.addEventListener('change', () => {
-					this.fetchUserAccounts(pageSelect.value);
-				});
-				
-				accountList.appendChild(pageSelect);
-				
-				let arr = displayAccount(data['accounts']);
-				arr.forEach(dom =>{
-					accountList.appendChild(dom);
-				});
-				
+				this.setPageSelector (data['numOfAcc'], page)
+				displayAccount(data['accounts']);				
             } else {
                 console.error('Error fetching user account:', data['errorMessage']);
             }
@@ -249,6 +226,8 @@ class AdminApi {
 			return;
 		}
 		
+		document.getElementById('page-selection').hidden = true;
+		
 		fetch('AdminLanding.php?action=searchAccount', {
             method: 'POST',
             headers: {
@@ -260,14 +239,7 @@ class AdminApi {
         .then(data => {
             console.log(data);
             if(data['success']) {
-                const accountList = document.getElementById('accountList');
-				accountList.innerHTML = ''; // Clear previous content
-				
-				let arr = displayAccount(data['accounts']);
-				arr.forEach(dom =>{
-					accountList.appendChild(dom);
-				});
-				
+                displayAccount(data['accounts']);				
             } else {
                 console.error('Error fetching user account:', data['errorMessage']);
             }
@@ -275,6 +247,22 @@ class AdminApi {
         })
         .catch(error => console.error('Error fetching user accounts:', error));
     }
+	
+	setPageSelector (numOfAcc, pageNum) {
+		let totalPages = (numOfAcc <= 0) ? 1 : Math.ceil(numOfAcc / 25);
+		console.log(totalPages);
+		document.getElementById('page-selection').hidden = false;
+		const pageSelect = document.getElementById('pageSelect');
+        pageSelect.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+			if (i == pageNum)
+				option.selected = true;
+            pageSelect.appendChild(option);
+        }
+	}
 };
 
 window.onload = function() {
@@ -336,7 +324,8 @@ function displayProfile (profiles) {
 }
 
 function displayAccount(accounts) {
-	let arr = [];
+	const accountList = document.getElementById('accountList');
+	accountList.innerHTML = ''; // Clear previous content
 	accounts.forEach(account => {
 		// Create container for account information
 		const accountContainer = document.createElement('div');
@@ -388,9 +377,8 @@ function displayAccount(accounts) {
 		accountContainer.appendChild(suspendButton);
 	
 		// Append account container to profile list
-		arr.push(accountContainer);
+		accountList.appendChild(accountContainer);
 	});
-	return arr;
 }
 
 function displayCreateUP() {
@@ -425,7 +413,7 @@ function displayCreateUA() {
     
     fetch('AdminLanding.php?action=getProfiles')
     .then(response => response.json())
-    .then(profiles => {
+    .then(data => {
         const Form = document.getElementById('modal-content');
 
         Form.style.display = 'block';
@@ -437,7 +425,7 @@ function displayCreateUA() {
         profileSelect.required = true;
 
         // Iterate over fetched profiles and create options
-        profiles.forEach(profile => {
+        data.profiles.forEach(profile => {
             const option = document.createElement('option');
             option.value = profile.id;
             option.textContent = profile.name;
@@ -493,13 +481,15 @@ function viewProfile(id, name, activeStatus, description){
 }
 
 function viewAccount(username, email, password, activeStatus, profile_id){
-    fetch(`AdminLanding.php?action=getProfileById&profile_id=${profile_id}`)
+    fetch(`AdminLanding.php?action=getProfiles`)
 	.then(response => response.json())
-	.then(profile => {
+	.then(data => {
 		
 		const Form = document.getElementById('modal-content');
 
 		const isActive = activeStatus == true;
+		
+		const profile = data.profiles.find(profile=> profile.id == profile_id)
 
 		Form.style.display = 'block';
 
@@ -563,9 +553,9 @@ function displayUpdateUP(profileId, profileName, activeStatus, description) {
 
 function displayUpdateUA(username, email, password, activeStatus, profile_id) {
 
-    fetch(`AdminLanding.php?action=updateGetProfile`)
+    fetch(`AdminLanding.php?action=getProfiles`)
 	.then(response => response.json())
-    .then(profiles => {
+    .then(data => {
         const Form = document.getElementById('modal-content');
 
         Form.style.display = 'block';
@@ -577,7 +567,7 @@ function displayUpdateUA(username, email, password, activeStatus, profile_id) {
         profileSelect.required = true;
 
         // Iterate over fetched profiles and create options
-        profiles.forEach(profile => {
+        data.profiles.forEach(profile => {
             const option = document.createElement('option');
             option.value = profile.id;
             option.textContent = profile.name;
@@ -662,6 +652,10 @@ function initializeUA() {
 
     document.getElementById('createAccount').addEventListener('click', displayCreateUA);
     document.getElementById('searchAccount').addEventListener('input', admin.searchEngineAccount);
+	document.getElementById('pageSelect').addEventListener('change', function() {
+		const pageNum = this.value;
+		admin.fetchUserAccounts(pageNum);
+    });
 }
 
 

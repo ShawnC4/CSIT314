@@ -54,11 +54,11 @@ class LoginApi {
     fetchUserProfiles() {
         fetch('index.php?action=getProfiles')
         .then(response => response.json())
-        .then(profiles => {
-            console.log(profiles);
+        .then(data => {
+            console.log(data);
             const profileSelect = document.getElementById('profile');
             profileSelect.innerHTML = '';
-            profiles.forEach(profile => {
+            data.profiles.forEach(profile => {
                 const option = document.createElement('option');
                 option.value = profile.id;
                 option.textContent = profile.name;

@@ -15,33 +15,38 @@ if (!isset($_SESSION['logged']) || $_SESSION['logged'] == false) {
     }
 }
 
-require_once 'SellerViewPropertyController.php';
-require_once 'SellerCreateRatingController.php';
-require_once 'SellerCreateReviewController.php';
+require_once 'SellerViewALLPropertyController.php';
+require_once 'SellerViewONEPropertyController.php';
+require_once 'CreateRatingController.php';
+require_once 'CreateReviewController.php';
 
 //VIEW//
-$SellerViewPropertyController = new SellerViewPropertyController();
+$SellerViewALLPropertyController = new SellerViewALLPropertyController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
     if(isset($_GET['sellerId'])) {
         
-        $properties = $SellerViewPropertyController->getSellerProperties($_GET['sellerId']);
+        $response = $SellerViewALLPropertyController->getSellerProperties($_GET['sellerId']);
         header('Content-Type: application/json');
-        echo json_encode($properties);
+        echo json_encode($response);
         exit();
     }
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
+} 
+
+$SellerViewONEPropertyController = new SellerViewONEPropertyController();
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
     if(isset($_GET['propertyId'])) {
-        $propertyDetails = $SellerViewPropertyController->getPropertyByID($_GET['propertyId']);
+        $response = $SellerViewONEPropertyController->getPropertyByID($_GET['propertyId']);
         
         header('Content-Type: application/json');
-        echo json_encode($propertyDetails);
+        echo json_encode($response);
         exit();
     }
 }
 
 //CREATE RATING//
-$SellerCreateRatingController = new SellerCreateRatingController();
+$CreateRatingController = new CreateRatingController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -49,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
     
-    $response = $SellerCreateRatingController->createRating($rating, $customer_id, $agent_id);
+    $response = $CreateRatingController->createRating($rating, $customer_id, $agent_id);
 
     // Send JSON response
     header('Content-Type: application/json');
@@ -58,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 }
 
 //CREATE REVIEW//
-$SellerCreateReviewController = new SellerCreateReviewController();
+$CreateReviewController = new CreateReviewController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -66,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
     
-    $response = $SellerCreateReviewController->createReview($review, $customer_id, $agent_id);
+    $response = $CreateReviewController->createReview($review, $customer_id, $agent_id);
 
     // Send JSON response
     header('Content-Type: application/json');
@@ -145,34 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 
         <!-- Property Listings -->
         <div class="property-listings">
-            <!-- Property 1 -->
-            <div class="property">
-                <img src="images/Prop-1.jpg" alt="Property 1">
-                <div class="property-details">
-                    <!-- Add more details as needed -->
-                    <div class="status">Available</div>
-                    <div class="buttons">
-                        <button onclick="loadContent('SellerView.php')">View</button>
-                        <button onclick="giveRating(1)" class="hidden">Give Rating</button>
-                        <button onclick="giveReview(1)" class="hidden">Give Review</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Property 2 -->
-            <div class="property">
-            <img src="images/Prop-2.jpg" alt="Property 2">
-                <div class="property-details">
-                    <h2>Property Name 2</h2>
-                    <div class="status">Sold</div>
-                    <div class="buttons">
-                        <button onclick="viewDetails(2)">View</button>
-                        <button onclick="giveRating(2)">Give Rating</button>
-                        <button onclick="giveReview(2)">Give Review</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Add more property listings as needed -->
         </div>
     </div>

@@ -1,11 +1,11 @@
 <?php
-require_once 'RatingEntity.php';
+require_once 'Rating.php';
 
-class SellerCreateRatingController {
+class CreateRatingController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new RatingEntity();
+        $this->entity = new Rating();
     }
 
     public function createRating($rating, $customer_id, $agent_id) {

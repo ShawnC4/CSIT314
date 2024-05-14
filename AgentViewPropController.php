@@ -1,15 +1,15 @@
 <?php
-require_once 'PropertyEntity.php';
+require_once 'PropertyListing.php';
 
 class AgentViewPropController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new PropertyEntity();
+        $this->entity = new PropertyListing();
     }
 
-    public function getPropertiesByAgent($agent) {
-        $properties = $this->entity->getPropertiesByAgent($agent);
+    public function getPropertiesByAgent($agent_id) {
+        $properties = $this->entity->getPropertiesByAgent($agent_id);
 
         return $properties;
     }

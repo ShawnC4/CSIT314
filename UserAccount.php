@@ -15,103 +15,41 @@ class UserAccount implements JsonSerializable{
 		}
     }
 	
-	public function getUsername () {
-        return $this->username;
-    }
+	public function loginAccount($username, $password, $profile_id){
+		$this->db = new DBconn();
+		$this->conn = $this->db->getConn();
+		
+		$stmt = $this->conn->prepare("SELECT activeStatus, COUNT(*) FROM user_accounts WHERE username = ? AND password = ? AND profile_id = ?");
+		$stmt->bind_param("ssi", $username, $password, $profile_id);
+		
+		if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
+			
+			$this->db->closeConn();
+			
+			if ($row['COUNT(*)'] == 0)
+				return ["success" => false, "error" => "Invalid username or password"];
+			else if (!$row['activeStatus'])
+				return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
+			else 
+				return ["success" => true];
+        } else {
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'error' => $errorMessage];
+        }
+	}
 
-    public function getPassword() {
-        return $this->password;
-
-    }
-	
-	public function getEmail() {
-        return $this->email;
-
-    }
-
-    public function isActive(){
-        return $this->activeStatus;
-    }
-
-    public function getProfileId () {
-        return $this->profile_id;
-    }
-
-	public function startConnection(){
-		$this->db = new DBconn(); 
+    public function getUserAccounts($pageNum) {
+        $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
-	}
-	
-	public function closeConnection(){
-		$this->db->closeConn();
-	}
-
-    public function findAccById($username) {
-		$this->startConnection();
-		// Prepare SQL statement
-        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        
-        $stmt->execute();
-        
-        // Get result
-        $result = $stmt->get_result();
-
-        // Fetch user data
-        $fetchuser = $result->fetch_assoc();
-        
-        // Close statement
-        $stmt->close();
-        
-        if ($fetchuser) {
-            $user = new UserAccount($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
-        } else {
-            $user = null;
-        }
-
-		$this->closeConnection();
-		
-        return $user; // Return user data
-    }
-
-    public function findAccByUsername($username, $profile) {
-		$this->startConnection();
-		// Prepare SQL statement
-        $stmt = $this->conn->prepare("SELECT * FROM user_accounts WHERE username = ? AND profile_id = ?");
-        $stmt->bind_param("si", $username, $profile);
-        
-        $stmt->execute();
-        
-        // Get result
-        $result = $stmt->get_result();
-
-        // Fetch user data
-        $fetchuser = $result->fetch_assoc();
-        
-        // Close statement
-        $stmt->close();
-        
-        if ($fetchuser) {
-            $user = new UserAccount($fetchuser['username'], $fetchuser['password'], $fetchuser['email'], $fetchuser['activeStatus'], $fetchuser['profile_id']);
-        } else {
-            $user = null;
-        }
-		
-		$this->closeConnection();
-
-        return $user; // Return user data
-    }
-
-    public function getUserAccounts($page = 0) {
-        $this->startConnection();
 		
 		$accounts = array(); 
 		
-		$page *= 25;
         // Prepare SQL statement to select profiles
-        $sql = "SELECT * FROM user_accounts ORDER BY username ASC LIMIT 25 OFFSET ?";
+        $sql = "SELECT * FROM user_accounts ORDER BY username ASC";
 		$stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $page);
 		
         // Execute the query    
         if ($stmt->execute()) {
@@ -129,39 +67,24 @@ class UserAccount implements JsonSerializable{
                 $accounts[] = $account;
             }
 			
-			$this->closeConnection();
-			$pageCount = $this->getCountUA();
-            return ['success' => true, 'accounts' => $accounts, 'count' => $pageCount];
+			// Calculate total number of accounts
+            $totalAccounts = count($accounts);
+			
+            // Calculate start and end indexes for pagination
+            $startIndex = ($pageNum - 1) * 25;
+            $endIndex = min($startIndex + 25, $totalAccounts);
+    
+            // Slice the accounts array to get accounts for the current page
+            $pagedAccounts = array_slice($accounts, $startIndex, 25);
+			
+			$this->db->closeConn();
+            return ['success' => true, 'accounts' => $pagedAccounts, 'numOfAcc' => $totalAccounts];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
-    }
-	
-	public function getCountUA(){
-		$this->startConnection();
-		// Prepare SQL statement to select profiles
-		$sql = "SELECT * FROM user_accounts;";
-
-		// Execute the query
-		$result = $this->conn->query($sql);
-
-		// Check if the query was successful
-		if ($result) {
-			$row = $result->fetch_assoc();
-			// Count the rows (using mysqli_num_rows)
-			$count = intval(ceil(mysqli_num_rows($result) / 25));
-			$this->closeConnection();
-			return $count;
-		} else {
-            // Handle error if query fails
-            $errorMessage = $this->conn->error;
-			$this->closeConnection();
-            return 1;
-        }
-	}
-	
+    }	
 
     public function createUserAccount($username, $email, $password, $activeStatus, $profile_id) {
         // Check if profile exists
@@ -169,7 +92,9 @@ class UserAccount implements JsonSerializable{
             return ['success' => false, 'message' => 'Account already exists!'];
 		}
 		
-		$this->startConnection();
+		$this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		// Prepare SQL statement
         $stmt = $this->conn->prepare("INSERT INTO user_accounts (username, email, password, activeStatus, profile_id) VALUES (?, ?, ?, ?, ?)");
         
@@ -179,18 +104,19 @@ class UserAccount implements JsonSerializable{
         // Execute the statement
         if ($stmt->execute()) {
             // Account creation successful
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
             // Account creation failed
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'message' => 'Error', 'errorMessage' => $errorMessage];
         }
     }
 	
 	public function accountExists($username) {
-        $this->startConnection();
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
 		
 		$sql = "SELECT COUNT(*) FROM user_accounts WHERE username = ?";
 		$stmt = $this->conn->prepare($sql);
@@ -199,14 +125,16 @@ class UserAccount implements JsonSerializable{
 		$result = $stmt->get_result();
 		$row = $result->fetch_assoc();
 
-		$this->closeConnection();
+		$this->db->closeConn();
 		
 		return $row['COUNT(*)'] > 0;
     }
 
     // Update user account
     public function updateUserAccount($username, $email, $password, $activeStatus, $profile_id) {
-        $this->startConnection();
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		// Prepare SQL statement
         $stmt = $this->conn->prepare("UPDATE user_accounts SET email = ?, password = ?, activeStatus = ?, profile_id = ? WHERE username = ?");
         
@@ -216,18 +144,20 @@ class UserAccount implements JsonSerializable{
         // Execute the statement
         if ($stmt->execute()) {
             // Account update successful
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
             // Account update failed
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
 	
 	public function searchUserAccount($username){
-		$this->startConnection();
+		$this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		$sql = "SELECT * FROM user_accounts WHERE username LIKE CONCAT('%', ?, '%')";
 		$stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -249,39 +179,41 @@ class UserAccount implements JsonSerializable{
                 $accounts[] = $account;
             }
 			
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true, 'accounts' => $accounts];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
 	}
 
     //Suspend user for userAccount
     public function suspendUserAccount($username) {
-        $this->startConnection();
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		$sql = "UPDATE user_accounts SET activeStatus = 0 WHERE username = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $username);
     
         if ($stmt->execute()) {
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
 	
 	public function jsonSerialize() {
 		return array(
-			'username' => $this->getUsername(),
-			'password' => $this->getPassword(),
-			'email' => $this->getEmail(),
-			'activeStatus' => $this->isActive(),
-			'profile_id' => $this->getProfileId()
+			'username' => $this->username,
+			'password' => $this->password,
+			'email' => $this->email,
+			'activeStatus' => $this->activeStatus,
+			'profile_id' => $this->profile_id
 		);
 	}
 }

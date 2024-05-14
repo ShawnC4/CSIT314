@@ -7,10 +7,10 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentRatings') {
 
-        $ratings = $agentRatingController->getAgentRatings($_GET['agentId']);
+        $response = $agentRatingController->getAgentRatings($_GET['agentId']);
         header('Content-Type: application/json');
 
-        echo json_encode($ratings);
+        echo json_encode($response);
         exit();
     }
 ?>

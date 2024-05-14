@@ -1,11 +1,11 @@
 <?php
-require_once 'PropertyEntity.php';
+require_once 'PropertyListing.php';
 
 class BuyerSearchPropertyController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new PropertyEntity();
+        $this->entity = new PropertyListing();
     }
 
     public function searchBuyerProperty($status, $name, $pageNum) {

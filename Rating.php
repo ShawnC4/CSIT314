@@ -1,10 +1,9 @@
 <?php
 require_once 'Konohadb.php';
-require 'RatingClass.php';
 
-class RatingEntity {
+class Rating implements JsonSerializable{
     private $db, $conn;
-    public $rating, $customer_id, $agent_id;
+    private $rating, $customer_id, $agent_id;
 
     public function __construct($rating = null, $customer_id = null, $agent_id = null) {
         if ($rating !== null && $customer_id !== null && $agent_id !== null) {
@@ -14,19 +13,19 @@ class RatingEntity {
         }
     }
 
-    public function getAgentRatings($agent) {
+    public function getAgentRatings($agent_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $ratings = array(); 
 
-        $sql = "SELECT * FROM ratings WHERE agent_id = '$agent'";
+        $sql = "SELECT * FROM ratings WHERE agent_id = '$agent_id'";
 
         $result = $this->conn->query($sql);
 
         if ($result) {
             while ($row = $result->fetch_assoc()) {
-                $rating = new RatingEntity(
+                $rating = new Rating(
                     $row['rating'],
                     $row['customer_id'],
                     $row['agent_id']
@@ -34,13 +33,14 @@ class RatingEntity {
  
                 $ratings[] = $rating;
             }
+			
+			$this->db->closeConn();
+            return ['success' => true, 'ratings' => $ratings];
         } else {
-            echo "Error fetching ratings: " . $this->conn->error;
-        }
-
-        $this->db->closeConn();
-
-        return $ratings;
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
     // Create rating
@@ -56,16 +56,21 @@ class RatingEntity {
         
         // Execute the statement
         if ($stmt->execute()) {
-            // Rating creation successful
-            return true;
+            $this->db->closeConn();
+            return ['success' => true];
         } else {
-            // Rating creation failed
-            return false;
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
         }
-        
-        // Close statement
-        $stmt->close();
     }
-
+	
+	public function jsonSerialize() {
+		return array(
+			'rating' => $this->rating,
+            'customer_id' => $this->customer_id,
+            'agent_id' => $this->agent_id
+		);
+	}
 }
 ?>

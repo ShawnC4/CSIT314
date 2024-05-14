@@ -9,8 +9,8 @@ class AdminSuspendUPController {
         $this->entity = new UserProfile();
     }
 
-    public function suspendProfile($profileId) {
-        $result = $this->entity->suspendUserProfile($profileId);
+    public function suspendProfile($id) {
+        $result = $this->entity->suspendUserProfile($id);
         return $result;
     }
 }

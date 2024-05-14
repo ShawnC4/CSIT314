@@ -71,34 +71,6 @@
         </div>
         <!-- Property Listings -->
         <div class="property-listings">
-            <!-- Property 1 -->
-            <div class="property">
-                <img src="images/Prop-1.jpg" alt="Property 1">
-                <div class="property-details">
-                    <!-- Add more details as needed -->
-                    <h2>Property Name 2</h2>
-                    <div class="buttons">
-                        <button onclick="loadContent('SellerView.php')">View</button>
-                        <button>Add To Shortlist</button>
-                        <button onclick="giveRating(1)" class="hidden">Give Rating</button>
-                        <button onclick="giveReview(1)" class="hidden">Give Review</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Property 2 -->
-            <div class="property">
-            <img src="images/Prop-2.jpg" alt="Property 2">
-                <div class="property-details">
-                    <h2>Property Name 2</h2>
-                    <div class="buttons">
-                        <button onclick="viewDetails(2)">View</button>
-                        <button>Add To Shortlist</button>
-                        <button onclick="giveRating(2)">Give Rating</button>
-                        <button onclick="giveReview(2)">Give Review</button>
-                    </div>
-                </div>
-            </div>
 
             <!-- Add more property listings as needed -->
         </div>

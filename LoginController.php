@@ -11,29 +11,26 @@ class LoginController {
         $this->entity = new UserAccount();
         $this->entityP = new UserProfile();
     }
-
-    public function auth($username, $password, $profile) {
-        // Retrieve user data from the database based on the provided username
-        $userA = $this->entity->findAccByUsername($username, $profile);
-        
-        if ($userA && $password == $userA->getPassword()) {
-            if ($userA->isActive()) {
-                $userP = $this->entityP->findProfileById($userA->getProfileId());
-                if ($userP && $userP->isActive()) {
-                    $_SESSION['userID'] = $userA->getUsername();
-                    $_SESSION['profile'] = $userP->getName();
-                    $_SESSION['logged'] = true;
-                    return ["success" => true];
-                } else {
-                    return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];
-                }
-            } else {
-                return ["success" => false, "error" => "Your account has been suspended. You cannot log in."];
-            }
-        } else {
-            return ["success" => false, "error" => "Invalid username or password"];
-        }
-    }
+	
+	public function auth($username, $password, $profile_id){
+		$profileState = $this->entityP->loginProfile($profile_id);
+		$userA = $this->entity->loginAccount($username, $password, $profile_id);
+		if (!$profileState['success']){
+			return $profileState;
+		}
+		else if (!$userA['success']){
+			return $userA;
+		}
+		else if ($profileState['success'] && $userA['success']){
+			$_SESSION['userID'] = $username;
+			$_SESSION['profile'] = $profileState['name'];
+			$_SESSION['logged'] = true;
+			return ["success" => true];
+		}
+		else{
+			return ["success" => false, "error" => "Unknown Error"];
+		}
+	}
     
     public function getUserProfiles() {
         // Retrieve user profiles from the database

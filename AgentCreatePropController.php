@@ -1,16 +1,16 @@
 <?php
-require_once 'PropertyEntity.php';
+require_once 'PropertyListing.php';
 
 class AgentCreatePropController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new PropertyEntity();
+        $this->entity = new PropertyListing();
     }
 
-    public function createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id) {
-        $properties = $this->entity->createProperty($Name, $Type, $Size, $Rooms, $Price, $Location, $Status, $Image, $Views, $Seller_id, $Agent_id);
-        return $properties;
+    public function createProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id) {
+        $result = $this->entity->createProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id);
+        return $result;
     }
 
 }

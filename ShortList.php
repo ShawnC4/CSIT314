@@ -2,7 +2,7 @@
 
 require_once 'Konohadb.php';
 
-class ShortlistEntity {
+class ShortList {
     private $db, $conn;
     public $id, $property_id, $buyer_id;
 
@@ -14,13 +14,13 @@ class ShortlistEntity {
         }
     }
 
-    public function getCountByProperty($id) {
+    public function getCountByProperty($property_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $sql = "SELECT COUNT(*) AS count FROM shortlist WHERE property_id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("i", $property_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
@@ -32,9 +32,36 @@ class ShortlistEntity {
         return $count;
     }
 
-    public function shortListProperty($property_id, $buyer_id) {
+    public function getBuyerShortlistProperties($buyer_id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
+		$property_id = array(); 
+
+        $sql = "SELECT * FROM shortlist WHERE buyer_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $buyer_id);
+		
+		if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			
+			while ($row = $result->fetch_assoc()) { 
+                $property_id[] = $row['property_id'];
+            }
+			
+            $stmt->close();
+            $this->db->closeConn();
+            return ['success' => true, 'property_id' => $property_id];
+        } else {
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
+    }
+
+    public function addShortListProperty($property_id, $buyer_id) {
         if ($this->shortListExists($property_id, $buyer_id)) {
-            return ['success' => false, 'message' => 'Account already exists!'];
+            return ['success' => false, 'errorMessage' => 'Property already shortlisted!'];
 		}
 
         $this->db = new DBconn(); 
@@ -47,12 +74,12 @@ class ShortlistEntity {
         if ($stmt->execute()) {
             $stmt->close();
             $this->db->closeConn();
-            return ['success' => true, 'message' => 'Property Shortlisted!'];
+            return ['success' => true];
         } else {
-            $stmt->close();
-            $this->db->closeConn();
-            return ['success' => false, 'message' => 'Error Shortlisting!'];
-        }
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
     public function deleteShortlistProperty ($property_id, $buyer_id) {
@@ -66,21 +93,21 @@ class ShortlistEntity {
         if ($stmt->execute()) {
             $stmt->close();
             $this->db->closeConn();
-            return ['success' => true, 'message' => 'Property Deleted!'];
+            return ['success' => true];
         } else {
-            $stmt->close();
-            $this->db->closeConn();
-            return ['success' => false, 'message' => 'Error Deleting!'];
-        }
+            $errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
-
-    public function shortListExists($property_id, $buyer_id) {
+	
+	public function shortListExists($property_id, $buyer_id) {
         $this->db = new DBconn(); 
         $this->conn = $this->db->getConn();
 
         $sql = "SELECT * FROM shortlist WHERE property_id = ? AND buyer_id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $property_id, $buyer_id);
+        $stmt->bind_param("is", $property_id, $buyer_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
@@ -88,24 +115,6 @@ class ShortlistEntity {
         $this->db->closeConn();
 
         return $result->num_rows > 0;
-    }
-
-    public function getNumberOfProperties($buyer_id) {
-        $this->db = new DBconn(); 
-        $this->conn = $this->db->getConn();
-
-        $sql = "SELECT COUNT(*) AS count FROM shortlist WHERE buyer_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("s", $buyer_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $count = $row['count'];
-        $stmt->close();
-
-        $this->db->closeConn();
-
-        return $count;
     }
 }
 ?>

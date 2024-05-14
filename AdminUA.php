@@ -56,6 +56,12 @@ body {font-family: Arial, Helvetica, sans-serif;}
     <button id="createAccount">Create User Account</button>
     <br>
     <input type="text" id="searchAccount" placeholder="Search accounts">
+	<div id="page-selection">
+		<label for="pageSelect">Select Page:</label>
+		<select id="pageSelect">
+			<!-- Options will be added here by JavaScript -->
+		</select>
+	</div>
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" id="modal-content">

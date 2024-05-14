@@ -1,24 +1,24 @@
 <?php
-require_once 'ShortListEntity.php';
-require_once 'PropertyEntity.php';
+require_once 'ShortList.php';
+require_once 'PropertyListing.php';
 
 class BuyerShortListViewController {
     private $entity , $entityP;
 
     public function __construct () {
-        $this->entity = new ShortlistEntity();
-        $this->entityP = new PropertyEntity();
+        $this->entity = new ShortList();
+        $this->entityP = new PropertyListing();
     }
 
-    public function getNumberOfPages($buyer_id) {
-        $properties = $this->entity->getNumberOfProperties($buyer_id);
-        $pages = ceil($properties / 9);
-        return $pages;
-    }
-
-    public function getBuyerShortlistProperties($page, $buyer_id) {
-        $properties = $this->entityP->getBuyerShortlistProperties($page, $buyer_id);
-        return $properties;
+    public function getBuyerShortlistProperties($buyer_id) {
+		// Get an array of shortlist property id
+		$shortlist = $this->entity->getBuyerShortlistProperties($buyer_id);
+		if (!$shortlist['success'])
+			return $shortlist;
+		
+		// Fetch properties using array
+        $result = $this->entityP->getBuyerShortlistProperties($shortlist['property_id']);
+        return $result;
     }
 }
 

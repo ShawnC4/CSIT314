@@ -8,8 +8,8 @@ class AdminCreateUPController {
         $this->entity = new UserProfile();
     }
 
-    public function createProfile ($profileName, $activeStatus, $description) {
-        $result = $this->entity->createUserProfile($profileName, $activeStatus, $description);
+    public function createProfile ($name, $activeStatus, $description) {
+        $result = $this->entity->createUserProfile($name, $activeStatus, $description);
         return $result;
     }
 }

@@ -1,11 +1,11 @@
 <?php
-require_once 'PropertyEntity.php';
+require_once 'PropertyListing.php';
 
 class AgentUpdatePropController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new PropertyEntity();
+        $this->entity = new PropertyListing();
     }
 
     public function updateProperty ($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id) {

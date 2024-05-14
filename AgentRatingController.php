@@ -1,19 +1,19 @@
 <?php
-require_once 'RatingEntity.php';
+require_once 'Rating.php';
 
 
 class AgentRatingController {
     private $entity;
 
     public function __construct() {
-        $this->entity = new RatingEntity();
+        $this->entity = new Rating();
     }
 
-    public function getAgentRatings($agent) {
+    public function getAgentRatings($agent_id) {
         // Retrieve user profiles from the database
-        $ratings = $this->entity->getAgentRatings($agent);
+        $result = $this->entity->getAgentRatings($agent_id);
 
-        return $ratings;
+        return $result;
     }
 }
 

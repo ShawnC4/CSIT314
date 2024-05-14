@@ -13,99 +13,73 @@ class UserProfile implements JsonSerializable{
 			$this->description = $description;
 		}
     }
-	
-	public function getId () {
-        return $this->id;
-    }
 
-    public function getName () {
-        return $this->name;
-    }
-
-    public function isActive(){
-        return $this->activeStatus;
-    }
-
-    public function getDescription () {
-        return $this->description;
-    }
-	
-	public function startConnection(){
-		$this->db = new DBconn(); 
-        $this->conn = $this->db->getConn();
-	}
-	
-	public function closeConnection(){
-		$this->db->closeConn();
-	}
-
-    public function findProfileById($profileId) {
-        $this->startConnection();
-		// Prepare SQL statement
-        $stmt = $this->conn->prepare("SELECT * FROM user_profiles WHERE id = ?");
-        $stmt->bind_param("i", $profileId);
-        
-        $stmt->execute();
-        
-        // Get result
-        $result = $stmt->get_result();
-
-        // Fetch user data
-        $fetchuser = $result->fetch_assoc();
-        
-        // Close statement
-        $stmt->close();
-        
-        if ($fetchuser) {
-            $user = new UserProfile($fetchuser['id'], $fetchuser['name'], $fetchuser['activeStatus'], $fetchuser['description']);
-        } else {
-            $user = null;
-        }
+	public function loginProfile($id){
+		$this->db = new DBconn();
+		$this->conn = $this->db->getConn();
 		
-		$this->closeConnection();
+		$stmt = $this->conn->prepare("SELECT name, activeStatus FROM user_profiles WHERE id = ?");
+		$stmt->bind_param("i", $id);
+		
+		if ($stmt->execute()) {
+			$result = $stmt->get_result();
+			$row = $result->fetch_assoc();
+			
+			$this->db->closeConn();
+			
+			if (!$row['activeStatus'])
+				return ["success" => false, "error" => "Your profile has been suspended. You cannot log in."];
+			else 
+				return ["success" => true, "name" => $row['name']];
+        } else {
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'error' => $errorMessage];
+        }
+	}
 
-        return $user; // Return user data
-    }
-
-    public function createUserProfile ($profileName, $activeStatus, $description) {
+    public function createUserProfile ($name, $activeStatus, $description) {
 		// Check if profile exists
-		if ($this->profileExists($profileName)){
+		if ($this->profileExists($name)){
             return ['success' => false, 'message' => 'Profile already exists!'];
 		}
 		
-		$this->startConnection();
+		$this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
 		
 		$sql = "INSERT INTO user_profiles (name, activeStatus, description) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sis", $profileName, $activeStatus, $description);
+        $stmt->bind_param("sis", $name, $activeStatus, $description);
 
         if ($stmt->execute()) {
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'message' => 'Error', 'errorMessage' => $errorMessage];
         }
     }
 	
-	public function profileExists($profileName) {
-        $this->startConnection();
+	public function profileExists($name) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
 		
 		$sql = "SELECT COUNT(*) FROM user_profiles WHERE name = ?";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bind_param("s", $profileName);
+		$stmt->bind_param("s", $name);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$row = $result->fetch_assoc();
 
-		$this->closeConnection();
+		$this->db->closeConn();
 		
 		return $row['COUNT(*)'] > 0;
     }
 
     public function getUserProfiles() {
-        $this->startConnection();
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
 		$profiles = array(); // Initialize an empty array to store profiles
 
         // Prepare SQL statement to select profiles
@@ -128,19 +102,20 @@ class UserProfile implements JsonSerializable{
                 $profiles[] = $profile;
                 //$profiles[] = $row;
             }
+			
+			$this->db->closeConn();
+            return ['success' => true, 'profiles' => $profiles];
         } else {
-            // Handle error if query fails
-            echo "Error fetching profiles: " . $this->conn->error;
-        }
-		
-		$this->closeConnection();
-
-        // Return the array of profiles
-        return $profiles;
+			$errorMessage = $this->conn->error;
+			$this->db->closeConn();
+            return ['success' => false, 'errorMessage' => $errorMessage];
+		}
     }
 
-    public function updateUserProfile ($profileId, $profileName, $activeStatus, $description) {
-        $this->startConnection();
+    public function updateUserProfile ($id, $name, $activeStatus, $description) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		// Prepare SQL statement to update the user profile
         $sql = "UPDATE user_profiles SET name = ?, activeStatus = ?, description = ? WHERE id = ?";
         
@@ -148,37 +123,41 @@ class UserProfile implements JsonSerializable{
         $stmt = $this->conn->prepare($sql);
         
         // Bind parameters
-        $stmt->bind_param("sisi", $profileName, $activeStatus, $description, $profileId);
+        $stmt->bind_param("sisi", $name, $activeStatus, $description, $id);
         
         // Execute the query
         if ($stmt->execute()) {
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
 	
-    public function suspendUserProfile($profileId) {
-        $this->startConnection();
+    public function suspendUserProfile($id) {
+        $this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		$sql = "UPDATE user_profiles SET activeStatus = 0 WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $profileId);
+        $stmt->bind_param("i", $id);
         
         if ($stmt->execute()) {
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
     }
 	
 	public function searchUserProfile($name){
-		$this->startConnection();
+		$this->db = new DBconn(); 
+        $this->conn = $this->db->getConn();
+		
 		$sql = "SELECT * FROM user_profiles WHERE name LIKE CONCAT('%', ?, '%')";
 		$stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $name);
@@ -199,21 +178,21 @@ class UserProfile implements JsonSerializable{
                 $profiles[] = $profile;
             }
 			
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => true, 'profiles' => $profiles];
         } else {
 			$errorMessage = $this->conn->error;
-			$this->closeConnection();
+			$this->db->closeConn();
             return ['success' => false, 'errorMessage' => $errorMessage];
         }
 	}
 	
 	public function jsonSerialize() {
 		return array(
-			'id' => $this->getId(),
-			'name' => $this->getName(),
-			'activeStatus' => $this->isActive(),
-			'description' => $this->getDescription()
+			'id' => $this->id,
+			'name' => $this->name,
+			'activeStatus' => $this->activeStatus,
+			'description' => $this->description
 		);
 	}
 }

@@ -8,8 +8,8 @@ class AdminUpdateUPController {
         $this->entity = new UserProfile();
     }
 
-    public function updateProfile($profileId, $profileName, $activeStatus, $description) {
-        $result = $this->entity->updateUserProfile($profileId, $profileName, $activeStatus, $description);
+    public function updateProfile($id, $name, $activeStatus, $description) {
+        $result = $this->entity->updateUserProfile($id, $name, $activeStatus, $description);
         return $result;
     }
 }

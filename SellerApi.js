@@ -6,12 +6,15 @@ class SellerApi {
     getDashboard() {
         fetch(`SellerLanding.php?action=getDashboard&sellerId=${window.userID}`)
             .then(response => response.json())
-            .then(propertyObjects => {
-                console.log(propertyObjects);
+            .then(data => {
+                console.log(data);
+				if (!data.success) // Access 'success' directly instead of using brackets
+					throw new Error(data.errorMessage);
+					
                 const propertyList = document.querySelector('.property-listings');
                 propertyList.innerHTML = '';
 
-                propertyObjects.forEach(property => {
+                data.properties.forEach(property => {
                     // Create div for property image, name and status
                     var propertyDiv = document.createElement('div');
                     propertyDiv.classList.add('property');
@@ -45,55 +48,58 @@ class SellerApi {
 
                     propertyDetailsDiv.appendChild(viewButton);
 
-                    if (property.status === 'sold') {
-                        // Create button for Give Rating
-                        var ratingButton = document.createElement('button');
-                        ratingButton.textContent = 'Give Rating';
-                        ratingButton.addEventListener('click', () => {
-                            this.displayRating(property.id);
-                        });
+					// Create button for Give Rating
+					var ratingButton = document.createElement('button');
+					ratingButton.textContent = 'Give Rating';
+					ratingButton.addEventListener('click', () => {
+						this.displayRating(property.id);
+					});
 
-                        // Create button for Give Review
-                        var reviewButton = document.createElement('button');
-                        reviewButton.textContent = 'Give Review';
-                        reviewButton.addEventListener('click', () => {
-                            this.displayReview(property.id);
-                        });
+					// Create button for Give Review
+					var reviewButton = document.createElement('button');
+					reviewButton.textContent = 'Give Review';
+					reviewButton.addEventListener('click', () => {
+						this.displayReview(property.id);
+					});
 
-                        // Append Give Rating and Give Review buttons to container
-                        propertyDetailsDiv.appendChild(ratingButton);
-                        propertyDetailsDiv.appendChild(reviewButton);
-                    }
+					// Append Give Rating and Give Review buttons to container
+					propertyDetailsDiv.appendChild(ratingButton);
+					propertyDetailsDiv.appendChild(reviewButton);
 
                     propertyDiv.appendChild(propertyDetailsDiv);
                     
                     // Append property container to listings
                     document.querySelector('.property-listings').appendChild(propertyDiv);
                 });
+            })
+			.catch(error => {
+                console.error('Error fetching properties:', error);
             });
     }
 
     displayProperty(id) {
         fetch(`SellerLanding.php?action=viewProperty&propertyId=${id}`)
             .then(response => response.json())
-            .then(propertyDetails => {
-                console.log(propertyDetails);
+            .then(data => {
+                console.log(data);
+				if (!data.success) // Access 'success' directly instead of using brackets
+					throw new Error(data.errorMessage);
                 // Assuming you have a modal for property details
                 document.getElementById('modal-content').innerHTML = `
                     <span class="close">&times;</span>
                     <div id="details">
                         <div>
-                            <p>Property ID: ${propertyDetails.property.id}</p>
-                            <p>Name: ${propertyDetails.property.name}</p>
-                            <p>Type: ${propertyDetails.property.type}</p>
-                            <p>Size: ${propertyDetails.property.size}</p>
-                            <p>Rooms: ${propertyDetails.property.rooms}</p>
-                            <p>Price: ${propertyDetails.property.price}</p>
-                            <p>Location: ${propertyDetails.property.location}</p>
-                            <p>Status: ${propertyDetails.property.status}</p>
-                            <p>Property Agent: ${propertyDetails.property.agent_id}</p>
-                            <p>Number of Views: ${propertyDetails.property.views}</p>
-                            <p>Number of shortlisted: ${propertyDetails.shortlist}</p>
+                            <p>Property ID: ${data.property.id}</p>
+                            <p>Name: ${data.property.name}</p>
+                            <p>Type: ${data.property.type}</p>
+                            <p>Size: ${data.property.size}</p>
+                            <p>Rooms: ${data.property.rooms}</p>
+                            <p>Price: ${data.property.price}</p>
+                            <p>Location: ${data.property.location}</p>
+                            <p>Status: ${data.property.status}</p>
+                            <p>Property Agent: ${data.property.agent_id}</p>
+                            <p>Number of Views: ${data.property.views}</p>
+                            <p>Number of shortlisted: ${data.shortlist}</p>
                         </div>
                 `;
                 //create a property image div to append to modal content
@@ -101,7 +107,7 @@ class SellerApi {
                 propertyImage.classList.add('property-image');
                 // Create img element for property image
                 var img = document.createElement('img');
-                img.src = propertyDetails.property.image; // Assuming propertyDetails.image is the image URL
+                img.src = data.property.image; // Assuming propertyDetails.image is the image URL
                 // Set style for property image
                 img.style.maxWidth = '100%';
                 img.style.height = 'auto';
@@ -124,6 +130,10 @@ class SellerApi {
         fetch(`SellerLanding.php?action=viewProperty&propertyId=${propertyId}`)
             .then(response => response.json())
             .then(propertyDetails => {
+				console.log(propertyDetails);
+				if (!propertyDetails.success) // Access 'success' directly instead of using brackets
+					throw new Error(propertyDetails.errorMessage);
+					
                 // Create modal content
                 const modalContent = document.getElementById('modal-content');
                 modalContent.innerHTML = `
@@ -190,14 +200,16 @@ class SellerApi {
         })
         .then(data => {
             console.log(data);
-            if (data === true){
-                alert(`Rating for ${agentID} was created successfully!`);
+			if (!data.success){ // Access 'success' directly instead of using brackets
+				document.getElementById("myModal").style.display = "none";
+				throw new Error(data.errorMessage);
+			}
+			else{
+				alert(`Rating for ${agentID} was created successfully!`);
                 document.getElementById("myModal").style.display = "none";
-            } else if(data['message'] == 'error'){
-                console.error('Error rating agent:', data['errorMessage']);
-            }
+			}
         })
-        .catch(error => console.error('Error rating agent:', error));
+        .catch(error => console.error('Error reviewing agent:', error));
     }
 
     // Create Review 
@@ -206,6 +218,10 @@ class SellerApi {
         fetch(`SellerLanding.php?action=viewProperty&propertyId=${propertyId}`)
             .then(response => response.json())
             .then(propertyDetails => {
+				console.log(propertyDetails);
+				if (!propertyDetails.success) // Access 'success' directly instead of using brackets
+					throw new Error(propertyDetails.errorMessage);
+				
                 // Create modal content
                 const modalContent = document.getElementById('modal-content');
                 modalContent.innerHTML = `
@@ -269,14 +285,16 @@ class SellerApi {
             }
             return response.json();
         })
-        .then(data => {
+		.then(data => {
             console.log(data);
-            if (data === true){
-                alert(`Review for ${agentID} was created successfully!`);
+			if (!data.success){ // Access 'success' directly instead of using brackets
+				document.getElementById("myModal").style.display = "none";
+				throw new Error(data.errorMessage);
+			}
+			else{
+				alert(`Review for ${agentID} was created successfully!`);
                 document.getElementById("myModal").style.display = "none";
-            } else if(data['message'] == 'error'){
-                console.error('Error reviewing agent:', data['errorMessage']);
-            }
+			}
         })
         .catch(error => console.error('Error reviewing agent:', error));
     }

@@ -60,23 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
-	$controllerCreateUA = new AdminCreateUAController();
-    $profiles = $controllerCreateUA->getUserProfiles();
-    header('Content-Type: application/json');
-
-    echo json_encode($profiles);
-    exit();
 } 
 
 //VIEW ALL PROFILE//
 // Handle POST request to authenticate user
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfiles') {
 	$controllerViewUP = new AdminViewUPController();
-	$profiles = $controllerViewUP->getUserProfiles();
+	$response = $controllerViewUP->getUserProfiles();
 
     header('Content-Type: application/json');
-    echo json_encode($profiles);
+    echo json_encode($response);
     exit();
 }
 
@@ -87,18 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     $pageNum = $requestData['page'];
 	
 	$controllerViewUA = new AdminViewUAController();
-	$accounts = $controllerViewUA->getUserAccounts($pageNum);
+	$response = $controllerViewUA->getUserAccounts($pageNum);
 
     header('Content-Type: application/json');
-    echo json_encode($accounts);
+    echo json_encode($response);
     exit();
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getProfileById') {
     $controllerViewUA = new AdminViewUAController();
-	$profile = $controllerViewUA->getProfileById($_GET['profile_id']);
+	$response = $controllerViewUA->getProfileById($_GET['profile_id']);
 
     header('Content-Type: application/json');
-    echo json_encode($profile);
+    echo json_encode($response);
     exit();
 }
 
@@ -134,13 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($response);
-    exit();
-}else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'updateGetProfile') {
-    $controllerUpdateUA = new AdminUpdateUAController();
-	$profile = $controllerUpdateUA->getUserProfiles();
-
-    header('Content-Type: application/json');
-    echo json_encode($profile);
     exit();
 }
 
