@@ -1,6 +1,7 @@
 -- If haven't already, drop the schema and create the schema again
 -- DROP SCHEMA `konohadb`;
 -- CREATE SCHEMA `konohadb`;
+-- USE `konohadb`;
 
 -- Create user_profile table
 CREATE TABLE user_profiles (
@@ -300,6 +301,22 @@ CREATE TABLE shortlist (
 -- Populate shortlist with buyer shortlists
 INSERT INTO shortlist (property_id, buyer_id)
 VALUES
-    (1, 'buyer_1'), (1, 'buyer_4'), (2, 'buyer_2'), (2, 'buyer_4'), (3, 'buyer_5'), (3, 'buyer_1'), (4, 'buyer_3'), (4, 'buyer_2'), (5, 'buyer_3'), (5, 'buyer_5'),
-    (6, 'buyer_1'), (6, 'buyer_4'), (7, 'buyer_2'), (7, 'buyer_4'), (8, 'buyer_5'), (8, 'buyer_1'), (9, 'buyer_3'), (9, 'buyer_2'), (10, 'buyer_3'), (10, 'buyer_5'),
-    (12, 'buyer_4'), (18, 'buyer_1'), (16, 'buyer_3'), (13, 'buyer_2'), (14, 'buyer_5');
+    (1, 'buyer_1'), (55, 'buyer_4'), (4, 'buyer_2'), (77, 'buyer_4'), (3, 'buyer_5'), (66, 'buyer_1'), (4, 'buyer_3'), (88, 'buyer_2'), (5, 'buyer_3'), (99, 'buyer_5'),
+    (6, 'buyer_1'), (64, 'buyer_4'), (7, 'buyer_2'), (59, 'buyer_4'), (8, 'buyer_5'), (65, 'buyer_1'), (9, 'buyer_3'), (81, 'buyer_2'), (10, 'buyer_3'), (96, 'buyer_5'),
+    (12, 'buyer_4'), (18, 'buyer_1'), (16, 'buyer_3'), (13, 'buyer_2'), (14, 'buyer_5'), (19, 'buyer_9'), (23, 'buyer_6'), (34, 'buyer_9'), (18, 'buyer_7'), (44, 'buyer_9'),
+    (39, 'buyer_10'), (37, 'buyer_6'), (21, 'buyer_8'), (28, 'buyer_7'), (32, 'buyer_8'), (17, 'buyer_10'), (16, 'buyer_6'), (70, 'buyer_9'), (33, 'buyer_7'), (29, 'buyer_10'),
+    (24, 'buyer_6'), (41, 'buyer_8'), (36, 'buyer_7'), (87, 'buyer_8'), (22, 'buyer_10'), (49, 'buyer_9'), (98, 'buyer_6'), (17, 'buyer_8'), (65, 'buyer_7'),(43, 'buyer_10');
+
+INSERT INTO shortlist (property_id, buyer_id)
+SELECT p.id, u.username
+FROM (
+    SELECT id, ROW_NUMBER() OVER() AS rn
+    FROM property
+    ORDER BY RAND()
+    LIMIT 50
+) p
+JOIN (
+    SELECT username, ROW_NUMBER() OVER() AS rn
+    FROM user_accounts
+    ORDER BY RAND()
+) u ON p.rn = u.rn;
