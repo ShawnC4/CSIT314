@@ -72,29 +72,18 @@ CREATE TABLE ratings (
     FOREIGN KEY (agent_id) REFERENCES user_accounts(username)
 );
 
--- Populate ratings table with 10 rows
+-- Populate ratings table with 100 rows 
 INSERT INTO ratings (rating, customer_id, agent_id)
-VALUES
-    (5, 'seller_2', 'agent_1'), 
-    (4, 'seller_1', 'agent_1'), 
-    (5, 'buyer_5', 'agent_1'),
-    (3, 'buyer_4', 'agent_1'),
-    (4, 'seller_3', 'agent_2'),
-    (1, 'seller_2', 'agent_2'),
-    (4, 'buyer_4', 'agent_2'),
-    (3, 'buyer_5', 'agent_2'),
-    (5, 'seller_4', 'agent_3'),
-    (4, 'seller_5', 'agent_3'),
-    (4, 'buyer_1', 'agent_3'), 
-    (5, 'buyer_3', 'agent_3'), 
-    (3, 'seller_5', 'agent_4'),
-    (4, 'seller_1', 'agent_4'),
-    (5, 'buyer_3', 'agent_4'),
-    (2, 'buyer_2', 'agent_4'),
-    (3, 'seller_2', 'agent_5'),
-    (4, 'seller_4', 'agent_5'),
-    (5, 'buyer_5', 'agent_5'),
-    (3, 'buyer_1', 'agent_5');
+SELECT
+    ROUND(1 + (RAND() * 4)), -- Generates random ratings from 1 to 5
+    CASE WHEN n <= 5 THEN CONCAT('buyer_', CEIL(RAND() * 10)) ELSE CONCAT('seller_', CEIL(RAND() * 10)) END, -- Randomly selects a buyer or seller
+    CONCAT('agent_', CEIL(n / 10.0)) -- Assigns an agent ID based on n, ensures each agent gets 10 entries
+FROM (
+    SELECT ROW_NUMBER() OVER() AS n
+    FROM information_schema.tables -- Generates rows; ensure this query provides at least 100 rows
+    LIMIT 100
+) t;
+
 
 -- Create reviews table
 CREATE TABLE reviews (
@@ -106,29 +95,38 @@ CREATE TABLE reviews (
     FOREIGN KEY (agent_id) REFERENCES user_accounts(username)
 );
 
--- Populate reviews table with 10 rows
+-- Populate reviews table with 10o rows 
 INSERT INTO reviews (review, customer_id, agent_id)
-VALUES
-    ('Great experience, highly recommended!', 'buyer_4', 'agent_1'), 
-    ('Good service overall, could improve communication.', 'seller_1', 'agent_1'), 
-    ('Excellent professionalism and timely delivery.', 'buyer_2', 'agent_1'),
-    ('Average service, needs improvement in quality.', 'seller_3', 'agent_1'),
-    ('Satisfactory performance, would use again.', 'buyer_5', 'agent_2'),
-    ('Terrible experience, very poor communication.', 'seller_1', 'agent_2'),
-    ('Impressed with the quality of work.', 'buyer_3', 'agent_2'),
-    ('Fair service, met expectations.', 'seller_2', 'agent_2'),
-    ('Outstanding service, exceeded expectations!', 'buyer_2', 'agent_3'),
-    ('Good job, but room for improvement.', 'seller_4', 'agent_3'),
-    ('Excellent service, highly recommended!', 'buyer_5', 'agent_3'), 
-    ('Good experience overall, satisfied.', 'seller_1', 'agent_3'), 
-    ('Could improve communication, but good otherwise.', 'buyer_4', 'agent_4'),
-    ('Satisfactory performance, met expectations.', 'seller_5', 'agent_4'),
-    ('Outstanding service, exceeded expectations!', 'buyer_1', 'agent_4'),
-    ('Poor experience, needs improvement.', 'seller_3', 'agent_4'),
-    ('Impressed with the quality of work.', 'buyer_3', 'agent_5'),
-    ('Fair service, could improve.', 'seller_2', 'agent_5'),
-    ('Exceptional service, highly recommended!', 'buyer_4', 'agent_5'),
-    ('Average service, nothing special.', 'seller_5', 'agent_5');
+SELECT
+    -- Randomly selects a review from the given set
+    CASE FLOOR(RAND() * 10)
+        WHEN 0 THEN 'Great experience, highly recommended!'
+        WHEN 1 THEN 'Good service overall, could improve communication.'
+        WHEN 2 THEN 'Excellent professionalism and timely delivery.'
+        WHEN 3 THEN 'Average service, needs improvement in quality.'
+        WHEN 4 THEN 'Satisfactory performance, would use again.'
+        WHEN 5 THEN 'Terrible experience, very poor communication.'
+        WHEN 6 THEN 'Impressed with the quality of work.'
+        WHEN 7 THEN 'Fair service, met expectations.'
+        WHEN 8 THEN 'Outstanding service, exceeded expectations!'
+        WHEN 9 THEN 'Good job, but room for improvement.'
+    END AS review,
+    
+    -- Randomly selects a buyer or seller
+    CASE
+        WHEN n % 2 = 0 THEN CONCAT('buyer_', FLOOR(1 + (RAND() * 10)))
+        ELSE CONCAT('seller_', FLOOR(1 + (RAND() * 10)))
+    END AS customer_id,
+    
+    -- Assigns an agent ID based on n, ensures each agent gets 10 entries
+    CONCAT('agent_', FLOOR((n - 1) / 10) + 1) AS agent_id
+    
+FROM (
+    SELECT ROW_NUMBER() OVER() AS n
+    FROM information_schema.tables
+    LIMIT 100 -- Ensures only 100 rows are generated
+) t;
+
 
 -- Create property table
 CREATE TABLE property (
