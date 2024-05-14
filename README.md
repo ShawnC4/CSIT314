@@ -366,5 +366,7 @@ FROM (
 JOIN (
     SELECT username, ROW_NUMBER() OVER() AS rn
     FROM user_accounts
+    WHERE profile_id= 1
     ORDER BY RAND()
-) u ON p.rn = u.rn;
+) u 
+limit 100;
