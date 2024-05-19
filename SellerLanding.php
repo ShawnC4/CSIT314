@@ -21,11 +21,9 @@ require_once 'CreateRatingController.php';
 require_once 'CreateReviewController.php';
 
 //VIEW//
-$SellerViewALLPropertyController = new SellerViewALLPropertyController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getDashboard') {
     if(isset($_GET['sellerId'])) {
-        
+        $SellerViewALLPropertyController = new SellerViewALLPropertyController();
         $response = $SellerViewALLPropertyController->getSellerProperties($_GET['sellerId']);
         header('Content-Type: application/json');
         echo json_encode($response);
@@ -33,10 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
     }
 } 
 
-$SellerViewONEPropertyController = new SellerViewONEPropertyController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
     if(isset($_GET['propertyId'])) {
+		$SellerViewONEPropertyController = new SellerViewONEPropertyController();
         $response = $SellerViewONEPropertyController->getPropertyByID($_GET['propertyId']);
         
         header('Content-Type: application/json');
@@ -46,14 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 }
 
 //CREATE RATING//
-$CreateRatingController = new CreateRatingController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
     $requestData = json_decode(file_get_contents('php://input'), true);
     $rating = $requestData['agentRating'];
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
-    
+    $CreateRatingController = new CreateRatingController();
     $response = $CreateRatingController->createRating($rating, $customer_id, $agent_id);
 
     // Send JSON response
@@ -63,14 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 }
 
 //CREATE REVIEW//
-$CreateReviewController = new CreateReviewController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
     $requestData = json_decode(file_get_contents('php://input'), true);
     $review = $requestData['agentReview'];
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
-    
+    $CreateReviewController = new CreateReviewController();
     $response = $CreateReviewController->createReview($review, $customer_id, $agent_id);
 
     // Send JSON response

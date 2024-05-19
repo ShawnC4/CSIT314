@@ -24,10 +24,9 @@ require_once 'CreateReviewController.php';
 require_once 'CreateRatingController.php';
 
 //VIEW ALL
-$BuyerViewALLPropertyController = new BuyerViewALLPropertyController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getViewDashboard') {
-    $response = $BuyerViewALLPropertyController->getBuyerProperties($_GET['status'], $_GET['page']);
+    $BuyerViewALLPropertyController = new BuyerViewALLPropertyController();
+	$response = $BuyerViewALLPropertyController->getBuyerProperties($_GET['status'], $_GET['page']);
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
@@ -35,11 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 } 
 
 //VIEW ONE
-$BuyerViewONEPropertyController = new BuyerViewONEPropertyController();
-	
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'viewProperty') {
     if(isset($_GET['propertyId'])) {
-        $response = $BuyerViewONEPropertyController->getPropertyByID($_GET['propertyId']);
+        $BuyerViewONEPropertyController = new BuyerViewONEPropertyController();
+		$response = $BuyerViewONEPropertyController->getPropertyByID($_GET['propertyId']);
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
@@ -47,20 +45,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 }
 
 //ADD SHORTLIST
-$BuyerShortlistAddController = new BuyerShortlistAddController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'shortListProperty') {
-    $result = $BuyerShortlistAddController->addShortListProperty($_GET['propertyId'], $_GET['buyerId']);
+    $BuyerShortlistAddController = new BuyerShortlistAddController();
+	$result = $BuyerShortlistAddController->addShortListProperty($_GET['propertyId'], $_GET['buyerId']);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit();
 }
 
 //SHORTLIST VIEW
-$BuyerShortlistViewController = new BuyerShortlistViewController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getShortlistDashboard') {
-    $response = $BuyerShortlistViewController->getBuyerShortlistProperties($_GET['buyerId']);
+    $BuyerShortlistViewController = new BuyerShortlistViewController();
+	$response = $BuyerShortlistViewController->getBuyerShortlistProperties($_GET['buyerId']);
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
@@ -68,24 +64,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
 }
 
 //DELETE SHORTLIST
-$BuyerShortlistDeleteController = new BuyerShortlistDeleteController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'deleteShortlistProperty') {
-    $result = $BuyerShortlistDeleteController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
+    $BuyerShortlistDeleteController = new BuyerShortlistDeleteController();
+	$result = $BuyerShortlistDeleteController->deleteShortlistProperty($_GET['propertyId'], $_GET['buyerId']);
     header('Content-Type: application/json');
     echo json_encode($result);
     exit();
 }
 
 //CREATE REVIEW//
-$CreateReviewController = new CreateReviewController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createReview') {
     $requestData = json_decode(file_get_contents('php://input'), true);
     $review = $requestData['agentReview'];
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
-
+	$CreateReviewController = new CreateReviewController();
     $response = $CreateReviewController->createReview($review, $customer_id, $agent_id);
 
     // Send JSON response
@@ -95,14 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 }
 
 //CREATE RATING//
-$CreateRatingController = new CreateRatingController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createRating') {
     $requestData = json_decode(file_get_contents('php://input'), true);
     $rating = $requestData['agentRating'];
     $customer_id = $requestData['customerID'];
     $agent_id = $requestData['agentID'];
-
+	$CreateRatingController = new CreateRatingController();
     $response = $CreateRatingController->createRating($rating, $customer_id, $agent_id);
 
     // Send JSON response
@@ -112,8 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 }
 
 //SEARCH PROPERTY//
-$BuyerSearchPropertyController = new BuyerSearchPropertyController();
-	
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchBuyerProperty') {
     $requestData = json_decode(file_get_contents('php://input'), true);
 
@@ -121,6 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         $status = $requestData['status'];
         $name = $requestData['name']; 
         $pageNum = $requestData['pageNum']; // Get pageNum from request
+		
+		$BuyerSearchPropertyController = new BuyerSearchPropertyController();
         $result = $BuyerSearchPropertyController->searchBuyerProperty($status, $name, $pageNum); // Pass pageNum to the controller method
         header('Content-Type: application/json');
         echo json_encode($result);

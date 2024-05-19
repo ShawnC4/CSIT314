@@ -6,10 +6,8 @@
 	require_once 'AgentSearchPropController.php';
 
     //VIEW//
-    $agentViewPropController = new AgentViewPropController();
-
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentProperties') {
-
+		$agentViewPropController = new AgentViewPropController();
         $response = $agentViewPropController->getPropertiesByAgent($_GET['agentId']);
         //$properties = $agentViewPropController->getAgentProperties('agent_1');
         header('Content-Type: application/json');
@@ -19,8 +17,6 @@
     }
 
     //UPDATE//
-    $agentUpdatePropController = new AgentUpdatePropController();
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'updateProperty') {
         $requestData = json_decode(file_get_contents('php://input'), true);
         $name = $requestData['name'];
@@ -36,6 +32,7 @@
         $agent_id = $requestData['agent_id'];
         $id = $requestData['id'];
         
+		$agentUpdatePropController = new AgentUpdatePropController();
         $response = $agentUpdatePropController->updateProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agent_id, $id);
 
         // Send JSON response
@@ -45,11 +42,10 @@
     }
     
     //DELETE//
-	$agentDeletePropController = new AgentDeletePropController();
-	
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'deleteProperty') {
         // Get the body of the POST request
         $requestData = json_decode(file_get_contents('php://input'), true);
+		$agentDeletePropController = new AgentDeletePropController();
     
         if (isset($requestData['propertyId'])) {
             $propertyId = $requestData['propertyId'];
@@ -63,12 +59,11 @@
         exit();
     }
     
-    //SEARCH//
-	$agentSearchPropController = new AgentSearchPropController();
-	
+    //SEARCH//	
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'searchProperty') {
         $requestData = json_decode(file_get_contents('php://input'), true);
-    
+		$agentSearchPropController = new AgentSearchPropController();
+		
         if (isset($requestData['searchInput']) && isset($requestData['agent_id'])) {
             $name = $requestData['searchInput']; 
 			$agent = $requestData['agent_id']; 

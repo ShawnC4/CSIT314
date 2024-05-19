@@ -10,8 +10,6 @@ if(isset($_SESSION['userID'])) {
 require_once 'AgentCreatePropController.php';
 
 //CREATE//
-$agentCreatePropController = new AgentCreatePropController();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'createProperty') {
 	$requestData = json_decode(file_get_contents('php://input'), true);
 	$name = $requestData['name'];
@@ -25,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
 	$views = $requestData['views'];
 	$seller_id = $requestData['seller_id'];
 	
+	$agentCreatePropController = new AgentCreatePropController();
 	$response = $agentCreatePropController->createProperty($name, $type, $size, $rooms, $price, $location, $status, $image, $views, $seller_id, $agentUserID);
 
 	// Send JSON response

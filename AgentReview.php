@@ -3,10 +3,8 @@
     require_once 'AgentReviewController.php';
 
     //VIEW//
-    $agentReviewController = new AgentReviewController();
-
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentReviews') {
-
+		$agentReviewController = new AgentReviewController();
         $response = $agentReviewController->getAgentReviews($_GET['agentId']);
         header('Content-Type: application/json');
 

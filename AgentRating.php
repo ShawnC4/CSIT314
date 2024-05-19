@@ -3,10 +3,8 @@
     require_once 'AgentRatingController.php';
 
     //VIEW//
-    $agentRatingController = new AgentRatingController();
-
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'getAgentRatings') {
-
+		$agentRatingController = new AgentRatingController();
         $response = $agentRatingController->getAgentRatings($_GET['agentId']);
         header('Content-Type: application/json');
 
