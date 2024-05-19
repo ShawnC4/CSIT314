@@ -1,3 +1,10 @@
+
+//To run test. install packages using terminal command: (Asusming IDE Visual Studio Code)
+//npm install selenium-webdriver
+
+//Followed by terminal command below to run the test after starting XAMPP:
+//node test.js
+
 const assert = require('assert');
 const { Builder, By, until } = require('selenium-webdriver');
 
